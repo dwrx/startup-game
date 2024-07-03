@@ -1,0 +1,242 @@
+{
+  "address": "8Vam7b9dbytDm3KjGkKCgJPechquwDXN1gk5w5biRZLb",
+  "metadata": {
+    "name": "startup_game",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "FOC business simulation game."
+  },
+  "instructions": [
+    {
+      "name": "collect_clean_cash",
+      "discriminator": [88, 159, 192, 186, 253, 139, 174, 4],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": ["player"]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "collect_dirty_cash",
+      "discriminator": [81, 41, 250, 124, 11, 25, 51, 219],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": ["player"]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_player",
+      "discriminator": [79, 249, 88, 177, 220, 62, 56, 128],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [80, 76, 65, 89, 69, 82]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "purchase_room",
+      "discriminator": [78, 210, 204, 69, 165, 78, 66, 224],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": ["player"]
+        }
+      ],
+      "args": [
+        {
+          "name": "room_type",
+          "type": {
+            "defined": {
+              "name": "RoomType"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Player",
+      "discriminator": [205, 222, 112, 7, 165, 155, 206, 218]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InsufficientExperience",
+      "msg": "Insufficient experience to purchase this room."
+    },
+    {
+      "code": 6001,
+      "name": "RoomAlreadyOwned",
+      "msg": "Room already owned."
+    },
+    {
+      "code": 6002,
+      "name": "InsufficientFunds",
+      "msg": "Insufficient funds."
+    }
+  ],
+  "types": [
+    {
+      "name": "Player",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "is_initialized",
+            "type": "bool"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "experience",
+            "type": "u64"
+          },
+          {
+            "name": "clean_cash",
+            "type": "u64"
+          },
+          {
+            "name": "dirty_cash",
+            "type": "u64"
+          },
+          {
+            "name": "workers",
+            "type": "u64"
+          },
+          {
+            "name": "enforcers",
+            "type": "u64"
+          },
+          {
+            "name": "hitmen",
+            "type": "u64"
+          },
+          {
+            "name": "rooms",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "Room"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Room",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "u64"
+          },
+          {
+            "name": "room_type",
+            "type": {
+              "defined": {
+                "name": "RoomType"
+              }
+            }
+          },
+          {
+            "name": "level",
+            "type": "u64"
+          },
+          {
+            "name": "storage_capacity",
+            "type": "u64"
+          },
+          {
+            "name": "last_collected",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RoomType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Laundry"
+          },
+          {
+            "name": "FastFoodRestaurant"
+          },
+          {
+            "name": "FitnessCenter"
+          },
+          {
+            "name": "UnlicensedBar"
+          },
+          {
+            "name": "CannabisFarm"
+          },
+          {
+            "name": "StripClub"
+          },
+          {
+            "name": "Casino"
+          },
+          {
+            "name": "Saferoom"
+          },
+          {
+            "name": "SecurityRoom"
+          }
+        ]
+      }
+    }
+  ]
+}
