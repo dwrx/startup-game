@@ -129,3 +129,12 @@ body {
     width: 100%;
     height: auto;
 }
+
+.footer {
+    margin-top: 50px;
+}
+
+.footer a {
+    color: white;
+    text-decoration: dotted underline;
+}

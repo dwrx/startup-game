@@ -3,7 +3,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useNavigate } from "react-router-dom";
 import { PublicKey, SystemProgram } from "@solana/web3.js";
-import { Button, CircularProgress, Container, Box } from "@mui/material";
+import { Button, CircularProgress, Container, Box, Alert, Link } from "@mui/material";
 import useProgram from "../hooks/useProgram";
 import "../styles.css";
 
@@ -67,25 +67,40 @@ const HomeScreen: React.FC = () => {
           <WalletMultiButton />
         </Box>
         {wallet.connected && (
-          <Box mt={4}>
-            {loading ? (
-              <CircularProgress />
-            ) : isInitialized ? (
-              <Button variant="contained" color="primary" onClick={() => navigate("/game")}>
-                Continue Playing
-              </Button>
-            ) : (
-              <Button variant="contained" color="primary" onClick={initializePlayer}>
-                New Game
-              </Button>
-            )}
-          </Box>
+          <>
+            <Box mt={4}>
+              <Alert severity="warning">
+                Switch wallet to Solana Devnet (
+                <Link href="https://faucet.solana.com/" target="_blank" rel="noopener">
+                  faucet
+                </Link>
+                ) or Sonic L2 Devnet (
+                <Link href="https://faucet.sonic.game/" target="_blank" rel="noopener">
+                  faucet
+                </Link>
+                ) to play
+              </Alert>
+            </Box>
+            <Box mt={4}>
+              {loading ? (
+                <CircularProgress />
+              ) : isInitialized ? (
+                <Button variant="contained" color="primary" onClick={() => navigate("/game")}>
+                  Continue Playing
+                </Button>
+              ) : (
+                <Button variant="contained" color="primary" onClick={initializePlayer}>
+                  New Game
+                </Button>
+              )}
+            </Box>
+          </>
         )}
         <footer className="footer">
           <a href="https://github.com/dwrx/startup-game" target="_blank" rel="noopener noreferrer">
             GitHub
           </a>{" "}
-          |
+          |&nbsp;
           <a href="https://x.com/dxrxdy/" target="_blank" rel="noopener noreferrer">
             Twitter
           </a>
