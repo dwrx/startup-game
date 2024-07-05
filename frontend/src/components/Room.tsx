@@ -109,7 +109,7 @@ const Room: React.FC<RoomProps> = ({ className, isLegal, playerCash, playerLevel
       price: 2000,
       yield: 50,
       capacity: 500,
-      image: "/rooms/casino.png",
+      image: "/rooms/casino.gif",
       levelRequirement: 2,
     },
     {
@@ -129,7 +129,7 @@ const Room: React.FC<RoomProps> = ({ className, isLegal, playerCash, playerLevel
       price: 600,
       yield: 0,
       capacity: 800,
-      image: "/rooms/securityRoom.png",
+      image: "/rooms/securityRoom.gif",
       levelRequirement: 5,
     },
   ];
