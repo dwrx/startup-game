@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, Connection, clusterApiUrl, AccountInfo } from "@solana/web3.js";
 import useProgram from "../hooks/useProgram";
+import { allRooms } from "../rooms";
 import "../styles.css";
 import { Button, Box } from "@mui/material";
 
@@ -15,6 +16,10 @@ const Navbar: React.FC = () => {
     enforcers: 0,
     hitmen: 0,
   });
+  const [estimatedDirtyCash, setEstimatedDirtyCash] = useState(0);
+  const [estimatedCleanCash, setEstimatedCleanCash] = useState(0);
+
+  const connection = new Connection(clusterApiUrl("devnet"));
 
   const fetchBalances = async () => {
     if (!wallet.connected || !wallet.publicKey || !program) return;
@@ -33,13 +38,77 @@ const Navbar: React.FC = () => {
         enforcers: playerAccount.enforcers.toNumber(),
         hitmen: playerAccount.hitmen.toNumber(),
       });
+
+      return playerAccount;
     } catch (err) {
       console.error("Failed to fetch balances", err);
     }
   };
 
+  const estimatePendingRewards = async (playerAccount: any) => {
+    try {
+    //   const clock: AccountInfo<Buffer> | null = await connection.getAccountInfo(new PublicKey("SysvarC1ock11111111111111111111111111111111"));
+    //   if (!clock || !clock.data) {
+    //     console.error("Failed to fetch clock");
+    //     return;
+    //   }
+
+    //   const currentTime = clock.data.readBigInt64LE(8);
+
+        const slot = await connection.getSlot();
+        const currentTime = await connection.getBlockTime(slot);
+
+      let totalDirtyCash = 0;
+      let totalCleanCash = 0;
+      const availableDirtyCash = playerAccount.dirtyCash.toNumber();
+
+      playerAccount.rooms.forEach((room: any) => {
+        const elapsedTime = Number(currentTime) - Number(room.lastCollected);
+        console.log('elapsedTime', elapsedTime)
+        console.log('currentTime', Number(currentTime))
+        console.log('lastCollected', Number(room.lastCollected))
+        const roomInfo = allRooms.find(r => Object.keys(r.roomType)[0] === Object.keys(room.roomType)[0]);
+        if (!roomInfo) return;
+
+        const yieldPerSecond = roomInfo.yield / 60;
+        const potentialReward = Math.min((elapsedTime * yieldPerSecond), room.storageCapacity.toNumber());
+
+        if (
+          ["unlicensedBar", "cannabisFarm", "stripClub", "casino"].includes(
+            Object.keys(room.roomType)[0]
+          )
+        ) {
+          totalDirtyCash += potentialReward;
+        }
+
+        if (
+          ["laundry", "fastFoodRestaurant", "fitnessCenter"].includes(
+            Object.keys(room.roomType)[0]
+          )
+        ) {
+          totalCleanCash += Math.min(potentialReward, availableDirtyCash * 0.7);
+        }
+      });
+
+      setEstimatedDirtyCash(Math.round(totalDirtyCash > 0 ? totalDirtyCash : 0));
+      setEstimatedCleanCash(Math.round(totalCleanCash > 0 ? totalCleanCash : 0));
+    } catch (err) {
+      console.error("Failed to estimate rewards", err);
+    }
+  };
+
   useEffect(() => {
-    fetchBalances();
+    const fetchAndEstimate = async () => {
+      const playerAccount = await fetchBalances();
+      if (playerAccount) {
+        estimatePendingRewards(playerAccount);
+      }
+    };
+
+    fetchAndEstimate();
+    const interval = setInterval(fetchAndEstimate, 2000);
+
+    return () => clearInterval(interval);
   }, [wallet.connected, wallet.publicKey, program]);
 
   const handleCollectDirtyCash = async () => {
@@ -101,16 +170,25 @@ const Navbar: React.FC = () => {
           <Button
             variant="outlined"
             onClick={handleCollectDirtyCash}
-            style={{ marginRight: "10px", height: "100%", color: "white", borderColor: "white" }}
+            style={{
+              marginRight: "10px",
+              height: "100%",
+              color: "white",
+              borderColor: "white",
+            }}
           >
-            Collect Dirty Money
+            Collect Dirty Money (${estimatedDirtyCash})
           </Button>
           <Button
             variant="outlined"
             onClick={handleCollectCleanCash}
-            style={{ height: "100%", color: "white", borderColor: "white" }}
+            style={{
+              height: "100%",
+              color: "white",
+              borderColor: "white",
+            }}
           >
-            Launder Money (-30%)
+            Launder Money (-30%) (${estimatedCleanCash})
           </Button>
           <WalletMultiButton />
         </Box>

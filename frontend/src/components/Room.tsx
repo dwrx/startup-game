@@ -4,6 +4,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import PurchaseModal from "./PurchaseModal";
 import RoomDetailsModal from "./RoomDetailsModal";
+import { legalRooms, illegalRooms } from "../rooms";
 import "../styles.css";
 
 interface RoomProps {
@@ -37,102 +38,6 @@ const Room: React.FC<RoomProps> = ({ className, isLegal, playerCash, playerLevel
       setSelectedRoom(roomData);
     }
   }, [roomData]);
-
-  const legalRooms = [
-    {
-      name: "Laundry",
-      roomType: { laundry: {} },
-      description: "Clean your dirty clothes.",
-      price: 100,
-      yield: 10,
-      capacity: 100,
-      image: "/rooms/laundry.gif",
-      levelRequirement: 0,
-    },
-    {
-      name: "Fastfood",
-      roomType: { fastFoodRestaurant: {} },
-      description: "Serve delicious fast food.",
-      price: 600,
-      yield: 25,
-      capacity: 200,
-      image: "/rooms/fastFoodRestaurant.gif",
-      levelRequirement: 100,
-    },
-    {
-      name: "Fitness Center",
-      roomType: { fitnessCenter: {} },
-      description: "Keep fit and healthy.",
-      price: 800,
-      yield: 35,
-      capacity: 300,
-      image: "/rooms/fitnessCenter.png",
-      levelRequirement: 200,
-    },
-  ];
-
-  const illegalRooms = [
-    {
-      name: "Unlicensed Bar",
-      roomType: { unlicensedBar: {} },
-      description: "Run an unlicensed bar.",
-      price: 400,
-      yield: 60,
-      capacity: 600,
-      image: "/rooms/unlicensedBar.gif",
-      levelRequirement: 0,
-    },
-    {
-      name: "Cannabis Farm",
-      roomType: { cannabisFarm: {} },
-      description: "Grow cannabis.",
-      price: 500,
-      yield: 40,
-      capacity: 400,
-      image: "/rooms/cannabisFarm.gif",
-      levelRequirement: 1,
-    },
-    {
-      name: "Strip Club",
-      roomType: { stripClub: {} },
-      description: "Run a strip club.",
-      price: 1500,
-      yield: 70,
-      capacity: 900,
-      image: "/rooms/stripClub.png",
-      levelRequirement: 6,
-    },
-    {
-      name: "Casino",
-      roomType: { casino: {} },
-      description: "Run a casino.",
-      price: 2000,
-      yield: 50,
-      capacity: 500,
-      image: "/rooms/casino.gif",
-      levelRequirement: 2,
-    },
-    {
-      name: "Saferoom",
-      roomType: { saferoom: {} },
-      description: "Hide your illegal earnings.",
-      price: 800,
-      yield: 0,
-      capacity: 700,
-      image: "/rooms/saferoom.png",
-      levelRequirement: 4,
-    },
-    {
-      name: "Security Room",
-      roomType: { securityRoom: {} },
-      description: "Hire enforcers and hitmen.",
-      price: 600,
-      yield: 0,
-      capacity: 800,
-      image: "/rooms/securityRoom.gif",
-      levelRequirement: 5,
-    },
-  ];
 
   const rooms = isLegal ? legalRooms : illegalRooms;
   console.log(selectedRoom);

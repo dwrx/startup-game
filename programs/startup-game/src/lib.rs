@@ -253,12 +253,12 @@ impl RoomType {
             RoomType::Laundry => 0,
             RoomType::FastFoodRestaurant => 100,
             RoomType::FitnessCenter => 200,
-            RoomType::CannabisFarm => 150,
-            RoomType::Casino => 300,
             RoomType::UnlicensedBar => 0,
+            RoomType::CannabisFarm => 150,
+            RoomType::StripClub => 350,
+            RoomType::Casino => 300,
             RoomType::Saferoom => 0,
             RoomType::SecurityRoom => 250,
-            RoomType::StripClub => 350,
         }
     }
 
@@ -267,12 +267,12 @@ impl RoomType {
             RoomType::Laundry => 100,
             RoomType::FastFoodRestaurant => 200,
             RoomType::FitnessCenter => 300,
-            RoomType::CannabisFarm => 150,
-            RoomType::Casino => 500,
             RoomType::UnlicensedBar => 250,
+            RoomType::CannabisFarm => 150,
+            RoomType::StripClub => 400,
+            RoomType::Casino => 500,
             RoomType::Saferoom => 1000,
             RoomType::SecurityRoom => 200,
-            RoomType::StripClub => 400,
         }
     }
 
@@ -281,10 +281,10 @@ impl RoomType {
             RoomType::Laundry => 10,
             RoomType::FastFoodRestaurant => 25,
             RoomType::FitnessCenter => 35,
-            RoomType::CannabisFarm => 20,
-            RoomType::Casino => 60,
             RoomType::UnlicensedBar => 15,
+            RoomType::CannabisFarm => 20,
             RoomType::StripClub => 50,
+            RoomType::Casino => 60,
             RoomType::Saferoom => 0,
             RoomType::SecurityRoom => 0,
         }
