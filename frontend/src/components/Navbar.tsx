@@ -65,9 +65,7 @@ const Navbar: React.FC = () => {
 
       playerAccount.rooms.forEach((room: any) => {
         const elapsedTime = Number(currentTime) - Number(room.lastCollected);
-        console.log('elapsedTime', elapsedTime)
-        console.log('currentTime', Number(currentTime))
-        console.log('lastCollected', Number(room.lastCollected))
+
         const roomInfo = allRooms.find(r => Object.keys(r.roomType)[0] === Object.keys(room.roomType)[0]);
         if (!roomInfo) return;
 
@@ -87,9 +85,11 @@ const Navbar: React.FC = () => {
             Object.keys(room.roomType)[0]
           )
         ) {
-          totalCleanCash += Math.min(potentialReward, availableDirtyCash * 0.7);
+          totalCleanCash += potentialReward;
         }
       });
+
+      totalCleanCash = Math.min(totalCleanCash, availableDirtyCash * 0.7);
 
       setEstimatedDirtyCash(Math.round(totalDirtyCash > 0 ? totalDirtyCash : 0));
       setEstimatedCleanCash(Math.round(totalCleanCash > 0 ? totalCleanCash : 0));

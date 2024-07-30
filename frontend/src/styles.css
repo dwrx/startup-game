@@ -1,5 +1,6 @@
 body {
   background: #161f26;
+  overflow-y: hidden;
 }
 
 .game-container {

@@ -59,7 +59,7 @@ export const illegalRooms = [
     price: 1500,
     yield: 100,
     capacity: 400,
-    image: "/rooms/stripClub.png",
+    image: "/rooms/stripClub.gif",
     levelRequirement: 4,
   },
   {

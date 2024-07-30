@@ -4,6 +4,7 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useNavigate } from "react-router-dom";
 import { PublicKey, SystemProgram } from "@solana/web3.js";
 import { Button, CircularProgress, Container, Box, Alert, Link } from "@mui/material";
+import HowToModal from "./HowToModal";
 import useProgram from "../hooks/useProgram";
 import "../styles.css";
 
@@ -13,6 +14,7 @@ const HomeScreen: React.FC = () => {
   const program = useProgram();
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const checkPlayerAccount = async () => {
     if (!wallet.connected || !wallet.publicKey || !program) return;
@@ -70,7 +72,15 @@ const HomeScreen: React.FC = () => {
           <>
             <Box mt={4}>
               <Alert severity="warning">
-              Switch wallet to <b>Sonic Devnet</b> (<a href="">How?</a>) and request SOL from <a href="https://faucet.sonic.game/" target="_blank" rel="noopener">faucet</a> to play.
+                Switch wallet to <b>Sonic Devnet</b> (
+                <Link href="#" onClick={() => setModalOpen(true)}>
+                  How?
+                </Link>
+                ) and request SOL from{" "}
+                <a href="https://faucet.sonic.game/" target="_blank" rel="noopener">
+                  faucet
+                </a>{" "}
+                to play.
               </Alert>
             </Box>
             <Box mt={4}>
@@ -98,6 +108,7 @@ const HomeScreen: React.FC = () => {
           </a>
         </footer>
       </div>
+      <HowToModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </Container>
   );
 };
