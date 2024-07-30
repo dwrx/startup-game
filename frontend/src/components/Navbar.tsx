@@ -4,6 +4,7 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { PublicKey, Connection, clusterApiUrl, AccountInfo } from "@solana/web3.js";
 import useProgram from "../hooks/useProgram";
 import { allRooms } from "../rooms";
+import MissionsModal from "./MissionsModal";
 import "../styles.css";
 import { Button, Box } from "@mui/material";
 
@@ -18,8 +19,8 @@ const Navbar: React.FC = () => {
   });
   const [estimatedDirtyCash, setEstimatedDirtyCash] = useState(0);
   const [estimatedCleanCash, setEstimatedCleanCash] = useState(0);
+  const [missionsModalOpen, setMissionsModalOpen] = useState<boolean>(false);
 
-  // const connection = new Connection("https://devnet.sonic.game");
   const { connection } = useConnection();
 
   const fetchBalances = async () => {
@@ -48,16 +49,8 @@ const Navbar: React.FC = () => {
 
   const estimatePendingRewards = async (playerAccount: any) => {
     try {
-    //   const clock: AccountInfo<Buffer> | null = await connection.getAccountInfo(new PublicKey("SysvarC1ock11111111111111111111111111111111"));
-    //   if (!clock || !clock.data) {
-    //     console.error("Failed to fetch clock");
-    //     return;
-    //   }
-
-    //   const currentTime = clock.data.readBigInt64LE(8);
-
-        const slot = await connection.getSlot();
-        const currentTime = await connection.getBlockTime(slot);
+      const slot = await connection.getSlot();
+      const currentTime = await connection.getBlockTime(slot);
 
       let totalDirtyCash = 0;
       let totalCleanCash = 0;
@@ -66,25 +59,17 @@ const Navbar: React.FC = () => {
       playerAccount.rooms.forEach((room: any) => {
         const elapsedTime = Number(currentTime) - Number(room.lastCollected);
 
-        const roomInfo = allRooms.find(r => Object.keys(r.roomType)[0] === Object.keys(room.roomType)[0]);
+        const roomInfo = allRooms.find((r) => Object.keys(r.roomType)[0] === Object.keys(room.roomType)[0]);
         if (!roomInfo) return;
 
         const yieldPerSecond = roomInfo.yield / 60;
-        const potentialReward = Math.min((elapsedTime * yieldPerSecond), room.storageCapacity.toNumber());
+        const potentialReward = Math.min(elapsedTime * yieldPerSecond, room.storageCapacity.toNumber());
 
-        if (
-          ["unlicensedBar", "cannabisFarm", "stripClub", "casino"].includes(
-            Object.keys(room.roomType)[0]
-          )
-        ) {
+        if (["unlicensedBar", "cannabisFarm", "stripClub", "casino"].includes(Object.keys(room.roomType)[0])) {
           totalDirtyCash += potentialReward;
         }
 
-        if (
-          ["laundry", "fastFoodRestaurant", "fitnessCenter"].includes(
-            Object.keys(room.roomType)[0]
-          )
-        ) {
+        if (["laundry", "fastFoodRestaurant", "fitnessCenter"].includes(Object.keys(room.roomType)[0])) {
           totalCleanCash += potentialReward;
         }
       });
@@ -99,6 +84,10 @@ const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
+    if (wallet.connected && wallet.publicKey) {
+      setMissionsModalOpen(true);
+    }
+
     const fetchAndEstimate = async () => {
       const playerAccount = await fetchBalances();
       if (playerAccount) {
@@ -170,6 +159,18 @@ const Navbar: React.FC = () => {
         <Box display="flex" alignItems="center" height="100%">
           <Button
             variant="outlined"
+            onClick={() => setMissionsModalOpen(true)}
+            style={{
+              marginRight: "10px",
+              height: "100%",
+              color: "gold",
+              borderColor: "gold",
+            }}
+          >
+            ⭐ Missions
+          </Button>
+          <Button
+            variant="outlined"
             onClick={handleCollectDirtyCash}
             style={{
               marginRight: "10px",
@@ -194,6 +195,7 @@ const Navbar: React.FC = () => {
           <WalletMultiButton />
         </Box>
       </div>
+      <MissionsModal open={missionsModalOpen} onClose={() => setMissionsModalOpen(false)} />
     </div>
   );
 };
