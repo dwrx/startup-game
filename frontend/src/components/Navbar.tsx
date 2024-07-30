@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { PublicKey, Connection, clusterApiUrl, AccountInfo } from "@solana/web3.js";
 import useProgram from "../hooks/useProgram";
@@ -19,7 +19,8 @@ const Navbar: React.FC = () => {
   const [estimatedDirtyCash, setEstimatedDirtyCash] = useState(0);
   const [estimatedCleanCash, setEstimatedCleanCash] = useState(0);
 
-  const connection = new Connection(clusterApiUrl("devnet"));
+  // const connection = new Connection("https://devnet.sonic.game");
+  const { connection } = useConnection();
 
   const fetchBalances = async () => {
     if (!wallet.connected || !wallet.publicKey || !program) return;

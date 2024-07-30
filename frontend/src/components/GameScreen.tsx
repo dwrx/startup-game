@@ -54,6 +54,8 @@ const GameScreen: React.FC = () => {
   }, [wallet.publicKey, program]);
 
   const handlePurchase = (room: any, isLegal: boolean) => {
+    return; 
+
     if (isLegal) {
       setLegalRooms([...legalRooms, room]);
     } else {
@@ -72,8 +74,8 @@ const GameScreen: React.FC = () => {
           key={startIndex + i}
           className={`room room-${startIndex + i + 1}`}
           isLegal={isLegal}
-          playerCash={parseInt(playerData.cleanCash)}
-          playerLevel={parseInt(playerData.experience)}
+          playerCash={playerData.cleanCash.toNumber()}
+          playerLevel={playerData.experience.toNumber()}
           onPurchase={handlePurchase}
           roomData={rooms[i]}
         />
@@ -87,8 +89,8 @@ const GameScreen: React.FC = () => {
           key={startIndex + rooms.length + i}
           className={`room room-${startIndex + rooms.length + i + 1}`}
           isLegal={isLegal}
-          playerCash={parseInt(playerData.cleanCash)}
-          playerLevel={parseInt(playerData.experience)}
+          playerCash={playerData.cleanCash.toNumber()}
+          playerLevel={playerData.experience.toNumber()}
           onPurchase={handlePurchase}
         />
       );

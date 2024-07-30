@@ -70,15 +70,7 @@ const HomeScreen: React.FC = () => {
           <>
             <Box mt={4}>
               <Alert severity="warning">
-                Switch wallet to Solana Devnet (
-                <Link href="https://faucet.solana.com/" target="_blank" rel="noopener">
-                  faucet
-                </Link>
-                ) or Sonic L2 Devnet (
-                <Link href="https://faucet.sonic.game/" target="_blank" rel="noopener">
-                  faucet
-                </Link>
-                ) to play
+              Switch wallet to <b>Sonic Devnet</b> (<a href="">How?</a>) and request SOL from <a href="https://faucet.sonic.game/" target="_blank" rel="noopener">faucet</a> to play.
               </Alert>
             </Box>
             <Box mt={4}>

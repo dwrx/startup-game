@@ -6,7 +6,7 @@ import { clusterApiUrl } from '@solana/web3.js';
 require('@solana/wallet-adapter-react-ui/styles.css');
 
 const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
-    const endpoint = useMemo(() => clusterApiUrl('devnet'), []);
+    const endpoint = useMemo(() => "https://devnet.sonic.game", []);
     const wallets = useMemo(() => [], []);
 
     return (
