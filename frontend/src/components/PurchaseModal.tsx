@@ -86,7 +86,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ open, onClose, rooms, onP
                       playerData.experience.toNumber() < room.levelRequirement
                     }
                   >
-                    {playerLevel < room.levelRequirement
+                    {playerData.experience.toNumber() < room.levelRequirement
                       ? "Your level is too low"
                       : playerData.cleanCash.toNumber() < room.price
                       ? "Not enough money"
