@@ -2,7 +2,8 @@ export const legalRooms = [
   {
     name: "Laundry",
     roomType: { laundry: {} },
-    description: "Clean your dirty clothes.",
+    description:
+      "This business operates within the law, converting your dirty money into clean cash at a cost of -30% loss. Remember, only the dirty funds you've collected can be laundered - uncollected funds remain in the shadows. Keep an eye on the storage capacity! Regularly collect your earnings to keep the cash flow smooth and steady. Happy laundering!",
     price: 100,
     yield: 50,
     capacity: 100,
@@ -12,7 +13,8 @@ export const legalRooms = [
   {
     name: "Fastfood",
     roomType: { fastFoodRestaurant: {} },
-    description: "Serve delicious fast food.",
+    description:
+      "This business operates within the law, converting your dirty money into clean cash at a cost of -30% loss. Remember, only the dirty funds you've collected can be laundered - uncollected funds remain in the shadows. Keep an eye on the storage capacity! Regularly collect your earnings to keep the cash flow smooth and steady. Happy laundering!",
     price: 600,
     yield: 75,
     capacity: 200,
@@ -22,7 +24,8 @@ export const legalRooms = [
   {
     name: "Fitness Center",
     roomType: { fitnessCenter: {} },
-    description: "Keep fit and healthy.",
+    description:
+      "This business operates within the law, converting your dirty money into clean cash at a cost of -30% loss. Remember, only the dirty funds you've collected can be laundered - uncollected funds remain in the shadows. Keep an eye on the storage capacity! Regularly collect your earnings to keep the cash flow smooth and steady. Happy laundering!",
     price: 800,
     yield: 85,
     capacity: 300,
@@ -35,7 +38,8 @@ export const illegalRooms = [
   {
     name: "Unlicensed Bar",
     roomType: { unlicensedBar: {} },
-    description: "Run an unlicensed bar.",
+    description:
+      "Generate dirty cash with high-risk ventures. If storage is full, you stop yielding new dirty cash. Collect cash regularly to keep the money flowing and avoid interruptions. Happy hustling!",
     price: 400,
     yield: 65,
     capacity: 150,
@@ -45,7 +49,8 @@ export const illegalRooms = [
   {
     name: "Cannabis Farm",
     roomType: { cannabisFarm: {} },
-    description: "Grow cannabis.",
+    description:
+      "Generate dirty cash with high-risk ventures. If storage is full, you stop yielding new dirty cash. Collect cash regularly to keep the money flowing and avoid interruptions. Happy hustling!",
     price: 500,
     yield: 70,
     capacity: 250,
@@ -55,7 +60,8 @@ export const illegalRooms = [
   {
     name: "Strip Club",
     roomType: { stripClub: {} },
-    description: "Run a strip club.",
+    description:
+      "Generate dirty cash with high-risk ventures. If storage is full, you stop yielding new dirty cash. Collect cash regularly to keep the money flowing and avoid interruptions. Happy hustling!",
     price: 1500,
     yield: 100,
     capacity: 400,
@@ -65,7 +71,8 @@ export const illegalRooms = [
   {
     name: "Casino",
     roomType: { casino: {} },
-    description: "Run a casino.",
+    description:
+      "Generate dirty cash with high-risk ventures. If storage is full, you stop yielding new dirty cash. Collect cash regularly to keep the money flowing and avoid interruptions. Happy hustling!",
     price: 2000,
     yield: 120,
     capacity: 500,
@@ -75,7 +82,8 @@ export const illegalRooms = [
   {
     name: "Saferoom",
     roomType: { saferoom: {} },
-    description: "Hide your illegal earnings.",
+    description:
+      "Hide your illegal earnings in the ultimate secret stash. The Saferoom provides a secure haven for your dirty cash, keeping it safe from authorities.",
     price: 800,
     yield: 0,
     capacity: 300,
@@ -85,7 +93,8 @@ export const illegalRooms = [
   {
     name: "Security Room",
     roomType: { securityRoom: {} },
-    description: "Hire enforcers and hitmen.",
+    description:
+      "Hire enforcers and hitmen to safeguard your operations and intimidate rivals. The Security Room is your command center for managing muscle.",
     price: 600,
     yield: 0,
     capacity: 0,

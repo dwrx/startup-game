@@ -48,6 +48,12 @@ const Room: React.FC<RoomProps> = ({ className, isLegal, playerCash, playerLevel
     return matchedRoom ? matchedRoom.image : "";
   };
 
+  const getRoomDetails = (roomType: any) => {
+    const allRooms = [...legalRooms, ...illegalRooms];
+    const matchedRoom = allRooms.find((room) => JSON.stringify(room.roomType) === JSON.stringify(roomType));
+    return matchedRoom || null;
+  };
+
   const handlePurchase = async (room: any) => {
     if (!wallet.publicKey || !program) return;
 
@@ -96,11 +102,9 @@ const Room: React.FC<RoomProps> = ({ className, isLegal, playerCash, playerLevel
         playerCash={playerCash}
         playerLevel={playerLevel}
       />
-      {/* <RoomDetailsModal
-            open={openDetailsModal}
-            onClose={() => setOpenDetailsModal(false)}
-            room={selectedRoom}
-        /> */}
+      {purchased && (
+        <RoomDetailsModal open={openDetailsModal} onClose={() => setOpenDetailsModal(false)} room={getRoomDetails(selectedRoom.roomType)} />
+      )}
     </>
   );
 };

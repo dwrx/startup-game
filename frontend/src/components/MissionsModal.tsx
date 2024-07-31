@@ -16,6 +16,7 @@ const missions: { [key: number]: string } = {
   2: "3/5 ⭐ The cash flow getting real. Keep collecting that dirty money and laundering it clean. Save up $600 and open a Fastfood restaurant on the ground floor. More business, more cash.",
   3: "4/5 ⭐ Diversification is the name of the game. Set up a Cannabis farm in the basement. More cash, more power. You got this!",
   4: "5/5 ⭐ You're on your way to building an empire. Buy up all the rooms and businesses. \nTip: Some rooms don't generate cash, but the Security Room lets you recruit enforcers and hitmen to take care of business, and the Saferoom protects your stash from getting stolen.",
+  9: "You are breathtaking! 😍😍😍 Congratulations on completing the demo!",
 };
 
 const MissionsModal: React.FC<MissionsModalProps> = ({ open, onClose }) => {
