@@ -63,6 +63,9 @@ pub mod startup_game {
         };
 
         player.rooms.push(new_room);
+
+        player.experience += 1;
+
         Ok(())
     }
 
@@ -251,14 +254,14 @@ impl RoomType {
     fn experience_requirement(&self) -> u64 {
         match self {
             RoomType::Laundry => 0,
-            RoomType::FastFoodRestaurant => 100,
-            RoomType::FitnessCenter => 200,
-            RoomType::CannabisFarm => 150,
-            RoomType::Casino => 300,
-            RoomType::UnlicensedBar => 0,
+            RoomType::FastFoodRestaurant => 2,
+            RoomType::FitnessCenter => 5,
+            RoomType::UnlicensedBar => 1,
+            RoomType::CannabisFarm => 3,
+            RoomType::StripClub => 4,
+            RoomType::Casino => 6,
             RoomType::Saferoom => 0,
-            RoomType::SecurityRoom => 250,
-            RoomType::StripClub => 350,
+            RoomType::SecurityRoom => 2,
         }
     }
 
@@ -267,24 +270,24 @@ impl RoomType {
             RoomType::Laundry => 100,
             RoomType::FastFoodRestaurant => 200,
             RoomType::FitnessCenter => 300,
-            RoomType::CannabisFarm => 150,
-            RoomType::Casino => 500,
-            RoomType::UnlicensedBar => 250,
-            RoomType::Saferoom => 1000,
-            RoomType::SecurityRoom => 200,
+            RoomType::UnlicensedBar => 150,
+            RoomType::CannabisFarm => 250,
             RoomType::StripClub => 400,
+            RoomType::Casino => 500,
+            RoomType::Saferoom => 300,
+            RoomType::SecurityRoom => 0,
         }
     }
 
     fn yield_per_minute(&self) -> u64 {
         match self {
-            RoomType::Laundry => 10,
-            RoomType::FastFoodRestaurant => 25,
-            RoomType::FitnessCenter => 35,
-            RoomType::CannabisFarm => 20,
-            RoomType::Casino => 60,
-            RoomType::UnlicensedBar => 15,
-            RoomType::StripClub => 50,
+            RoomType::Laundry => 50,
+            RoomType::FastFoodRestaurant => 75,
+            RoomType::FitnessCenter => 85,
+            RoomType::UnlicensedBar => 65,
+            RoomType::CannabisFarm => 70,
+            RoomType::StripClub => 100,
+            RoomType::Casino => 120,
             RoomType::Saferoom => 0,
             RoomType::SecurityRoom => 0,
         }

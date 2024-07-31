@@ -1,5 +1,6 @@
 body {
   background: #161f26;
+  overflow-y: hidden;
 }
 
 .game-container {
@@ -13,6 +14,7 @@ body {
 .background {
   /* width: 1600px;
     height: 1134px; */
+  margin: 0 auto;
   width: 1440px;
   height: 1021px;
   background-image: url("../public/background.png");
@@ -154,6 +156,10 @@ body {
 .room-image {
   width: 100%;
   height: auto;
+}
+
+.text-center {
+  text-align: center;
 }
 
 .footer {

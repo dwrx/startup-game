@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Box, Typography, Button, Grid } from "@mui/material";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { PublicKey } from "@solana/web3.js";
+import useProgram from "../hooks/useProgram";
 import "../styles.css";
 
 interface RoomInfo {
@@ -10,6 +13,7 @@ interface RoomInfo {
   capacity: number;
   image: string;
   levelRequirement: number;
+  roomType: any;
 }
 
 interface PurchaseModalProps {
@@ -22,6 +26,41 @@ interface PurchaseModalProps {
 }
 
 const PurchaseModal: React.FC<PurchaseModalProps> = ({ open, onClose, rooms, onPurchase, playerCash, playerLevel }) => {
+  const wallet = useWallet();
+  const program = useProgram();
+  const [playerData, setPlayerData] = useState<any>(null);
+
+  const fetchPlayerData = async () => {
+    if (!wallet.publicKey || !program) return;
+
+    const [playerPda] = await PublicKey.findProgramAddress(
+      [Buffer.from("PLAYER"), wallet.publicKey.toBuffer()],
+      program.programId
+    );
+
+    try {
+      // @ts-ignore
+      const playerAccount = await program.account.player.fetch(playerPda);
+      setPlayerData(playerAccount);
+      console.log(playerAccount.rooms);
+    } catch (err) {
+      console.error("Failed to fetch player data", err);
+    }
+  };
+
+  useEffect(() => {
+    if (open) {
+      fetchPlayerData();
+    }
+  }, [open]);
+
+  const isRoomPurchased = (roomType: any) => {
+    if (!playerData) return false;
+    return playerData.rooms.some(
+      (purchasedRoom: any) => JSON.stringify(purchasedRoom.roomType) === JSON.stringify(roomType)
+    );
+  };
+
   return (
     <Modal open={open} onClose={onClose}>
       <Box className="modal-box">
@@ -31,22 +70,33 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ open, onClose, rooms, onP
               <Box className="room-option">
                 <img src={room.image} alt={room.name} className="room-image" />
                 <Typography variant="h6">{room.name}</Typography>
-                <Typography>{room.description}</Typography>
-                <Typography>Price: ${room.price}</Typography>
-                <Typography>Yield: {room.yield}/min</Typography>
-                <Typography>Capacity: {room.capacity}</Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => onPurchase(room)}
-                  disabled={playerCash < room.price || playerLevel < room.levelRequirement}
-                >
-                  {playerCash < room.price
-                    ? "Not enough money"
-                    : playerLevel < room.levelRequirement
-                    ? "Your level too low"
-                    : "Purchase"}
-                </Button>
+                {/* <Typography>{room.description}</Typography> */}
+                <pre>
+                  <p>Price: ${room.price}</p>
+                  <p>Yield: {room.yield}/min</p>
+                  <p>Capacity: {room.capacity}</p>
+                </pre>
+                {playerData && !isRoomPurchased(room.roomType) ? (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => onPurchase(room)}
+                    disabled={
+                      playerData.cleanCash.toNumber() < room.price ||
+                      playerData.experience.toNumber() < room.levelRequirement
+                    }
+                  >
+                    {playerData.experience.toNumber() < room.levelRequirement
+                      ? "Your level is too low"
+                      : playerData.cleanCash.toNumber() < room.price
+                      ? "Not enough money"
+                      : "Purchase"}
+                  </Button>
+                ) : isRoomPurchased(room.roomType) ? (
+                  "✅"
+                ) : (
+                  ""
+                )}
               </Box>
             </Grid>
           ))}
