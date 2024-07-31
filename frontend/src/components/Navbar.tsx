@@ -86,6 +86,9 @@ const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
+    if (wallet.connected && wallet.publicKey) {
+      setMissionsModalOpen(true);
+    }
     const fetchAndEstimate = async () => {
       const playerAccount = await fetchBalances();
       if (playerAccount) {
