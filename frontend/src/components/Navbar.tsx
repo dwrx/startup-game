@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { PublicKey, Connection, clusterApiUrl, AccountInfo } from "@solana/web3.js";
+import { PublicKey } from "@solana/web3.js";
+import { Button, Box, Tooltip } from "@mui/material";
 import useProgram from "../hooks/useProgram";
 import { allRooms } from "../rooms";
 import MissionsModal from "./MissionsModal";
 import "../styles.css";
-import { Button, Box } from "@mui/material";
 
 const Navbar: React.FC = () => {
   const wallet = useWallet();
@@ -20,6 +20,8 @@ const Navbar: React.FC = () => {
   const [estimatedDirtyCash, setEstimatedDirtyCash] = useState(0);
   const [estimatedCleanCash, setEstimatedCleanCash] = useState(0);
   const [missionsModalOpen, setMissionsModalOpen] = useState<boolean>(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const { connection } = useConnection();
 
@@ -84,10 +86,6 @@ const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
-    if (wallet.connected && wallet.publicKey) {
-      setMissionsModalOpen(true);
-    }
-
     const fetchAndEstimate = async () => {
       const playerAccount = await fetchBalances();
       if (playerAccount) {
@@ -147,55 +145,90 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const toggleAudio = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.2;
+    }
+  }, []);
+
   return (
     <div className="navbar">
       <div className="navbar-left">
-        <div>Clean Cash: ${balances.cleanCash}</div>
-        <div>Dirty Cash: ${balances.dirtyCash}</div>
-        <div>Enforcers: {balances.enforcers}</div>
-        <div>Hitmen: {balances.hitmen}</div>
+        <div className="text-center">Clean Cash: ${balances.cleanCash}</div>
+        <div className="text-center">Dirty Cash: ${balances.dirtyCash}</div>
+        <div className="text-center">Enforcers: {balances.enforcers}</div>
+        <div className="text-center">Hitmen: {balances.hitmen}</div>
       </div>
       <div className="navbar-right">
+        <Button
+          variant="outlined"
+          onClick={() => setMissionsModalOpen(true)}
+          style={{
+            marginRight: "10px",
+            height: "100%",
+            color: "gold",
+            borderColor: "gold",
+          }}
+        >
+          ⭐ Missions
+        </Button>
         <Box display="flex" alignItems="center" height="100%">
+          <Tooltip title="Collect dirty money generated from illegal activities.">
+            <Button
+              variant="outlined"
+              onClick={handleCollectDirtyCash}
+              style={{
+                marginRight: "10px",
+                height: "100%",
+                color: "white",
+                borderColor: "white",
+              }}
+            >
+              Collect (${estimatedDirtyCash})
+            </Button>
+          </Tooltip>
+          <Tooltip title="Launder available dirty money to convert it into clean cash, losing 30% in the process.">
+            <Button
+              variant="outlined"
+              onClick={handleCollectCleanCash}
+              style={{
+                marginRight: "10px",
+                height: "100%",
+                color: "white",
+                borderColor: "white",
+              }}
+            >
+              Launder, -30% (${estimatedCleanCash})
+            </Button>
+          </Tooltip>
           <Button
             variant="outlined"
-            onClick={() => setMissionsModalOpen(true)}
+            onClick={toggleAudio}
             style={{
               marginRight: "10px",
               height: "100%",
-              color: "gold",
-              borderColor: "gold",
+              color: isPlaying ? "red" : "limegreen",
+              borderColor: isPlaying ? "red" : "limegreen",
             }}
           >
-            ⭐ Missions
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={handleCollectDirtyCash}
-            style={{
-              marginRight: "10px",
-              height: "100%",
-              color: "white",
-              borderColor: "white",
-            }}
-          >
-            Collect Dirty Money (${estimatedDirtyCash})
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={handleCollectCleanCash}
-            style={{
-              height: "100%",
-              color: "white",
-              borderColor: "white",
-            }}
-          >
-            Launder Money (-30%) (${estimatedCleanCash})
+            {isPlaying ? "🔇" : "🔊"}
           </Button>
           <WalletMultiButton />
         </Box>
       </div>
       <MissionsModal open={missionsModalOpen} onClose={() => setMissionsModalOpen(false)} />
+      <audio ref={audioRef} src="/background-music.mp3" loop />
     </div>
   );
 };
