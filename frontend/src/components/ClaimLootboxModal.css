@@ -1,0 +1,83 @@
+.claim-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.claim-modal {
+  outline: none;
+}
+
+.claim-modal *:focus {
+  outline: none;
+}
+
+.modal-content {
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 20px;
+  border-radius: 0.5rem;
+  color: #fff;
+  width: 90%;
+  max-width: 500px;
+}
+
+.claim-checklist {
+  list-style-type: none;
+  padding: 0;
+}
+
+.claim-checklist li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 20px 20px;
+  background: #33333382;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.username-input {
+  display: flex;
+  align-items: center;
+}
+
+.username-input input {
+  color: #fff;
+}
+
+.username-input fieldset {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 40px;
+  border-radius: 4px;
+}
+
+.status.completed {
+  background-color: rgba(76, 175, 80, 0.3);
+}
+
+.status.not-completed {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.checkmark {
+  color: #4caf50;
+  font-size: 1.5rem;
+}
+
+.xmark {
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.error-message {
+  color: #f44336;
+  margin-top: 10px;
+}

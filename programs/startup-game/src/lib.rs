@@ -3,7 +3,7 @@ use anchor_lang::prelude::*;
 
 pub mod errors;
 
-declare_id!("8Vam7b9dbytDm3KjGkKCgJPechquwDXN1gk5w5biRZLb");
+declare_id!("7GgVwtoJBPvPtophHJ8PuRajFdFkNP1QbaWTrhadNNaM");
 
 #[program]
 pub mod startup_game {
@@ -17,6 +17,8 @@ pub mod startup_game {
         }
         player.is_initialized = true;
         player.owner = ctx.accounts.owner.key();
+        player.lootbox_level = 0;
+        player.silver = 0;
         player.experience = 0;
         player.clean_cash = 500;
         player.dirty_cash = 0;
@@ -24,6 +26,25 @@ pub mod startup_game {
         player.enforcers = 0;
         player.hitmen = 0;
         player.rooms = vec![];
+
+        Ok(())
+    }
+
+    pub fn claim_lootbox(ctx: Context<ClaimLootbox>) -> Result<()> {
+        let player = &mut ctx.accounts.player;
+
+        // Check if the player already claimed a lootbox
+        if player.lootbox_level > 0 {
+            return err!(PlayerError::LootboxAlreadyClaimed);
+        }
+
+        // Check if the player has at least 3 experience points
+        if player.experience < 3 {
+            return err!(PlayerError::InsufficientExperience);
+        }
+
+        // Claim the lootbox by setting the level to 1
+        player.lootbox_level = 1;
 
         Ok(())
     }
@@ -160,6 +181,13 @@ pub struct InitializePlayer<'info> {
 }
 
 #[derive(Accounts)]
+pub struct ClaimLootbox<'info> {
+    #[account(mut, has_one = owner)]
+    pub player: Account<'info, Player>,
+    pub owner: Signer<'info>,
+}
+
+#[derive(Accounts)]
 pub struct PurchaseRoom<'info> {
     #[account(mut, has_one = owner)]
     pub player: Account<'info, Player>,
@@ -184,6 +212,8 @@ pub struct CollectCleanCash<'info> {
 pub struct Player {
     pub is_initialized: bool,
     pub owner: Pubkey,
+    pub lootbox_level: u8,
+    pub silver: u64,
     pub experience: u64,
     pub clean_cash: u64,
     pub dirty_cash: u64,

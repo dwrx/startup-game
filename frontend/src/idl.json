@@ -1,5 +1,5 @@
 {
-  "address": "8Vam7b9dbytDm3KjGkKCgJPechquwDXN1gk5w5biRZLb",
+  "address": "7GgVwtoJBPvPtophHJ8PuRajFdFkNP1QbaWTrhadNNaM",
   "metadata": {
     "name": "startup_game",
     "version": "0.1.0",
@@ -7,6 +7,22 @@
     "description": "FOC business simulation game."
   },
   "instructions": [
+    {
+      "name": "claim_lootbox",
+      "discriminator": [56, 126, 40, 192, 232, 156, 40, 107],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": ["player"]
+        }
+      ],
+      "args": []
+    },
     {
       "name": "collect_clean_cash",
       "discriminator": [88, 159, 192, 186, 253, 139, 174, 4],
@@ -133,6 +149,14 @@
           {
             "name": "owner",
             "type": "pubkey"
+          },
+          {
+            "name": "lootbox_level",
+            "type": "u8"
+          },
+          {
+            "name": "silver",
+            "type": "u64"
           },
           {
             "name": "experience",

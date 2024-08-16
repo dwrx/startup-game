@@ -12,8 +12,6 @@ body {
 }
 
 .background {
-  /* width: 1600px;
-    height: 1134px; */
   margin: 0 auto;
   width: 1440px;
   height: 1021px;
@@ -28,8 +26,6 @@ body {
   cursor: pointer;
   border: 2px solid transparent;
   transition: border-color 0.3s, box-shadow 0.3s;
-  /* width: 370px; 
-    height: 220px; */
   width: 325px;
   height: 192px;
 }
@@ -42,16 +38,6 @@ body {
   border-color: yellow;
   box-shadow: 0 0 10px yellow;
 }
-
-/* .room-1 { top: 190px; left: 212px; }
-.room-2 { top: 190px; left: 610px; }
-.room-3 { top: 190px; left: 1010px; }
-.room-4 { top: 463px; left: 212px; }
-.room-5 { top: 463px; left: 610px; }
-.room-6 { top: 453px; left: 1010px; }
-.room-7 { top: 710px; left: 212px; }
-.room-8 { top: 725px; left: 610px; }
-.room-9 { top: 715px; left: 1025px; } */
 
 .room-1 {
   top: 176px;
@@ -123,7 +109,14 @@ body {
 
 .navbar-left {
   display: flex;
+  align-items: center;
   gap: 20px;
+}
+
+.navbar-left .text-center {
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
 }
 
 .navbar-right {

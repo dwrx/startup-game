@@ -1,0 +1,268 @@
+.home-screen {
+  background: url("../../public/bg.png") no-repeat center center fixed;
+  background-size: cover;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.content-wrapper {
+  display: flex;
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.left-block,
+.top-right-block,
+.bottom-right-block {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 0.25rem;
+  padding: 20px;
+  color: #fff;
+  box-sizing: border-box;
+}
+
+.left-block {
+  flex: 2;
+  margin-right: 20px;
+  max-width: 500px;
+}
+
+.left-block.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.left-block .wallet-adapter-button {
+  margin-left: 0;
+}
+
+.left-block .play-button {
+  width: 100%;
+  background: #f2b24e;
+  color: #000;
+}
+
+.left-block .play-button:hover {
+  cursor: pointer;
+  background: #ee9e1d;
+}
+
+.right-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 200px;
+}
+
+.top-right-block {
+  margin-bottom: 10px;
+  background: rgba(199, 117, 251, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  border: 3px solid #c775fb;
+}
+
+.top-right-block .image-container {
+  text-align: center;
+  margin: 0 auto;
+}
+
+.bottom-right-block {
+  background: #723ea7;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.shining-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.shining-effect {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shine 2s infinite;
+}
+
+@keyframes shine {
+  from {
+    left: -100%;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+p.progression-text {
+  margin: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+  padding-bottom: 5px;
+}
+
+.bottom-right-block p.upgrade-lootbox {
+  text-align: center;
+  margin: 0;
+  font-weight: 700;
+}
+
+.lootbox-image {
+  width: 100px;
+  transition: transform 0.3s ease;
+}
+
+.top-right-block:hover {
+  cursor: pointer;
+}
+
+.top-right-block:hover .lootbox-image {
+  transform: scale(1.2);
+}
+
+.progress-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+}
+
+.progress-bar {
+  width: 70%;
+  background-color: #fff;
+  height: 20px;
+  border-radius: 10px;
+  margin-right: 10px;
+}
+
+.xp-text {
+  color: #fff;
+  margin-right: 10px;
+  white-space: nowrap;
+  font-size: 0.8rem;
+}
+
+.upgrade-button {
+  width: 100%;
+  background-color: #ffcc00;
+  color: #000;
+  margin-top: 20px;
+  padding: 10px 0;
+  font-size: 1rem;
+}
+
+.claim-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 20px;
+  border-radius: 0.5rem;
+  color: #fff;
+  width: 90%;
+  max-width: 500px;
+}
+
+.claim-checklist {
+  list-style-type: none;
+  padding: 0;
+}
+
+.claim-checklist li {
+  margin-bottom: 15px;
+}
+
+.check {
+  color: #4caf50;
+}
+
+.uncheck {
+  color: #f44336;
+}
+
+.username-input {
+  display: flex;
+  align-items: center;
+}
+
+.message-box {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  margin: 20px auto;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.message-box.success {
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .left-block,
+  .right-block {
+    max-width: 100%;
+    width: 100%;
+    margin-bottom: 20px;
+    margin-right: 0;
+    box-sizing: border-box;
+  }
+
+  .right-block {
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .top-right-block {
+    margin-bottom: 20px;
+  }
+
+  .claim-lootbox-button {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+}

@@ -127,8 +127,21 @@ describe("startup-game", () => {
       .rpc();
 
     const playerAccount = await program.account.player.fetch(playerPda);
-    console.log(playerAccount);
+
     // Check if clean cash has been collected
     expect(playerAccount.cleanCash.gt(new anchor.BN(0))).to.be.true;
+  });
+
+  it("Fails to claim lootbox: player has insufficient experience", async () => {
+    try {
+      await program.methods
+        .claimLootbox()
+        .accounts({
+          player: playerPda,
+        })
+        .rpc();
+    } catch (err) {
+      expect(err.error.errorMessage).to.equal("The player has insufficient experience.");
+    }
   });
 });

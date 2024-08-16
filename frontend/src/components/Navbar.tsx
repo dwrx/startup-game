@@ -168,8 +168,8 @@ const Navbar: React.FC = () => {
   return (
     <div className="navbar">
       <div className="navbar-left">
-        <div className="text-center">Clean Cash: ${balances.cleanCash}</div>
-        <div className="text-center">Dirty Cash: ${balances.dirtyCash}</div>
+        <div className="text-center"><img src="/clean-money.png" width="32" alt="Clean Cash:" /> ${balances.cleanCash}</div>
+        <div className="text-center"><img src="/dirty-money.png" width="32" alt="Dirty Cash:" /> ${balances.dirtyCash}</div>
         <div className="text-center">Enforcers: {balances.enforcers}</div>
         <div className="text-center">Hitmen: {balances.hitmen}</div>
       </div>
