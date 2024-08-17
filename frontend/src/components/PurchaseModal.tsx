@@ -14,6 +14,7 @@ interface RoomInfo {
   image: string;
   levelRequirement: number;
   roomType: any;
+  short_description?: string;
 }
 
 interface PurchaseModalProps {
@@ -73,8 +74,19 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ open, onClose, rooms, onP
                 {/* <Typography>{room.description}</Typography> */}
                 <pre>
                   {/* <p>Price: ${room.price}</p> */}
-                  <p>Yield: {room.yield}/min</p>
-                  <p>Capacity: {room.capacity}</p>
+                  {room && room.name !== "Saferoom" && room.name !== "Security Room" ? (
+                    <>
+                      <p>Yield: {room.yield}/min</p>
+                      <p>Capacity: {room.capacity}</p>
+                    </>
+                  ) : (
+                    <>
+                      <p>{room.short_description}</p>
+                      <p>
+                        <br />
+                      </p>
+                    </>
+                  )}
                 </pre>
                 {playerData && !isRoomPurchased(room.roomType) ? (
                   <Button

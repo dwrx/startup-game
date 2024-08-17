@@ -84,6 +84,7 @@ export const illegalRooms = [
     roomType: { saferoom: {} },
     description:
       "Hide your illegal earnings in the ultimate secret stash. The Saferoom provides a secure haven for your dirty cash, keeping it safe from authorities.",
+    short_description: "Protect cash",
     price: 800,
     yield: 0,
     capacity: 300,
@@ -95,6 +96,7 @@ export const illegalRooms = [
     roomType: { securityRoom: {} },
     description:
       "Hire enforcers and hitmen to safeguard your operations and intimidate rivals. The Security Room is your command center for managing muscle.",
+    short_description: "Recruit units",
     price: 600,
     yield: 0,
     capacity: 0,

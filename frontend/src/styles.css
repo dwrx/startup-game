@@ -170,10 +170,6 @@ body {
   text-decoration: dotted underline;
 }
 
-.wallet-adapter-dropdown {
-  z-index: 1400 !important;
-}
-
 .MuiPaper-elevation {
   overflow: visible !important;
 }

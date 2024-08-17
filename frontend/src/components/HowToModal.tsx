@@ -12,11 +12,11 @@ const HowToModal: React.FC<HowToModalProps> = ({ open, onClose }) => {
     <Modal open={open} onClose={onClose}>
       <Box className="modal-box">
         <Typography variant="body1" paragraph>
-          I recommend using{" "}
-          <a href="https://backpack.app/download" target="_blank" rel="noopener noreferrer">
+          You can use{" "}
+          <a href="https://backpack.app/download" target="_blank" style={{ color: "white" }} rel="noopener noreferrer">
             Backpack wallet
-          </a>{" "}
-          that has a native support of Sonic Devnet. If you use other wallets, you may need to setup manually a custom
+          </a>{" "}or <a href="https://nightly.app/" target="_blank" style={{ color: "white" }} rel="noopener noreferrer">Nightly wallet</a>{" "}
+          that have a native support of Sonic Origin (devnet). If you use other wallets, you may need to setup manually a custom
           RPC URL if your wallet allows this:
         </Typography>
         <Typography variant="body1" paragraph>

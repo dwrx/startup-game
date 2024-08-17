@@ -25,6 +25,7 @@ const HomeScreen: React.FC = () => {
   const [xp, setXp] = useState<number>(0);
   const [silver, setSilver] = useState<number>(0);
   const [lootboxClaimed, setLootboxClaimed] = useState<boolean>(false);
+  const [lootboxLevel, setLootboxLevel] = useState<number>(0);
   const [twitterLinked, setTwitterLinked] = useState<boolean>(false);
   const [followedOnTwitter, setFollowedOnTwitter] = useState<boolean>(false);
   const [signedIn, setSignedIn] = useState<boolean>(false);
@@ -53,6 +54,7 @@ const HomeScreen: React.FC = () => {
       const playerAccount = await program.account.player.fetch(playerPda);
       setIsInitialized(playerAccount.isInitialized);
       setLootboxClaimed(playerAccount.lootboxLevel > 0);
+      setLootboxLevel(Number(playerAccount.lootboxLevel));
       setXp(Number(playerAccount.experience));
       setSilver(Number(playerAccount.silver));
     } catch (err) {
@@ -241,12 +243,12 @@ const HomeScreen: React.FC = () => {
             </div>
             {!lootboxClaimed ? (
               <p className="upgrade-lootbox">Claim lootbox</p>
-            ) : silver < 1200 ? (
+            ) : silver < 1000 ? (
               <>
                 <p className="progression-text">Lootbox Progression</p>
                 <div className="progress-wrapper">
-                  <LinearProgress variant="determinate" value={(silver / 1200) * 100} className="progress-bar" />
-                  <span className="xp-text">{silver} / 1200 silver</span>
+                  <LinearProgress variant="determinate" value={(silver / 1000) * 100} className="progress-bar" />
+                  <span className="xp-text">{silver} / 1000 silver</span>
                 </div>
               </>
             ) : (
