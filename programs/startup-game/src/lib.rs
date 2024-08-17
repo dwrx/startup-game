@@ -33,18 +33,40 @@ pub mod startup_game {
     pub fn claim_lootbox(ctx: Context<ClaimLootbox>) -> Result<()> {
         let player = &mut ctx.accounts.player;
 
-        // Check if the player already claimed a lootbox
         if player.lootbox_level > 0 {
             return err!(PlayerError::LootboxAlreadyClaimed);
         }
 
-        // Check if the player has at least 3 experience points
         if player.experience < 3 {
             return err!(PlayerError::InsufficientExperience);
         }
 
-        // Claim the lootbox by setting the level to 1
         player.lootbox_level = 1;
+
+        Ok(())
+    }
+
+    pub fn upgrade_lootbox(ctx: Context<UpgradeLootbox>) -> Result<()> {
+        let player = &mut ctx.accounts.player;
+
+        if player.lootbox_level == 0 {
+            return err!(PlayerError::LootboxNotClaimed);
+        }
+
+        let cost = player
+            .get_lootbox_upgrade_cost()
+            .ok_or(PlayerError::MaxLevelReached)?;
+
+        if player.silver < cost {
+            return err!(PlayerError::InsufficientSilver);
+        }
+
+        player.silver = player
+            .silver
+            .checked_sub(cost)
+            .ok_or(PlayerError::InsufficientSilver)?;
+
+        player.lootbox_level += 1;
 
         Ok(())
     }
@@ -297,6 +319,13 @@ pub struct ClaimLootbox<'info> {
 }
 
 #[derive(Accounts)]
+pub struct UpgradeLootbox<'info> {
+    #[account(mut, has_one = owner)]
+    pub player: Account<'info, Player>,
+    pub owner: Signer<'info>,
+}
+
+#[derive(Accounts)]
 pub struct PurchaseRoom<'info> {
     #[account(mut, has_one = owner)]
     pub player: Account<'info, Player>,
@@ -378,6 +407,15 @@ impl Player {
             (self.quest_claim_bitmask & (1 << quest_id)) != 0
         } else {
             false
+        }
+    }
+
+    fn get_lootbox_upgrade_cost(&self) -> Option<u64> {
+        match self.lootbox_level {
+            1 => Some(1000),
+            2 => Some(2400),
+            3 => Some(3800),
+            _ => None,
         }
     }
 }

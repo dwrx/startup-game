@@ -8,12 +8,16 @@ pub enum PlayerError {
     InsufficientExperience,
     #[msg("The lootbox has already been claimed.")]
     LootboxAlreadyClaimed,
-
     #[msg("The quest has not been completed.")]
     QuestNotCompleted,
-
     #[msg("The quest reward has already been claimed.")]
     RewardAlreadyClaimed,
+    #[msg("The lootbox has not been claimed yet.")]
+    LootboxNotClaimed,
+    #[msg("The player has reached the maximum lootbox level.")]
+    MaxLevelReached,
+    #[msg("The player does not have enough silver.")]
+    InsufficientSilver,
 }
 
 #[error_code]
