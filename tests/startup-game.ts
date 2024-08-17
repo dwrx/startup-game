@@ -62,6 +62,20 @@ describe("startup-game", () => {
     }
   });
 
+  it("Fails to claim quest that is not completed", async () => {
+    try {
+      // Quest 1: Build Laundry
+      await program.methods
+        .claimQuestReward(0)
+        .accounts({
+          player: playerPda,
+        })
+        .rpc();
+    } catch (err) {
+      expect(err.error.errorMessage).to.equal("The quest has not been completed.");
+    }
+  });
+
   it("Laundry purchase should be successful", async () => {
     const roomType = { laundry: {} };
     await program.methods
@@ -74,6 +88,34 @@ describe("startup-game", () => {
     const playerAccount = await program.account.player.fetch(playerPda);
     expect(playerAccount.rooms.length).to.equal(1);
     expect(playerAccount.rooms[0].roomType).deep.equal(roomType);
+  });
+
+  it("Claim 'Quest 1: Build Laundry' reward successfully", async () => {
+    await program.methods
+      .claimQuestReward(0)
+      .accounts({
+        player: playerPda,
+      })
+      .rpc();
+
+    const updatedPlayerAccount = await program.account.player.fetch(playerPda);
+    expect(Number(updatedPlayerAccount.silver)).to.equal(100);
+  });
+
+  it("Fails to claim the same quest reward again", async () => {
+    try {
+      await program.methods
+        .claimQuestReward(0)
+        .accounts({
+          player: playerPda,
+        })
+        .rpc();
+    } catch (err) {
+      expect(err.error.errorMessage).to.equal("The quest reward has already been claimed.");
+    }
+
+    const updatedPlayerAccount = await program.account.player.fetch(playerPda);
+    expect(Number(updatedPlayerAccount.silver)).to.equal(100);
   });
 
   it("Another Laundry purchase attempt should fail due to RoomAlreadyOwned", async () => {
@@ -115,6 +157,18 @@ describe("startup-game", () => {
     expect(playerAccount.dirtyCash.gt(new anchor.BN(0))).to.be.true;
   });
 
+  it("Claim 'Quest 2: Build Unlicensed Bar' reward successfully", async () => {
+    await program.methods
+      .claimQuestReward(1)
+      .accounts({
+        player: playerPda,
+      })
+      .rpc();
+
+    const updatedPlayerAccount = await program.account.player.fetch(playerPda);
+    expect(Number(updatedPlayerAccount.silver)).to.equal(200);
+  });
+
   it("Collect clean cash from Laundry after 5 seconds", async () => {
     // Wait for 5 seconds to give the room time to produce clean cash
     await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -130,6 +184,19 @@ describe("startup-game", () => {
 
     // Check if clean cash has been collected
     expect(playerAccount.cleanCash.gt(new anchor.BN(0))).to.be.true;
+  });
+
+  it("Fails to recruit enforcers without Security Room", async () => {
+    try {
+      await program.methods
+        .recruitUnits(new anchor.BN(5), new anchor.BN(0))
+        .accounts({
+          player: playerPda,
+        })
+        .rpc();
+    } catch (err) {
+      expect(err.error.errorMessage).to.equal("No Security Room.");
+    }
   });
 
   it("Fails to claim lootbox: player has insufficient experience", async () => {

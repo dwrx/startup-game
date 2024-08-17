@@ -3,7 +3,7 @@ use anchor_lang::prelude::*;
 
 pub mod errors;
 
-declare_id!("7GgVwtoJBPvPtophHJ8PuRajFdFkNP1QbaWTrhadNNaM");
+declare_id!("2HkFArK6JYkarKcynVvwc76Dt5MZFwNrjWnzWaxhzmE3");
 
 #[program]
 pub mod startup_game {
@@ -87,6 +87,28 @@ pub mod startup_game {
 
         player.experience += 1;
 
+        match room_type {
+            // Quest 1: Build Laundry
+            RoomType::Laundry => player.complete_quest(0),
+            // Quest 2: Build Unlicensed Bar
+            RoomType::UnlicensedBar => player.complete_quest(1),
+            // Quest 4: Build Fastfood Restaurant
+            RoomType::FastFoodRestaurant => player.complete_quest(3),
+            // Quest 5: Build Security Room
+            RoomType::SecurityRoom => player.complete_quest(4),
+            // Quest 7: Build Canabis Farm
+            RoomType::CannabisFarm => player.complete_quest(6),
+            // Quest 8: Build Saferoom
+            RoomType::Saferoom => player.complete_quest(7),
+            // Quest 9: Build Strip Club
+            RoomType::StripClub => player.complete_quest(8),
+            // Quest 10: Build Casino
+            RoomType::Casino => player.complete_quest(9),
+            // Quest 11: Build Fitness Center
+            RoomType::FitnessCenter => player.complete_quest(10),
+            _ => {}
+        }
+
         Ok(())
     }
 
@@ -159,7 +181,94 @@ pub mod startup_game {
                 .dirty_cash
                 .checked_sub(convertible_dirty_cash)
                 .ok_or(RoomError::InsufficientFunds)?;
+
+            // Check if clean cash >= $600 for Quest 3
+            if !player.is_quest_completed(2) && player.clean_cash >= 600 {
+                player.complete_quest(2);
+            }
         }
+
+        Ok(())
+    }
+
+    pub fn recruit_units(ctx: Context<RecruitUnits>, enforcers: u64, hitmen: u64) -> Result<()> {
+        let player = &mut ctx.accounts.player;
+
+        let security_room = player
+            .rooms
+            .iter()
+            .find(|room| room.room_type == RoomType::SecurityRoom);
+        if security_room.is_none() {
+            return err!(RoomError::NoSecurityRoom);
+        }
+
+        // Hitmen can only be recruited if player has a Security Room at level 2 or higher
+        /*
+        if hitmen > 0 {
+            if let Some(room) = security_room {
+                if room.level < 2 {
+                    return err!(RoomError::SecurityRoomLevelTooLow);
+                }
+            }
+        }
+        */
+
+        // One enforcer costs $50 clean cash
+        let enforcer_cost = enforcers.checked_mul(50).ok_or(RoomError::Overflow)?;
+        if player.clean_cash < enforcer_cost {
+            return err!(RoomError::InsufficientFunds);
+        }
+
+        // One hitman costs $100 dirty cash
+        let hitmen_cost = hitmen.checked_mul(100).ok_or(RoomError::Overflow)?;
+        if player.dirty_cash < hitmen_cost {
+            return err!(RoomError::InsufficientFunds);
+        }
+
+        if enforcers > 0 {
+            player.clean_cash = player
+                .clean_cash
+                .checked_sub(enforcer_cost)
+                .ok_or(RoomError::InsufficientFunds)?;
+            player.enforcers = player
+                .enforcers
+                .checked_add(enforcers)
+                .ok_or(RoomError::Overflow)?;
+        }
+
+        if hitmen > 0 {
+            player.dirty_cash = player
+                .dirty_cash
+                .checked_sub(hitmen_cost)
+                .ok_or(RoomError::InsufficientFunds)?;
+            player.hitmen = player
+                .hitmen
+                .checked_add(hitmen)
+                .ok_or(RoomError::Overflow)?;
+        }
+
+        // Check if the player has recruited at least 10 enforcers and 10 hitmen for Quest 6
+        if !player.is_quest_completed(5) && player.enforcers >= 10 && player.hitmen >= 10 {
+            player.complete_quest(5);
+        }
+
+        Ok(())
+    }
+
+    pub fn claim_quest_reward(ctx: Context<ClaimQuestReward>, quest_id: u8) -> Result<()> {
+        let player = &mut ctx.accounts.player;
+
+        if !player.is_quest_completed(quest_id) {
+            return err!(PlayerError::QuestNotCompleted);
+        }
+
+        if player.is_quest_claimed(quest_id) {
+            return err!(PlayerError::RewardAlreadyClaimed);
+        }
+
+        player.silver += 100;
+
+        player.claim_quest_reward(quest_id);
 
         Ok(())
     }
@@ -170,7 +279,7 @@ pub struct InitializePlayer<'info> {
     #[account(
         init,
         payer = owner,
-        space = 1024,
+        space = 5000,
         seeds = [b"PLAYER", owner.key().as_ref()],
         bump
     )]
@@ -208,6 +317,20 @@ pub struct CollectCleanCash<'info> {
     pub owner: Signer<'info>,
 }
 
+#[derive(Accounts)]
+pub struct RecruitUnits<'info> {
+    #[account(mut, has_one = owner)]
+    pub player: Account<'info, Player>,
+    pub owner: Signer<'info>,
+}
+
+#[derive(Accounts)]
+pub struct ClaimQuestReward<'info> {
+    #[account(mut, has_one = owner)]
+    pub player: Account<'info, Player>,
+    pub owner: Signer<'info>,
+}
+
 #[account]
 pub struct Player {
     pub is_initialized: bool,
@@ -220,12 +343,42 @@ pub struct Player {
     pub workers: u64,
     pub enforcers: u64,
     pub hitmen: u64,
+    pub quest_completion_bitmask: u64,
+    pub quest_claim_bitmask: u64,
     pub rooms: Vec<Room>,
 }
 
 impl Player {
     fn owns_room(&self, room_type: RoomType) -> bool {
         self.rooms.iter().any(|room| room.room_type == room_type)
+    }
+
+    fn complete_quest(&mut self, quest_id: u8) {
+        if quest_id < 64 {
+            self.quest_completion_bitmask |= 1 << quest_id;
+        }
+    }
+
+    fn is_quest_completed(&self, quest_id: u8) -> bool {
+        if quest_id < 64 {
+            (self.quest_completion_bitmask & (1 << quest_id)) != 0
+        } else {
+            false
+        }
+    }
+
+    fn claim_quest_reward(&mut self, quest_id: u8) {
+        if quest_id < 64 {
+            self.quest_claim_bitmask |= 1 << quest_id;
+        }
+    }
+
+    fn is_quest_claimed(&self, quest_id: u8) -> bool {
+        if quest_id < 64 {
+            (self.quest_claim_bitmask & (1 << quest_id)) != 0
+        } else {
+            false
+        }
     }
 }
 
@@ -241,9 +394,7 @@ pub struct Room {
 impl Room {
     fn pending_rewards(&self) -> u64 {
         let clock = Clock::get().unwrap();
-        let elapsed_time = (clock.unix_timestamp as u64)
-            .checked_sub(self.last_collected)
-            .unwrap_or(0);
+        let elapsed_time = (clock.unix_timestamp as u64).saturating_sub(self.last_collected);
         let yield_per_second = self.room_type.yield_per_minute() as f64 / 60.0;
         let potential_reward = (elapsed_time as f64 * yield_per_second).round() as u64;
         potential_reward.min(self.storage_capacity)

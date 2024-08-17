@@ -8,6 +8,12 @@ pub enum PlayerError {
     InsufficientExperience,
     #[msg("The lootbox has already been claimed.")]
     LootboxAlreadyClaimed,
+
+    #[msg("The quest has not been completed.")]
+    QuestNotCompleted,
+
+    #[msg("The quest reward has already been claimed.")]
+    RewardAlreadyClaimed,
 }
 
 #[error_code]
@@ -18,4 +24,10 @@ pub enum RoomError {
     RoomAlreadyOwned,
     #[msg("Insufficient funds.")]
     InsufficientFunds,
+    #[msg("Player has too many units recruited.")]
+    Overflow,
+    #[msg("Security Room level too low.")]
+    SecurityRoomLevelTooLow,
+    #[msg("No Security Room.")]
+    NoSecurityRoom,
 }
