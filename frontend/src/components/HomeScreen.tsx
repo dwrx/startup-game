@@ -157,8 +157,27 @@ const HomeScreen: React.FC = () => {
     setFollowedOnTwitter(true);
   };
 
-  const upgradeLootbox = () => {
-    console.log("Upgrading lootbox...");
+  const upgradeLootbox = async () => {
+    if (!wallet.publicKey || !program) return;
+
+    const [playerPda] = await PublicKey.findProgramAddress(
+      [Buffer.from("PLAYER"), wallet.publicKey.toBuffer()],
+      program.programId
+    );
+
+    try {
+      await program.methods
+        .upgradeLootbox()
+        .accounts({
+          player: playerPda,
+          owner: wallet.publicKey,
+        })
+        .rpc();
+
+      checkPlayerAccount();
+    } catch (err) {
+      console.error("Failed to upgrade lootbox", err);
+    }
   };
 
   useEffect(() => {
@@ -234,7 +253,7 @@ const HomeScreen: React.FC = () => {
               <div className="shining-effect"></div>
             </div>
             <div className="image-container">
-              <img src="/lootbox.png" alt="Lootbox" className="lootbox-image" />
+              <img src={`/lootbox-${lootboxLevel || 1}.png`} alt="Lootbox" className="lootbox-image" />
             </div>
           </div>
           <div className="bottom-right-block" onClick={claimLootbox}>
@@ -243,18 +262,31 @@ const HomeScreen: React.FC = () => {
             </div>
             {!lootboxClaimed ? (
               <p className="upgrade-lootbox">Claim lootbox</p>
-            ) : silver < 1000 ? (
+            ) : (
               <>
                 <p className="progression-text">Lootbox Progression</p>
                 <div className="progress-wrapper">
-                  <LinearProgress variant="determinate" value={(silver / 1000) * 100} className="progress-bar" />
-                  <span className="xp-text">{silver} / 1000 silver</span>
+                  <LinearProgress
+                    variant="determinate"
+                    value={(silver / (lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800)) * 100}
+                    className="progress-bar"
+                  />
+                  <span className="xp-text">
+                    {silver} / {lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800} silver
+                  </span>
                 </div>
+                {silver >= (lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800) && lootboxLevel < 4 && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    style={{ background: "gold", marginTop: "10px", color: "#333" }}
+                    className="upgrade-button"
+                    onClick={upgradeLootbox}
+                  >
+                    Upgrade
+                  </Button>
+                )}
               </>
-            ) : (
-              <Button variant="contained" color="primary" className="upgrade-button" onClick={upgradeLootbox}>
-                Upgrade
-              </Button>
             )}
           </div>
         </div>

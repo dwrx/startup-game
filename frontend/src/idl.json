@@ -157,6 +157,22 @@
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "upgrade_lootbox",
+      "discriminator": [144, 140, 90, 37, 238, 178, 86, 108],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": ["player"]
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -168,33 +184,43 @@
   "errors": [
     {
       "code": 6000,
-      "name": "InsufficientExperience",
-      "msg": "Insufficient experience to purchase this room."
+      "name": "AlreadyInitialized",
+      "msg": "The player account is already initialized."
     },
     {
       "code": 6001,
-      "name": "RoomAlreadyOwned",
-      "msg": "Room already owned."
+      "name": "InsufficientExperience",
+      "msg": "The player has insufficient experience."
     },
     {
       "code": 6002,
-      "name": "InsufficientFunds",
-      "msg": "Insufficient funds."
+      "name": "LootboxAlreadyClaimed",
+      "msg": "The lootbox has already been claimed."
     },
     {
       "code": 6003,
-      "name": "Overflow",
-      "msg": "Player has too many units recruited."
+      "name": "QuestNotCompleted",
+      "msg": "The quest has not been completed."
     },
     {
       "code": 6004,
-      "name": "SecurityRoomLevelTooLow",
-      "msg": "Security Room level too low."
+      "name": "RewardAlreadyClaimed",
+      "msg": "The quest reward has already been claimed."
     },
     {
       "code": 6005,
-      "name": "NoSecurityRoom",
-      "msg": "No Security Room."
+      "name": "LootboxNotClaimed",
+      "msg": "The lootbox has not been claimed yet."
+    },
+    {
+      "code": 6006,
+      "name": "MaxLevelReached",
+      "msg": "The player has reached the maximum lootbox level."
+    },
+    {
+      "code": 6007,
+      "name": "InsufficientSilver",
+      "msg": "The player does not have enough silver."
     }
   ],
   "types": [
