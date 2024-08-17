@@ -1,0 +1,153 @@
+.claim-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.claim-modal {
+  outline: none;
+}
+
+.claim-modal *:focus {
+  outline: none;
+}
+
+.modal-content {
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 20px;
+  border-radius: 0.5rem;
+  color: #fff;
+  width: 90%;
+  max-width: 500px;
+}
+
+.claim-checklist {
+  list-style-type: none;
+  padding: 0;
+}
+
+.claim-checklist li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 20px 20px;
+  background: #33333382;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 40px;
+  border-radius: 4px;
+}
+
+.status.completed {
+  background-color: #27a533;
+}
+
+.status.not-completed {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.checkmark {
+  color: #4caf50;
+}
+
+.xmark {
+  color: #fff;
+}
+
+.error-message {
+  color: #f44336;
+  margin-top: 10px;
+}
+
+.missions-modal button {
+  background-color: #ffcc00;
+  color: #000;
+  margin-top: 20px;
+}
+
+.missions-modal button.close,
+button.close {
+  background-color: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+}
+
+.mission-list {
+  list-style-type: none;
+  padding: 0;
+  max-height: 400px;
+  overflow-y: auto;
+  margin: 0;
+}
+
+.mission-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  margin-bottom: 15px;
+  background: #33333382;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.mission-description {
+  color: gray;
+  max-width: 80%;
+}
+
+.mission-item h6 {
+  margin: 0 0 5px;
+  flex-grow: 1;
+  font-size: 16px;
+}
+
+.mission-item p {
+  margin: 0;
+  flex-grow: 1;
+}
+
+.status {
+  margin-left: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-left: auto;
+}
+
+.completed {
+  background-color: #27a533;
+}
+
+.not-completed {
+  background-color: rgba(244, 67, 54, 0.6);
+}
+
+.checkmark,
+.xmark {
+  font-size: 1rem;
+  color: #fff;
+}
+
+.claim-modal .modal-content {
+  max-width: 600px;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.claim-modal h2 {
+  margin-bottom: 15px;
+}

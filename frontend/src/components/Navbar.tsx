@@ -2,11 +2,29 @@ import React, { useEffect, useState, useRef } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { PublicKey } from "@solana/web3.js";
-import { Button, Box, Tooltip } from "@mui/material";
+import { Button, Box, Tooltip, createTheme, ThemeProvider, Menu, MenuItem, IconButton } from "@mui/material";
+// import SettingsIcon from '@mui/icons-material/Settings';
 import useProgram from "../hooks/useProgram";
 import { allRooms } from "../rooms";
 import MissionsModal from "./MissionsModal";
 import "../styles.css";
+
+const theme = createTheme({
+  components: {
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          fontSize: "14px",
+          backgroundColor: "#000",
+          color: "#fff",
+          borderRadius: "5px",
+          padding: "10px",
+          boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+        },
+      },
+    },
+  },
+});
 
 const Navbar: React.FC = () => {
   const wallet = useWallet();
@@ -14,6 +32,8 @@ const Navbar: React.FC = () => {
   const [balances, setBalances] = useState({
     cleanCash: 0,
     dirtyCash: 0,
+    silver: 0,
+    xp: 0,
     enforcers: 0,
     hitmen: 0,
   });
@@ -24,6 +44,16 @@ const Navbar: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const { connection } = useConnection();
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   const fetchBalances = async () => {
     if (!wallet.connected || !wallet.publicKey || !program) return;
@@ -39,6 +69,8 @@ const Navbar: React.FC = () => {
       setBalances({
         cleanCash: playerAccount.cleanCash.toNumber(),
         dirtyCash: playerAccount.dirtyCash.toNumber(),
+        silver: playerAccount.silver.toNumber(),
+        xp: playerAccount.experience.toNumber(),
         enforcers: playerAccount.enforcers.toNumber(),
         hitmen: playerAccount.hitmen.toNumber(),
       });
@@ -166,73 +198,110 @@ const Navbar: React.FC = () => {
   }, []);
 
   return (
-    <div className="navbar">
-      <div className="navbar-left">
-        <div className="text-center"><img src="/clean-money.png" width="32" alt="Clean Cash:" /> ${balances.cleanCash}</div>
-        <div className="text-center"><img src="/dirty-money.png" width="32" alt="Dirty Cash:" /> ${balances.dirtyCash}</div>
-        <div className="text-center">Enforcers: {balances.enforcers}</div>
-        <div className="text-center">Hitmen: {balances.hitmen}</div>
-      </div>
-      <div className="navbar-right">
-        <Button
-          variant="outlined"
-          onClick={() => setMissionsModalOpen(true)}
-          style={{
-            marginRight: "10px",
-            height: "100%",
-            color: "gold",
-            borderColor: "gold",
-          }}
-        >
-          ⭐ Missions
-        </Button>
-        <Box display="flex" alignItems="center" height="100%">
-          <Tooltip title="Collect dirty money generated from illegal activities.">
-            <Button
-              variant="outlined"
-              onClick={handleCollectDirtyCash}
-              style={{
-                marginRight: "10px",
-                height: "100%",
-                color: "white",
-                borderColor: "white",
-              }}
-            >
-              Collect (${estimatedDirtyCash})
-            </Button>
+    <ThemeProvider theme={theme}>
+      <div className="navbar">
+        <div className="navbar-left">
+          <Tooltip title="Clean cash">
+            <div className="text-center">
+              <img src="/clean-money.png" width="32" alt="Clean Cash:" /> ${balances.cleanCash}
+            </div>
           </Tooltip>
-          <Tooltip title="Launder available dirty money to convert it into clean cash, losing 30% in the process.">
-            <Button
-              variant="outlined"
-              onClick={handleCollectCleanCash}
-              style={{
-                marginRight: "10px",
-                height: "100%",
-                color: "white",
-                borderColor: "white",
-              }}
-            >
-              Launder, -30% (${estimatedCleanCash})
-            </Button>
+          <Tooltip title="Dirty cash">
+            <div className="text-center">
+              <img src="/dirty-money.png" width="32" alt="Dirty Cash:" /> ${balances.dirtyCash}
+            </div>
           </Tooltip>
+          <Tooltip title="Enforcers are defensive guards that patrol the rooms.">
+            <div className="text-center">
+              <img src="/enforcer.png" width="32" alt="Enforcers:" /> {balances.enforcers}
+            </div>
+          </Tooltip>
+          <Tooltip title="Hitmen are good at attacking competitors.">
+            <div className="text-center">
+              <img src="/hitman.png" width="32" alt="Hitmen:" /> {balances.hitmen}
+            </div>
+          </Tooltip>
+          <div>|</div>
+          <Tooltip title="Silver is used to purchase and upgrade loot boxes.">
+            <div className="text-center">
+              <img src="/silver.png" width="32" alt="Silver:" /> {balances.silver}
+            </div>
+          </Tooltip>
+          <Tooltip title="Experience">
+            <div className="text-center">
+              <b>{balances.xp} XP</b>
+            </div>
+          </Tooltip>
+        </div>
+        <div className="navbar-right">
           <Button
             variant="outlined"
-            onClick={toggleAudio}
+            onClick={() => setMissionsModalOpen(true)}
             style={{
               marginRight: "10px",
               height: "100%",
-              color: isPlaying ? "red" : "limegreen",
-              borderColor: isPlaying ? "red" : "limegreen",
+              color: "black",
+              backgroundColor: "gold",
+              borderColor: "gold",
             }}
           >
-            {isPlaying ? "🔇" : "🔊"}
+            <div className="shining-container">
+              <div className="shining-effect"></div>
+            </div>
+            Quests
           </Button>
-          <WalletMultiButton />
-        </Box>
+          <Box display="flex" alignItems="center" height="100%">
+            <Tooltip title="Collect dirty cash generated from illegal activities.">
+              <Button
+                variant="outlined"
+                onClick={handleCollectDirtyCash}
+                style={{
+                  marginRight: "10px",
+                  height: "100%",
+                  color: "white",
+                  backgroundColor: "#723ea7",
+                  borderColor: "#723ea7",
+                }}
+              >
+                Collect ${estimatedDirtyCash}{" "}
+                <img src="/dirty-money.png" style={{ paddingLeft: "5px" }} width="32" alt="Dirty Cash" />
+              </Button>
+            </Tooltip>
+            <Tooltip title="Launder collected dirty cash to convert it into clean cash, losing 30% in the process.">
+              <Button
+                variant="outlined"
+                onClick={handleCollectCleanCash}
+                style={{
+                  marginRight: "10px",
+                  height: "100%",
+                  color: "white",
+                  backgroundColor: "#723ea7",
+                  borderColor: "#723ea7",
+                }}
+              >
+                Launder ${estimatedCleanCash}{" "}
+                <img src="/clean-money.png" style={{ paddingLeft: "5px" }} width="32" alt="Clean Cash" />
+              </Button>
+            </Tooltip>
+            <IconButton onClick={handleMenuClick}>{/* <SettingsIcon /> */}⚙️</IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              style={{ overflow: "visible" }}
+            >
+              <MenuItem onClick={toggleAudio}>{isPlaying ? "Mute Sound 🔇" : "Play Sound 🔊"}</MenuItem>
+              <MenuItem onClick={() => (window.location.href = "/")}>Home Page</MenuItem>
+              <MenuItem>
+                <WalletMultiButton />
+              </MenuItem>
+            </Menu>
+          </Box>
+        </div>
+        <MissionsModal open={missionsModalOpen} onClose={() => setMissionsModalOpen(false)} />
+        <audio ref={audioRef} src="/background-music.mp3" loop />
       </div>
-      <MissionsModal open={missionsModalOpen} onClose={() => setMissionsModalOpen(false)} />
-      <audio ref={audioRef} src="/background-music.mp3" loop />
-    </div>
+    </ThemeProvider>
   );
 };
 

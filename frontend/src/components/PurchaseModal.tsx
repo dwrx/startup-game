@@ -72,7 +72,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ open, onClose, rooms, onP
                 <Typography variant="h6">{room.name}</Typography>
                 {/* <Typography>{room.description}</Typography> */}
                 <pre>
-                  <p>Price: ${room.price}</p>
+                  {/* <p>Price: ${room.price}</p> */}
                   <p>Yield: {room.yield}/min</p>
                   <p>Capacity: {room.capacity}</p>
                 </pre>
@@ -80,6 +80,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ open, onClose, rooms, onP
                   <Button
                     variant="contained"
                     color="primary"
+                    style={{ marginTop: "0px" }}
                     onClick={() => onPurchase(room)}
                     disabled={
                       playerData.cleanCash.toNumber() < room.price ||
@@ -87,13 +88,13 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ open, onClose, rooms, onP
                     }
                   >
                     {playerData.experience.toNumber() < room.levelRequirement
-                      ? "Your level is too low"
+                      ? "Not enough XP"
                       : playerData.cleanCash.toNumber() < room.price
-                      ? "Not enough money"
-                      : "Purchase"}
+                      ? `Buy for $${room.price}`
+                      : `Buy for $${room.price}`}
                   </Button>
                 ) : isRoomPurchased(room.roomType) ? (
-                  "✅"
+                  "✅ Purchased"
                 ) : (
                   ""
                 )}

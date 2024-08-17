@@ -103,7 +103,11 @@ const Room: React.FC<RoomProps> = ({ className, isLegal, playerCash, playerLevel
         playerLevel={playerLevel}
       />
       {purchased && (
-        <RoomDetailsModal open={openDetailsModal} onClose={() => setOpenDetailsModal(false)} room={getRoomDetails(selectedRoom.roomType)} />
+        <RoomDetailsModal
+          open={openDetailsModal}
+          onClose={() => setOpenDetailsModal(false)}
+          room={getRoomDetails(selectedRoom.roomType)}
+        />
       )}
     </>
   );

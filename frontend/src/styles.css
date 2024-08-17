@@ -110,13 +110,19 @@ body {
 .navbar-left {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
 }
 
 .navbar-left .text-center {
   display: flex;
   align-items: center;
   margin: 5px 0;
+  background: #ffffff0f;
+  padding: 0 10px;
+  border-radius: 10px;
+  height: 40px;
+  font-size: 13px;
+  cursor: pointer
 }
 
 .navbar-right {
@@ -162,4 +168,12 @@ body {
 .footer a {
   color: white;
   text-decoration: dotted underline;
+}
+
+.wallet-adapter-dropdown {
+  z-index: 1400 !important;
+}
+
+.MuiPaper-elevation {
+  overflow: visible !important;
 }

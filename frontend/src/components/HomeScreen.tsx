@@ -23,6 +23,7 @@ const HomeScreen: React.FC = () => {
   const [claimModalOpen, setClaimModalOpen] = useState<boolean>(false);
   const [howToModalOpen, setHowToModalOpen] = useState<boolean>(false);
   const [xp, setXp] = useState<number>(0);
+  const [silver, setSilver] = useState<number>(0);
   const [lootboxClaimed, setLootboxClaimed] = useState<boolean>(false);
   const [twitterLinked, setTwitterLinked] = useState<boolean>(false);
   const [followedOnTwitter, setFollowedOnTwitter] = useState<boolean>(false);
@@ -53,6 +54,7 @@ const HomeScreen: React.FC = () => {
       setIsInitialized(playerAccount.isInitialized);
       setLootboxClaimed(playerAccount.lootboxLevel > 0);
       setXp(Number(playerAccount.experience));
+      setSilver(Number(playerAccount.silver));
     } catch (err) {
       setIsInitialized(false);
       setLootboxClaimed(false);
@@ -239,12 +241,12 @@ const HomeScreen: React.FC = () => {
             </div>
             {!lootboxClaimed ? (
               <p className="upgrade-lootbox">Claim lootbox</p>
-            ) : xp < 10 ? (
+            ) : silver < 1200 ? (
               <>
                 <p className="progression-text">Lootbox Progression</p>
                 <div className="progress-wrapper">
-                  <LinearProgress variant="determinate" value={(xp / 10) * 100} className="progress-bar" />
-                  <span className="xp-text">{xp} XP / 10 XP</span>
+                  <LinearProgress variant="determinate" value={(silver / 1200) * 100} className="progress-bar" />
+                  <span className="xp-text">{silver} / 1200 silver</span>
                 </div>
               </>
             ) : (

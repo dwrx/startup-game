@@ -1,5 +1,5 @@
 {
-  "address": "7GgVwtoJBPvPtophHJ8PuRajFdFkNP1QbaWTrhadNNaM",
+  "address": "2HkFArK6JYkarKcynVvwc76Dt5MZFwNrjWnzWaxhzmE3",
   "metadata": {
     "name": "startup_game",
     "version": "0.1.0",
@@ -22,6 +22,27 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "claim_quest_reward",
+      "discriminator": [73, 123, 191, 206, 63, 127, 247, 12],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": ["player"]
+        }
+      ],
+      "args": [
+        {
+          "name": "quest_id",
+          "type": "u8"
+        }
+      ]
     },
     {
       "name": "collect_clean_cash",
@@ -111,6 +132,31 @@
           }
         }
       ]
+    },
+    {
+      "name": "recruit_units",
+      "discriminator": [31, 62, 139, 234, 81, 154, 162, 193],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": ["player"]
+        }
+      ],
+      "args": [
+        {
+          "name": "enforcers",
+          "type": "u64"
+        },
+        {
+          "name": "hitmen",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -134,6 +180,21 @@
       "code": 6002,
       "name": "InsufficientFunds",
       "msg": "Insufficient funds."
+    },
+    {
+      "code": 6003,
+      "name": "Overflow",
+      "msg": "Player has too many units recruited."
+    },
+    {
+      "code": 6004,
+      "name": "SecurityRoomLevelTooLow",
+      "msg": "Security Room level too low."
+    },
+    {
+      "code": 6005,
+      "name": "NoSecurityRoom",
+      "msg": "No Security Room."
     }
   ],
   "types": [
@@ -180,6 +241,14 @@
           },
           {
             "name": "hitmen",
+            "type": "u64"
+          },
+          {
+            "name": "quest_completion_bitmask",
+            "type": "u64"
+          },
+          {
+            "name": "quest_claim_bitmask",
             "type": "u64"
           },
           {

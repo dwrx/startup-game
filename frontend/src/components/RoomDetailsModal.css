@@ -1,0 +1,97 @@
+.modal-box {
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 20px;
+  border-radius: 8px;
+  color: #fff;
+  width: 90%;
+  max-width: 500px;
+  outline: none;
+  overflow-y: auto;
+}
+
+.modal-box h6 {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+  color: #ffcc00;
+}
+
+.modal-box p {
+  margin: 10px 0;
+}
+
+.modal-box hr {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 20px 0;
+}
+
+.modal-box pre {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.modal-box button {
+  background-color: #ffcc00;
+  color: #000;
+  margin-top: 20px;
+}
+
+.modal-box .MuiButton-root.Mui-disabled {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.modal-box .MuiButton-root:hover {
+  background-color: #ffaa00;
+}
+
+.modal-box .recruitment-section {
+  margin-top: 20px;
+}
+
+.modal-box .recruitment-section h6 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.modal-box .recruitment-section .MuiTextField-root {
+  margin-bottom: 15px;
+}
+
+.modal-box .recruitment-section .MuiTextField-root input {
+  color: #fff;
+}
+
+.modal-box .recruitment-section .MuiFormHelperText-root {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.modal-box .MuiFormHelperText-root.Mui-error {
+  color: #f44336;
+}
+
+.modal-box .close-button {
+  background-color: #ffcc00;
+  color: #000;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.room-details-modal label,
+.room-details-modal .MuiFormHelperText-root {
+  color: #fff;
+}
+
+.room-description {
+  color: gray;
+}
+
+.recruitment-input input {
+  color: #fff;
+}
+
+.recruitment-input fieldset {
+  border-color: rgba(255, 255, 255, 0.5);
+}
