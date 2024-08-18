@@ -1,6 +1,6 @@
 # Startup: The Game
 
-Play here: https://startup.miso.one/
+Play here: https://playstartup.io
 
 This is a MVP of fully on-chain business simulation game I've built for Solana Speedrun 3.
 
