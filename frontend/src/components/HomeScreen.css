@@ -265,4 +265,8 @@ p.progression-text {
     font-size: 0.9rem;
     padding: 10px;
   }
+
+  .how-to-play {
+    width: 100% !important;
+  }
 }
