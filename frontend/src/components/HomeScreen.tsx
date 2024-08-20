@@ -31,6 +31,7 @@ const HomeScreen: React.FC = () => {
   const [signedIn, setSignedIn] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
   const [messageType, setMessageType] = useState("");
+  const [showMobileWalletButton, setShowMobileWalletButton] = useState<boolean>(false);
 
   const checkJWT = () => {
     localStorage.removeItem("JWT");
@@ -84,6 +85,26 @@ const HomeScreen: React.FC = () => {
         console.error("Error saving address:", error);
       }
     }
+  };
+
+  useEffect(() => {
+    const ua = navigator.userAgent;
+    const isIOS = /iphone|ipad|ipod|ios/i.test(ua);
+    const isAndroid = /android|XiaoMi|MiuiBrowser/i.test(ua);
+    const isMobile = isIOS || isAndroid;
+    const isOKApp = /OKApp/i.test(ua);
+
+    if (isMobile && !isOKApp) {
+      setShowMobileWalletButton(true);
+    }
+  }, []);
+
+  const handleMobileWalletConnect = () => {
+    const dappUrl = window.location.href;
+    const encodedDappUrl = encodeURIComponent(dappUrl);
+    const deepLink = `okx://wallet/dapp/url?dappUrl=${encodedDappUrl}`;
+    const encodedUrl = `https://www.okx.com/download?deeplink=${encodeURIComponent(deepLink)}`;
+    window.location.href = encodedUrl;
   };
 
   useEffect(() => {
@@ -212,107 +233,115 @@ const HomeScreen: React.FC = () => {
   return (
     <div className="home-screen">
       {message && <div className={`message-box ${messageType}`}>{message}</div>}
-        <div className="content-wrapper">
-          <div className={`left-block ${!wallet.connected ? "centered" : ""}`}>
+      <div className="content-wrapper">
+        <div className={`left-block ${!wallet.connected ? "centered" : ""}`}>
+          {showMobileWalletButton ? (
+            <Box mt={4}>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleMobileWalletConnect}
+                style={{ backgroundColor: "#ffcc00", color: "#000" }}
+              >
+                Connect Mobile Wallet
+              </Button>
+            </Box>
+          ) : (
             <WalletMultiButton />
-            {wallet.connected && (
+          )}
+          {wallet.connected && (
+            <>
+              <Box mt={4}>
+                <Alert severity="warning">
+                  Switch wallet to <b>Sonic Origin</b> network (
+                  <Link href="#" onClick={() => setHowToModalOpen(true)}>
+                    How?
+                  </Link>
+                  ) and request SOL from{" "}
+                  <a href="https://faucet.sonic.game/" target="_blank" rel="noreferrer noopener">
+                    faucet
+                  </a>{" "}
+                  to play.
+                </Alert>
+              </Box>
+              <Box mt={4}>
+                {loading ? (
+                  <CircularProgress />
+                ) : isInitialized ? (
+                  <Button variant="contained" color="primary" className="play-button" onClick={() => navigate("/game")}>
+                    Continue Playing
+                  </Button>
+                ) : (
+                  <Button variant="contained" color="primary" className="play-button" onClick={initializePlayer}>
+                    New Game
+                  </Button>
+                )}
+              </Box>
+            </>
+          )}
+        </div>
+        <div className="right-block">
+          <div className="top-right-block">
+            <div className="shining-container">
+              <div className="shining-effect"></div>
+            </div>
+            <div className="image-container">
+              <img src={`/lootbox-${lootboxLevel || 1}.png`} alt="Lootbox" className="lootbox-image" />
+            </div>
+          </div>
+          <div className="bottom-right-block" onClick={claimLootbox}>
+            <div className="shining-container">
+              <div className="shining-effect"></div>
+            </div>
+            {!lootboxClaimed ? (
+              <p className="upgrade-lootbox">Claim lootbox</p>
+            ) : (
               <>
-                <Box mt={4}>
-                  <Alert severity="warning">
-                    Switch wallet to <b>Sonic Origin</b> network (
-                    <Link href="#" onClick={() => setHowToModalOpen(true)}>
-                      How?
-                    </Link>
-                    ) and request SOL from{" "}
-                    <a href="https://faucet.sonic.game/" target="_blank" rel="noreferrer noopener">
-                      faucet
-                    </a>{" "}
-                    to play.
-                  </Alert>
-                </Box>
-                <Box mt={4}>
-                  {loading ? (
-                    <CircularProgress />
-                  ) : isInitialized ? (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      className="play-button"
-                      onClick={() => navigate("/game")}
-                    >
-                      Continue Playing
-                    </Button>
-                  ) : (
-                    <Button variant="contained" color="primary" className="play-button" onClick={initializePlayer}>
-                      New Game
-                    </Button>
-                  )}
-                </Box>
+                <p className="progression-text">Lootbox Progression</p>
+                <div className="progress-wrapper">
+                  <LinearProgress
+                    variant="determinate"
+                    value={(silver / (lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800)) * 100}
+                    className="progress-bar"
+                  />
+                  <span className="xp-text">
+                    {silver} / {lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800} silver
+                  </span>
+                </div>
+                {silver >= (lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800) && lootboxLevel < 4 && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    style={{ background: "gold", marginTop: "10px", color: "#333" }}
+                    className="upgrade-button"
+                    onClick={upgradeLootbox}
+                  >
+                    Upgrade
+                  </Button>
+                )}
               </>
             )}
           </div>
-          <div className="right-block">
-            <div className="top-right-block">
-              <div className="shining-container">
-                <div className="shining-effect"></div>
-              </div>
-              <div className="image-container">
-                <img src={`/lootbox-${lootboxLevel || 1}.png`} alt="Lootbox" className="lootbox-image" />
-              </div>
-            </div>
-            <div className="bottom-right-block" onClick={claimLootbox}>
-              <div className="shining-container">
-                <div className="shining-effect"></div>
-              </div>
-              {!lootboxClaimed ? (
-                <p className="upgrade-lootbox">Claim lootbox</p>
-              ) : (
-                <>
-                  <p className="progression-text">Lootbox Progression</p>
-                  <div className="progress-wrapper">
-                    <LinearProgress
-                      variant="determinate"
-                      value={(silver / (lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800)) * 100}
-                      className="progress-bar"
-                    />
-                    <span className="xp-text">
-                      {silver} / {lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800} silver
-                    </span>
-                  </div>
-                  {silver >= (lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800) && lootboxLevel < 4 && (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      style={{ background: "gold", marginTop: "10px", color: "#333" }}
-                      className="upgrade-button"
-                      onClick={upgradeLootbox}
-                    >
-                      Upgrade
-                    </Button>
-                  )}
-                </>
-              )}
-            </div>
-            <Box mt={2} textAlign="right" width="100%">
-          <Button
-            variant="outlined"
-            color="secondary"
-            className="how-to-play"
-            onClick={() => navigate("/guide")}
-            style={{
-              margin: "0 auto",
-              color: "#ffcc00",
-              borderColor: "#ffcc00",
-              padding: "10px 20px",
-              fontSize: "18px",
-              width: '200px',
-            }}
-          >
-            How to Play
-          </Button>
-        </Box>
-          </div>
+          <Box mt={2} textAlign="right" width="100%">
+            <Button
+              variant="outlined"
+              color="secondary"
+              className="how-to-play"
+              onClick={() => navigate("/guide")}
+              style={{
+                margin: "0 auto",
+                color: "#ffcc00",
+                borderColor: "#ffcc00",
+                padding: "10px 20px",
+                fontSize: "18px",
+                width: "200px",
+              }}
+            >
+              How to Play
+            </Button>
+          </Box>
         </div>
+      </div>
 
       <ClaimLootboxModal
         open={claimModalOpen}
