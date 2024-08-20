@@ -122,12 +122,43 @@ body {
   border-radius: 10px;
   height: 40px;
   font-size: 13px;
-  cursor: pointer
+  cursor: pointer;
 }
 
 .navbar-right {
   display: flex;
   align-items: center;
+}
+
+.menu-button {
+  display: none;
+}
+
+.drawer-content {
+  padding: 20px 5px;
+  background-color: #333;
+  color: white;
+  height: 100%;
+}
+
+.balance-item {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-button {
+  color: white;
+  border-color: white;
+  font-size: 14px;
+  padding: 5px 10px;
+}
+
+.drawer-content .mobile-quests-button {
+  width: 100%;
+  color: #fff;
+  border-color: #fff;
+  margin-bottom: 15px;
 }
 
 .wallet-adapter-button {
@@ -172,4 +203,51 @@ body {
 
 .MuiPaper-elevation {
   overflow: visible !important;
+}
+
+@media (max-width: 768px) {
+  .navbar-left {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar-right .desktop-only,
+  .navbar-left .desktop-only {
+    display: none;
+  }
+
+  .menu-button {
+    display: block;
+  }
+
+  .modal-box {
+    max-height: 80vh;
+  }
+
+  .modal-content {
+    overflow-y: auto;
+    max-height: calc(100% - 32px);
+  }
+
+  .balance-item {
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .navbar-right button {
+    padding: 5px;
+    font-size: 13px;
+  }
+
+  .navbar-right {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .navbar-button {
+    font-size: 12px;
+    padding: 3px 6px;
+  }
 }

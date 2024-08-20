@@ -2,11 +2,12 @@ import React, { useEffect, useState, useRef } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { PublicKey } from "@solana/web3.js";
-import { Button, Box, Tooltip, createTheme, ThemeProvider, Menu, MenuItem, IconButton } from "@mui/material";
+import { useMediaQuery, Drawer, Button, Box, Tooltip, createTheme, ThemeProvider, Menu, MenuItem, IconButton } from "@mui/material";
 // import SettingsIcon from '@mui/icons-material/Settings';
 import useProgram from "../hooks/useProgram";
 import { allRooms } from "../rooms";
 import MissionsModal from "./MissionsModal";
+import Balances from "./Balances";
 import "../styles.css";
 
 const theme = createTheme({
@@ -42,10 +43,15 @@ const Navbar: React.FC = () => {
   const [missionsModalOpen, setMissionsModalOpen] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const isMobile = useMediaQuery('(max-width:768px)');
 
   const { connection } = useConnection();
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const toggleDrawer = (open: boolean) => () => {
+    setDrawerOpen(open);
+  };
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -200,43 +206,43 @@ const Navbar: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <div className="navbar">
-        <div className="navbar-left">
-          <Tooltip title="Clean cash">
-            <div className="text-center">
-              <img src="/clean-money.png" width="32" alt="Clean Cash:" /> ${balances.cleanCash}
-            </div>
-          </Tooltip>
-          <Tooltip title="Dirty cash">
-            <div className="text-center">
-              <img src="/dirty-money.png" width="32" alt="Dirty Cash:" /> ${balances.dirtyCash}
-            </div>
-          </Tooltip>
-          <Tooltip title="Enforcers are defensive guards that patrol the rooms.">
-            <div className="text-center">
-              <img src="/enforcer.png" width="32" alt="Enforcers:" /> {balances.enforcers}
-            </div>
-          </Tooltip>
-          <Tooltip title="Hitmen are good at attacking competitors.">
-            <div className="text-center">
-              <img src="/hitman.png" width="32" alt="Hitmen:" /> {balances.hitmen}
-            </div>
-          </Tooltip>
-          <div>|</div>
-          <Tooltip title="Silver is used to purchase and upgrade loot boxes.">
-            <div className="text-center">
-              <img src="/silver.png" width="32" alt="Silver:" /> {balances.silver}
-            </div>
-          </Tooltip>
-          <Tooltip title="Experience">
-            <div className="text-center">
-              <b>{balances.xp} XP</b>
-            </div>
-          </Tooltip>
-        </div>
+      {isMobile ? (
+          <>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              onClick={toggleDrawer(true)}
+              className="menu-button"
+            >
+              ☰
+            </IconButton>
+
+            <Drawer
+              anchor="left"
+              open={drawerOpen}
+              onClose={toggleDrawer(false)}
+              PaperProps={{
+                sx: { width: "30%" },
+              }}
+            >
+              <div className="drawer-content">
+              <Button
+              className="mobile-quests-button"
+            variant="outlined"
+            onClick={() => setMissionsModalOpen(true)}>Quests</Button>
+                <Balances {...balances} />
+              </div>
+            </Drawer>
+          </>
+        ) : (
+          <Balances {...balances} />
+        )}
         <div className="navbar-right">
           <Button
             variant="outlined"
             onClick={() => setMissionsModalOpen(true)}
+            className="desktop-only"
             style={{
               marginRight: "10px",
               height: "100%",
@@ -283,7 +289,7 @@ const Navbar: React.FC = () => {
                 <img src="/clean-money.png" style={{ paddingLeft: "5px" }} width="32" alt="Clean Cash" />
               </Button>
             </Tooltip>
-            <IconButton onClick={handleMenuClick}>{/* <SettingsIcon /> */}⚙️</IconButton>
+            <IconButton className="desktop-only" onClick={handleMenuClick}>{/* <SettingsIcon /> */}⚙️</IconButton>
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
