@@ -101,10 +101,13 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
+  padding: 0 20px;
   background-color: #282c34;
   color: white;
   height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .navbar-left {

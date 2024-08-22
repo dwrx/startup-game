@@ -2,7 +2,18 @@ import React, { useEffect, useState, useRef } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { PublicKey } from "@solana/web3.js";
-import { useMediaQuery, Drawer, Button, Box, Tooltip, createTheme, ThemeProvider, Menu, MenuItem, IconButton } from "@mui/material";
+import {
+  useMediaQuery,
+  Drawer,
+  Button,
+  Box,
+  Tooltip,
+  createTheme,
+  ThemeProvider,
+  Menu,
+  MenuItem,
+  IconButton,
+} from "@mui/material";
 // import SettingsIcon from '@mui/icons-material/Settings';
 import useProgram from "../hooks/useProgram";
 import { allRooms } from "../rooms";
@@ -45,7 +56,7 @@ const Navbar: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const isMobile = useMediaQuery('(max-width:768px)');
+  const isMobile = useMediaQuery("(max-width:768px)");
 
   const { connection } = useConnection();
 
@@ -206,7 +217,7 @@ const Navbar: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <div className="navbar">
-      {isMobile ? (
+        {isMobile ? (
           <>
             <IconButton
               edge="start"
@@ -227,10 +238,9 @@ const Navbar: React.FC = () => {
               }}
             >
               <div className="drawer-content">
-              <Button
-              className="mobile-quests-button"
-            variant="outlined"
-            onClick={() => setMissionsModalOpen(true)}>Quests</Button>
+                <Button className="mobile-quests-button" variant="outlined" onClick={() => setMissionsModalOpen(true)}>
+                  Quests
+                </Button>
                 <Balances {...balances} />
               </div>
             </Drawer>
@@ -289,7 +299,9 @@ const Navbar: React.FC = () => {
                 <img src="/clean-money.png" style={{ paddingLeft: "5px" }} width="32" alt="Clean Cash" />
               </Button>
             </Tooltip>
-            <IconButton className="desktop-only" onClick={handleMenuClick}>{/* <SettingsIcon /> */}⚙️</IconButton>
+            <IconButton className="desktop-only" onClick={handleMenuClick}>
+              {/* <SettingsIcon /> */}⚙️
+            </IconButton>
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
