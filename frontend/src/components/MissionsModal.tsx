@@ -14,57 +14,95 @@ const quests = [
   {
     id: 0,
     title: "Build Laundry",
+    rewards: [
+      { type: "silver", amount: 100 },
+      { type: "xp", amount: 1 },
+    ],
     description:
       "Laundry can be built on the ground floor. Legal businesses can launder illicit funds if you have any.",
   },
   {
     id: 1,
     title: "Build Unlicensed Bar",
+    rewards: [
+      { type: "silver", amount: 100 },
+      { type: "xp", amount: 1 },
+    ],
     description: "Illegal businesses can be built in the basement. They generate dirty cash.",
   },
   {
     id: 2,
     title: "Launder $600 of cash",
+    rewards: [{ type: "silver", amount: 100 }],
     description: "Launder your dirty money through legal businesses. Clean money is safe money.",
   },
   {
     id: 3,
     title: "Build Fast Food Restaurant",
+    rewards: [
+      { type: "silver", amount: 100 },
+      { type: "xp", amount: 1 },
+    ],
     description: "Expand your operations with a fast food restaurant. More businesses mean more cash.",
   },
   {
     id: 4,
     title: "Build Security Room",
+    rewards: [
+      { type: "silver", amount: 100 },
+      { type: "xp", amount: 1 },
+    ],
     description: "Security room protects your operations and allows for the recruitment of enforcers and hitmen.",
   },
   {
     id: 5,
     title: "Recruit 10 Enforcers and 10 Hitmen",
+    rewards: [{ type: "silver", amount: 100 }],
     description: "Enforcers and hitmen protect and expand your empire.",
   },
   {
     id: 6,
     title: "Build Cannabis Farm",
+    rewards: [
+      { type: "silver", amount: 100 },
+      { type: "xp", amount: 1 },
+    ],
     description: "Grow your empire with a Cannabis Farm in the basement. It generates dirty cash.",
   },
   {
     id: 7,
     title: "Build Saferoom",
+    rewards: [
+      { type: "silver", amount: 100 },
+      { type: "xp", amount: 1 },
+    ],
     description: "Saferoom protects your dirty cash from police raids or theft.",
   },
   {
     id: 8,
     title: "Build Strip Club",
+    rewards: [
+      { type: "silver", amount: 100 },
+      { type: "xp", amount: 1 },
+    ],
     description: "Another illegal business that can generate dirty cash.",
   },
   {
     id: 9,
     title: "Build Casino",
+    rewards: [
+      { type: "silver", amount: 100 },
+      { type: "xp", amount: 1 },
+    ],
     description: "Casinos generate large amounts of dirty cash, making it a valuable asset to your operation.",
   },
   {
     id: 10,
     title: "Build Fitness Center",
+    rewards: [
+      { type: "silver", amount: 100 },
+      { type: "xp", amount: 1 },
+    ],
     description: "Fitness center generates clean cash.",
   },
   {
@@ -181,6 +219,28 @@ const MissionsModal: React.FC<MissionsModalProps> = ({ open, onClose }) => {
                 >
                   <div className="mission-details">
                     <Typography variant="h6">{quest.title}</Typography>
+                    <div className="mission-rewards">
+                      {quest.rewards &&
+                        quest.rewards.map((reward, index) => (
+                          <div key={index} className="reward-item">
+                            {reward.type === "silver" ? (
+                              <img
+                                src="/silver.png"
+                                alt="Silver"
+                                width="24"
+                                style={{ verticalAlign: "middle", marginRight: "4px" }}
+                              />
+                            ) : (
+                              ""
+                            )}
+                            {reward.type === "silver" ? (
+                              <span>{reward.amount} Silver</span>
+                            ) : (
+                              <span>{reward.amount} XP</span>
+                            )}
+                          </div>
+                        ))}
+                    </div>
                     {isSelected && (
                       <Typography variant="body2" className="mission-description">
                         {quest.description}

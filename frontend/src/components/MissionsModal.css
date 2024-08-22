@@ -112,7 +112,24 @@ button.close {
 
 .mission-item p {
   margin: 0;
+  margin-top: 10px;
   flex-grow: 1;
+}
+
+.mission-rewards {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.reward-item {
+  display: flex;
+  align-items: center;
+  background-color: #444;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
 }
 
 .status {
