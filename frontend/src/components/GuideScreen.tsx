@@ -5,7 +5,18 @@ const GuideScreen: React.FC = () => {
   return (
     <div className="guide-container-wrapper">
       <div className="guide-container">
-        <h1>About "Startup" Game</h1>
+      <div className="toc">
+          <h3>Contents</h3>
+          <ul>
+            <li><a href="#about">About the Game</a></li>
+            <li><a href="#connect-wallet">Connect Your Wallet</a></li>
+            <li><a href="#gameplay">Gameplay</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#pre-season-rewards">🏆 Pre-season & Sonic Odyssey Rewards</a></li>
+          </ul>
+        </div>
+
+        <h1 id="about">About "Startup" Game</h1>
         <p>
           <b>Startup</b> is a fully on-chain business simulation game. Players purchase rooms to establish legal and
           illegal businesses, earn dirty and clean cash, convert illicit funds into legal money, recruit units to
@@ -14,7 +25,7 @@ const GuideScreen: React.FC = () => {
           spent on loot boxes and transferable assets after the Pre-season ends.
         </p>
 
-        <h2>Connect Your Wallet to Sonic</h2>
+        <h2 id="connect-wallet">Connect Your Wallet to Sonic</h2>
         <p>
           To play <b>Startup</b>, you need a wallet that supports the <b>Sonic Origin</b> (Devnet) network. We recommend
           using either{" "}
@@ -55,7 +66,7 @@ const GuideScreen: React.FC = () => {
           .
         </p>
 
-        <h2>Gameplay</h2>
+        <h2 id="gameplay">Gameplay</h2>
 
         <h3>Resources</h3>
         <ul>
@@ -116,7 +127,7 @@ const GuideScreen: React.FC = () => {
           </li>
         </ul>
 
-        <h2>How It Works</h2>
+        <h2 id="how-it-works">How It Works</h2>
 
         <img src="/guide.png" alt="" />
 
@@ -137,6 +148,44 @@ const GuideScreen: React.FC = () => {
           Dirty cash generated from illegal businesses can be laundered through legal businesses. There is a 30% loss
           when converting dirty cash to clean cash.
         </p>
+        <h2 id="pre-season-rewards">Pre-season & Sonic Odyssey Rewards</h2>
+        <div className="info-box">
+          <p>
+            All in-game actions count towards the 100 TX daily goal in the Sonic Odyssey campaign. Just to name a few on-chain transactions: purchasing or upgrading rooms, collecting
+            or converting cash, recruiting units, raiding, and claiming quest rewards.
+          </p>
+        </div>
+        <p>
+          Players can earn valuable assets and Rings by being active in the game during Pre-Season. There is a prize pool of <span style={{ color: "#d7973a" }}>1,000,000</span> <img src="/rings.png" width="24" alt="" className="rings-img" />{" "}
+          <span style={{ color: "#d7973a" }}>Rings</span>. The pre-season is expected to last ~6 weeks until late September - early October.
+        </p>
+        <ul>
+          <li>
+            <b>Quests:</b> Complete missions to earn in-game currency "silver" and share a pool of 250,000 Rings on a FCFS basis. Every completed quest yields 100 silver and 1 XP. Players who earn 5XP, 10XP, and 15XP in the game can additionally claim 2, 3, and 5 Rings, respectively.
+          </li>
+          <li>
+            <b>Leaderboard:</b> A guaranteed pool of Rings and Silver for all players who stay active throughout the season. The exact distribution model is to be announced.
+          </li>
+          <li>
+            <b>Loot boxes:</b> Players can upgrade their loot boxes by spending silver obtained via quests, raids, and game events. The higher the loot box level, the more valuable the rewards. Loot boxes open up to{" "}
+            <img src="/rings.png" width="24" alt="" className="rings-img" />{" "}
+            <span style={{ color: "#d7973a" }}>Rings</span>, NFTs, WLs, silver, and other rewards after the pre-season concludes.
+          </li>
+        </ul>
+        <div className="lootbox-images">
+          <div className="lootbox common">
+            <img src="/lootbox-1.png" alt="Common Lootbox" />
+            <span>Common</span>
+          </div>
+          <div className="lootbox rare">
+            <img src="/lootbox-2.png" alt="Rare Lootbox" />
+            <span>Rare</span>
+          </div>
+          <div className="lootbox epic">
+            <img src="/lootbox-3.png" alt="Epic Lootbox" />
+            <span>Epic</span>
+          </div>
+        </div>
         <p className="back-home">
           <a href="/">Back to the Home page</a>
         </p>

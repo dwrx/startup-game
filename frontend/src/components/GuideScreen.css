@@ -44,6 +44,89 @@
   max-width: 800px;
 }
 
+.guide-container img.rings-img {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+}
+
+.toc {
+  margin-bottom: 20px;
+}
+
+.toc ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.toc ul li {
+  margin-bottom: 5px;
+}
+
+.toc ul li a {
+  color: #00a1ff;
+  text-decoration: none;
+}
+
+.toc ul li a:hover {
+  text-decoration: underline;
+}
+
+.lootbox-images {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+}
+
+.lootbox {
+  position: relative;
+  text-align: center;
+}
+
+.lootbox img {
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  padding: 25px;
+}
+
+.lootbox span {
+  display: block;
+  margin-top: 5px;
+  font-weight: bold;
+  color: white;
+}
+
+.lootbox.common img {
+  border: 3px solid #8a8a8a;
+  background: rgba(138, 138, 138, 0.3);
+}
+
+.lootbox.rare img {
+  border: 3px solid #007bff;
+  background: rgba(0, 123, 255, 0.3);
+}
+
+.lootbox.epic img {
+  border: 3px solid #d7973a;
+  background: rgba(215, 151, 58, 0.3);
+}
+
+.guide-container .info-box {
+  background-color: #333;
+  color: #fff;
+  border-left: 5px solid #ffcc00;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.guide-container .info-box p {
+  margin: 0;
+}
+
 @media (max-width: 768px) {
   .guide-container {
       padding: 10px;
@@ -51,5 +134,19 @@
 
   .guide-container p, ul, li {
       font-size: 16px;
+  }
+
+  .lootbox-images {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .lootbox {
+    margin-bottom: 15px;
+  }
+
+  .lootbox img {
+    width: 80px;
+    height: 80px;
   }
 }
