@@ -93,7 +93,11 @@ const ClaimLootboxModal: React.FC<ClaimLootboxModalProps> = ({
     >
       <div className="modal-content">
         <h2 id="claim-lootbox-modal-title">Claim Lootbox</h2>
-        <p>Lootboxes open up to NFTs, gems, and other rewards after pre-season concludes.</p>
+        <p style={{ lineHeight: "24px" }}>
+          Lootboxes open up to <img src="/rings.png" width="24" alt="" style={{ verticalAlign: "middle" }} />{" "}
+          <span style={{ color: "#d7973a" }}>Rings</span>, NFTs, WLs, silver and other rewards after pre-season
+          concludes.
+        </p>
         {error && <p className="error-message">{error}</p>}
         <ul className="claim-checklist">
           <li>
