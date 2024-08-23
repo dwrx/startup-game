@@ -27,15 +27,17 @@ const GuideScreen: React.FC = () => {
 
         <h2 id="connect-wallet">Connect Your Wallet to Sonic</h2>
         <p>
-          To play <b>Startup</b>, you need a wallet that supports the <b>Sonic Origin</b> (Devnet) network. We recommend
+          To play <b>Startup</b>, you need a wallet that supports the <b>Sonic Origin</b> network. We recommend
           using either{" "}
           <a href="https://www.backpack.app/" target="_blank" rel="noopener noreferrer">
             Backpack
-          </a>{" "}
-          or{" "}
+          </a>,{" "}
           <a href="https://nightly.app/" target="_blank" rel="noopener noreferrer">
             Nightly
           </a>{" "}
+          or{" "}
+          <a href="https://www.okx.com/web3" target="_blank" rel="noopener noreferrer">
+            OKX</a>{" "}
           wallets for now.
         </p>
         <ul>
@@ -57,11 +59,20 @@ const GuideScreen: React.FC = () => {
               Nightly Wallet Setup Guide
             </a>
           </li>
+          <li>
+            <a
+              href="https://blog.sonic.game/sonic-origin-network-settings---okx-wallet"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              OKX Wallet Setup Guide
+            </a>
+          </li>
         </ul>
         <p>
-          Once your wallet is set up, request devnet SOL from the{" "}
+          Once your wallet is set up, request test SOL from the{" "}
           <a href="https://faucet.sonic.game/" target="_blank" rel="noopener noreferrer">
-            Sonic Devnet Faucet
+            Sonic Origin Faucet
           </a>
           .
         </p>
@@ -186,6 +197,7 @@ const GuideScreen: React.FC = () => {
             <span>Epic</span>
           </div>
         </div>
+        <p>You can check your rings balances in the <a href="https://odyssey.sonic.game/task" target="_blank" rel="noopener noreferrer">Sonic Odyssey</a> page.</p>
         <p className="back-home">
           <a href="/">Back to the Home page</a>
         </p>

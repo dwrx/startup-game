@@ -254,7 +254,7 @@ const HomeScreen: React.FC = () => {
               <Box mt={4}>
                 <Alert severity="warning">
                   Switch wallet to <b>Sonic Origin</b> network (
-                  <Link href="#" onClick={() => setHowToModalOpen(true)}>
+                  <Link href="/guide#connect-wallet">
                     How?
                   </Link>
                   ) and request SOL from{" "}
