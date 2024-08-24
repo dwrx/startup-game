@@ -13,8 +13,28 @@
   max-width: 1000px;
   width: 100%;
   margin: 0 auto;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.content-wrappper-details {
+  display: flex;
+  max-width: 1000px;
   flex-direction: row;
   justify-content: center;
+}
+
+.bottom-main-block {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.bottom-main-block .socials {
+  margin: 0 7px;
+  max-width: 32px;
 }
 
 .left-block,
@@ -239,6 +259,11 @@ p.progression-text {
 
 @media (max-width: 768px) {
   .content-wrapper {
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .content-wrappper-details {
     flex-direction: column;
     max-width: 100%;
   }

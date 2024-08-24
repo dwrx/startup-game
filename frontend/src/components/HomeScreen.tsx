@@ -234,112 +234,128 @@ const HomeScreen: React.FC = () => {
     <div className="home-screen">
       {message && <div className={`message-box ${messageType}`}>{message}</div>}
       <div className="content-wrapper">
-        <div className={`left-block ${!wallet.connected ? "centered" : ""}`}>
-          {showMobileWalletButton ? (
-            <Box mt={4}>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleMobileWalletConnect}
-                style={{ backgroundColor: "#ffcc00", color: "#000" }}
-              >
-                Connect Mobile Wallet
-              </Button>
-            </Box>
-          ) : (
-            <WalletMultiButton />
-          )}
-          {wallet.connected && (
-            <>
+        <div className="content-wrappper-details">
+          <div className={`left-block ${!wallet.connected ? "centered" : ""}`}>
+            {showMobileWalletButton ? (
               <Box mt={4}>
-                <Alert severity="warning">
-                  Switch wallet to <b>Sonic Origin</b> network (
-                  <Link href="/guide#connect-wallet">
-                    How?
-                  </Link>
-                  ) and request SOL from{" "}
-                  <a href="https://faucet.sonic.game/" target="_blank" rel="noreferrer noopener">
-                    faucet
-                  </a>{" "}
-                  to play.
-                </Alert>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleMobileWalletConnect}
+                  style={{ backgroundColor: "#ffcc00", color: "#000" }}
+                >
+                  Connect Mobile Wallet
+                </Button>
               </Box>
-              <Box mt={4}>
-                {loading ? (
-                  <CircularProgress />
-                ) : isInitialized ? (
-                  <Button variant="contained" color="primary" className="play-button" onClick={() => navigate("/game")}>
-                    Continue Playing
-                  </Button>
-                ) : (
-                  <Button variant="contained" color="primary" className="play-button" onClick={initializePlayer}>
-                    New Game
-                  </Button>
-                )}
-              </Box>
-            </>
-          )}
-        </div>
-        <div className="right-block">
-          <div className="top-right-block">
-            <div className="shining-container">
-              <div className="shining-effect"></div>
-            </div>
-            <div className="image-container">
-              <img src={`/lootbox-${lootboxLevel || 1}.png`} alt="Lootbox" className="lootbox-image" />
-            </div>
-          </div>
-          <div className="bottom-right-block" onClick={claimLootbox}>
-            <div className="shining-container">
-              <div className="shining-effect"></div>
-            </div>
-            {!lootboxClaimed ? (
-              <p className="upgrade-lootbox">Claim lootbox</p>
             ) : (
+              <WalletMultiButton />
+            )}
+            {wallet.connected && (
               <>
-                <p className="progression-text">Lootbox Progression</p>
-                <div className="progress-wrapper">
-                  <LinearProgress
-                    variant="determinate"
-                    value={(silver / (lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800)) * 100}
-                    className="progress-bar"
-                  />
-                  <span className="xp-text">
-                    {silver} / {lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800} silver
-                  </span>
+                <Box mt={4}>
+                  <Alert severity="warning">
+                    Switch wallet to <b>Sonic Origin</b> network (<Link href="/guide#connect-wallet">How?</Link>) and
+                    request SOL from{" "}
+                    <a href="https://faucet.sonic.game/" target="_blank" rel="noreferrer noopener">
+                      faucet
+                    </a>{" "}
+                    to play.
+                  </Alert>
+                </Box>
+                <Box mt={4}>
+                  {loading ? (
+                    <CircularProgress />
+                  ) : isInitialized ? (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      className="play-button"
+                      onClick={() => navigate("/game")}
+                    >
+                      Continue Playing
+                    </Button>
+                  ) : (
+                    <Button variant="contained" color="primary" className="play-button" onClick={initializePlayer}>
+                      New Game
+                    </Button>
+                  )}
+                </Box>
+                <div className="bottom-main-block">
+                  <div>
+                    <a href="https://x.com/playstartupio" target="_blank" rel="noopener noreferrer">
+                      <img src="/icons/x.png" className="socials" width="26" alt="Twitter" />
+                    </a>
+                  </div>
+                  <div>
+                    <a href="https://discord.gg/fckhkP5p5Z" target="_blank" rel="noopener noreferrer">
+                      <img src="/icons/discord.png" className="socials" width="32" alt="Discord" />
+                    </a>
+                  </div>
                 </div>
-                {silver >= (lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800) && lootboxLevel < 4 && (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    style={{ background: "gold", marginTop: "10px", color: "#333" }}
-                    className="upgrade-button"
-                    onClick={upgradeLootbox}
-                  >
-                    Upgrade
-                  </Button>
-                )}
               </>
             )}
           </div>
-          <Box mt={2} textAlign="right" width="100%">
-            <Button
-              variant="outlined"
-              color="secondary"
-              className="how-to-play"
-              onClick={() => navigate("/guide")}
-              style={{
-                margin: "0 auto",
-                color: "#ffcc00",
-                borderColor: "#ffcc00",
-                padding: "10px 20px",
-                fontSize: "18px",
-                width: "200px",
-              }}
-            >
-              How to Play
-            </Button>
-          </Box>
+          <div className="right-block">
+            <div className="top-right-block">
+              <div className="shining-container">
+                <div className="shining-effect"></div>
+              </div>
+              <div className="image-container">
+                <img src={`/lootbox-${lootboxLevel || 1}.png`} alt="Lootbox" className="lootbox-image" />
+              </div>
+            </div>
+            <div className="bottom-right-block" onClick={claimLootbox}>
+              <div className="shining-container">
+                <div className="shining-effect"></div>
+              </div>
+              {!lootboxClaimed ? (
+                <p className="upgrade-lootbox">Claim lootbox</p>
+              ) : (
+                <>
+                  <p className="progression-text">Lootbox Progression</p>
+                  <div className="progress-wrapper">
+                    <LinearProgress
+                      variant="determinate"
+                      value={(silver / (lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800)) * 100}
+                      className="progress-bar"
+                    />
+                    <span className="xp-text">
+                      {silver} / {lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800} silver
+                    </span>
+                  </div>
+                  {silver >= (lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800) && lootboxLevel < 4 && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      style={{ background: "gold", marginTop: "10px", color: "#333" }}
+                      className="upgrade-button"
+                      onClick={upgradeLootbox}
+                    >
+                      Upgrade
+                    </Button>
+                  )}
+                </>
+              )}
+            </div>
+            <Box mt={2} textAlign="right" width="100%">
+              <Button
+                variant="outlined"
+                color="secondary"
+                className="how-to-play"
+                onClick={() => navigate("/guide")}
+                style={{
+                  margin: "0 auto",
+                  color: "#ffcc00",
+                  borderColor: "#ffcc00",
+                  padding: "10px 20px",
+                  fontSize: "18px",
+                  width: "200px",
+                }}
+              >
+                How to Play
+              </Button>
+            </Box>
+          </div>
         </div>
       </div>
 
