@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Box, Typography, Button, Switch, FormControlLabel } from "@mui/material";
+import { Modal, Box, Typography, Button, Switch, FormControlLabel, Tabs, Tab } from "@mui/material";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import useProgram from "../hooks/useProgram";
@@ -9,6 +9,8 @@ interface MissionsModalProps {
   open: boolean;
   onClose: () => void;
 }
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const quests = [
   {
@@ -117,6 +119,30 @@ const quests = [
   },
 ];
 
+const odysseyQuests = [
+  {
+    id: 1000,
+    title: "Earn 5 XP",
+    xpRequired: 5,
+    rewards: [{ type: "rings", amount: 2 }],
+    description: "Earn 5 XP to claim 2 rings.",
+  },
+  {
+    id: 1001,
+    title: "Earn 10 XP",
+    xpRequired: 10,
+    rewards: [{ type: "rings", amount: 3 }],
+    description: "Earn 10 XP to claim 3 rings.",
+  },
+  {
+    id: 1002,
+    title: "Earn 15 XP",
+    xpRequired: 15,
+    rewards: [{ type: "rings", amount: 5 }],
+    description: "Earn 15 XP to claim 5 rings.",
+  },
+];
+
 const MissionsModal: React.FC<MissionsModalProps> = ({ open, onClose }) => {
   const wallet = useWallet();
   const program = useProgram();
@@ -124,6 +150,10 @@ const MissionsModal: React.FC<MissionsModalProps> = ({ open, onClose }) => {
   const [claimedQuests, setClaimedQuests] = useState<number[]>([]);
   const [selectedQuest, setSelectedQuest] = useState<number | null>(null);
   const [hideClaimed, setHideClaimed] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState(0);
+  const [xp, setXp] = useState(0);
+  const [transactions, setTransactions] = useState<Record<number, string>>({});
+  const [error, setError] = useState<string | null>(null);
 
   const fetchPlayerData = async () => {
     if (!wallet.publicKey || !program) return;
@@ -141,7 +171,7 @@ const MissionsModal: React.FC<MissionsModalProps> = ({ open, onClose }) => {
       const questClaimBitmask = playerAccount.questClaimBitmask.toNumber();
 
       const completed = [];
-      const claimed = [];
+      const claimed: number[] = [];
       for (let i = 0; i < quests.length; i++) {
         if (questCompletionBitmask & (1 << i)) {
           completed.push(i);
@@ -151,7 +181,8 @@ const MissionsModal: React.FC<MissionsModalProps> = ({ open, onClose }) => {
         }
       }
       setCompletedQuests(completed);
-      setClaimedQuests(claimed);
+      setClaimedQuests((prevClaimedQuests) => [...prevClaimedQuests, ...claimed]);
+      setXp(playerAccount.experience.toNumber());
     } catch (err) {
       console.error("Failed to fetch player data", err);
     }
@@ -179,10 +210,56 @@ const MissionsModal: React.FC<MissionsModalProps> = ({ open, onClose }) => {
     }
   };
 
+  const handleOdysseyClaim = async (questId: number, type: string) => {
+    console.log(claimedQuests);
+    if (!wallet.connected || !wallet.publicKey || !program) return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/claim-odyssey-reward`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ questId, type, address: wallet.publicKey.toBase58() }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setClaimedQuests([...claimedQuests, questId]);
+        setError(null);
+      } else {
+        setError(result.message);
+      }
+      fetchOdysseyData();
+    } catch (err) {
+      console.error("Failed to claim quest reward", err);
+    }
+  };
+
+  const fetchOdysseyData = async () => {
+    if (!wallet.publicKey || !program) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/claimed-quests?address=${wallet.publicKey.toBase58()}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const result = await response.json();
+      console.log(result);
+      if (result.success) {
+        setClaimedQuests((prevClaimedQuests) => [...prevClaimedQuests, ...result.claimedQuests]);
+        setTransactions((prevTransactions) => ({ ...prevTransactions, ...result.transactions }));
+      }
+    } catch (err) {
+      console.error("Failed to fetch odyssey data", err);
+    }
+  };
+
   useEffect(() => {
     if (open) {
+      setActiveTab(0);
       fetchPlayerData();
       setSelectedQuest(0);
+      setError(null);
+      fetchOdysseyData();
     }
   }, [open]);
 
@@ -193,84 +270,162 @@ const MissionsModal: React.FC<MissionsModalProps> = ({ open, onClose }) => {
   return (
     <Modal open={open} onClose={onClose} className="claim-modal missions-modal">
       <Box className="modal-content">
-        <h2>Missions</h2>
-        <Typography variant="body1" paragraph>
-          Complete these missions to progress and earn rewards.
-        </Typography>
+        <Tabs
+          className="missions-tabs"
+          TabIndicatorProps={{ style: { backgroundColor: "#ffcc00" } }}
+          value={activeTab}
+          onChange={(e, newValue) => setActiveTab(newValue)}
+        >
+          <Tab className="missions-tab-button" label="Missions" />
+          <Tab className="missions-tab-button" label="Odyssey Rings" />
+        </Tabs>
+        {activeTab === 0 && (
+          <>
+            {/* <Typography variant="body1" paragraph>
+              Complete these missions to progress and earn rewards.
+            </Typography> */}
 
-        <FormControlLabel
-          control={<Switch checked={hideClaimed} onChange={() => setHideClaimed(!hideClaimed)} color="primary" />}
-          label="Hide claimed"
-        />
+            <FormControlLabel
+              control={<Switch checked={hideClaimed} onChange={() => setHideClaimed(!hideClaimed)} color="primary" />}
+              label="Hide claimed"
+            />
 
-        <ul className="mission-list">
-          {quests
-            .filter((quest) => !hideClaimed || !claimedQuests.includes(quest.id))
-            .map((quest) => {
-              const isCompleted = completedQuests.includes(quest.id);
-              const isClaimed = claimedQuests.includes(quest.id);
-              const isSelected = selectedQuest === quest.id;
+            <ul className="mission-list">
+              {quests
+                .filter((quest) => !hideClaimed || !claimedQuests.includes(quest.id))
+                .map((quest) => {
+                  const isCompleted = completedQuests.includes(quest.id);
+                  const isClaimed = claimedQuests.includes(quest.id);
+                  const isSelected = selectedQuest === quest.id;
 
-              return (
-                <li
-                  key={quest.id}
-                  className={`mission-item ${isClaimed ? "claimed" : ""}`}
-                  onClick={() => handleQuestClick(quest.id)}
-                >
-                  <div className="mission-details">
-                    <Typography variant="h6">{quest.title}</Typography>
-                    <div className="mission-rewards">
-                      {quest.rewards &&
-                        quest.rewards.map((reward, index) => (
-                          <div key={index} className="reward-item">
-                            {reward.type === "silver" ? (
-                              <img
-                                src="/silver.png"
-                                alt="Silver"
-                                width="24"
-                                style={{ verticalAlign: "middle", marginRight: "4px" }}
-                              />
-                            ) : (
-                              ""
-                            )}
-                            {reward.type === "silver" ? (
-                              <span>{reward.amount} Silver</span>
-                            ) : (
-                              <span>{reward.amount} XP</span>
-                            )}
-                          </div>
-                        ))}
-                    </div>
-                    {isSelected && (
-                      <Typography variant="body2" className="mission-description">
-                        {quest.description}
-                      </Typography>
-                    )}
-                  </div>
-                  <div className="mission-action">
-                    {isCompleted && !isClaimed ? (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => handleClaim(quest.id)}
-                        style={{ backgroundColor: "#ffcc00", color: "#000" }}
-                      >
-                        Claim
-                      </Button>
-                    ) : (
-                      <div className={`status ${isCompleted ? "completed" : "not-completed"}`}>
-                        {isCompleted ? (
-                          <div className="checkmark">&#10004;</div>
-                        ) : (
-                          <div className="xmark">&#10008;</div>
+                  return (
+                    <li
+                      key={quest.id}
+                      className={`mission-item ${isClaimed ? "claimed" : ""}`}
+                      onClick={() => handleQuestClick(quest.id)}
+                    >
+                      <div className="mission-details">
+                        <Typography variant="h6">{quest.title}</Typography>
+                        <div className="mission-rewards">
+                          {quest.rewards &&
+                            quest.rewards.map((reward, index) => (
+                              <div key={index} className="reward-item">
+                                {reward.type === "silver" ? (
+                                  <img
+                                    src="/silver.png"
+                                    alt="Silver"
+                                    width="24"
+                                    style={{ verticalAlign: "middle", marginRight: "4px" }}
+                                  />
+                                ) : (
+                                  ""
+                                )}
+                                {reward.type === "silver" ? (
+                                  <span>{reward.amount} Silver</span>
+                                ) : (
+                                  <span>{reward.amount} XP</span>
+                                )}
+                              </div>
+                            ))}
+                        </div>
+                        {isSelected && (
+                          <Typography variant="body2" className="mission-description">
+                            {quest.description}
+                          </Typography>
                         )}
                       </div>
-                    )}
-                  </div>
-                </li>
-              );
-            })}
-        </ul>
+                      <div className="mission-action">
+                        {isCompleted && !isClaimed ? (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handleClaim(quest.id)}
+                            style={{ backgroundColor: "#ffcc00", color: "#000" }}
+                          >
+                            Claim
+                          </Button>
+                        ) : (
+                          <div className={`status ${isCompleted ? "completed" : "not-completed"}`}>
+                            {isCompleted ? (
+                              <div className="checkmark">&#10004;</div>
+                            ) : (
+                              <div className="xmark">&#10008;</div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+            </ul>
+          </>
+        )}
+        {activeTab === 1 && (
+          <>
+            {/* <Typography variant="body1" paragraph>
+              Progress in the game to earn Odyssey Rings.
+            </Typography> */}
+            {error && (
+              <Typography color="error" className="quest-claim-error" variant="body2">
+                {error}{" "}
+                <a href="/" style={{ color: "#ffcc00" }}>
+                  Home Page
+                </a>
+              </Typography>
+            )}
+            <ul className="mission-list">
+              {odysseyQuests.map((quest) => {
+                const canClaim = xp >= quest.xpRequired;
+                const isClaimed = claimedQuests.includes(quest.id);
+                return (
+                  <li key={quest.id} className={`mission-item`}>
+                    <div className="mission-details">
+                      <Typography variant="h6">{quest.title}</Typography>
+                      <div className="mission-rewards">
+                        <div className="reward-item">
+                          <img
+                            src="/rings.png"
+                            alt="Rings"
+                            width="24"
+                            style={{ verticalAlign: "middle", marginRight: "4px" }}
+                          />
+                          {quest.rewards[0].amount} Rings
+                        </div>
+                      </div>
+                      {/* <Typography variant="body2" className="mission-description">
+                        {quest.description}
+                      </Typography> */}
+                    </div>
+                    <div className="mission-action">
+                      {!isClaimed ? (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => handleOdysseyClaim(quest.id, "odyssey")}
+                          disabled={!canClaim}
+                          style={{ backgroundColor: canClaim ? "#ffcc00" : "gray", color: canClaim ? "#000" : "#fff" }}
+                        >
+                          {canClaim ? "Claim" : "Not Enough XP"}
+                        </Button>
+                      ) : (
+                        <div>
+                          <a
+                            style={{ color: "#ffcc00", fontSize: "14px" }}
+                            href={`https://explorer.sonic.game/tx/${transactions[quest.id]}?cluster=devnet`}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                          >
+                            Transaction
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </>
+        )}
         <Box mt={2} textAlign="right">
           <Button variant="contained" color="primary" className="close" onClick={onClose}>
             Close

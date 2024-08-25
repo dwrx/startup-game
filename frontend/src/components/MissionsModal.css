@@ -80,6 +80,21 @@ button.close {
   color: #fff;
 }
 
+.missions-tabs {
+  margin-bottom: 20px;
+}
+
+.missions-modal .missions-tab-button {
+  color: #fff;
+  background-color: #ffffff26;
+    margin-right: 5px;
+    border-radius: 5px;
+}
+
+.missions-modal .missions-tab-button.Mui-selected {
+  color: #ffcc00;
+}
+
 .mission-list {
   list-style-type: none;
   padding: 0;
@@ -120,6 +135,13 @@ button.close {
   display: flex;
   gap: 10px;
   margin-top: 5px;
+}
+
+.missions-modal .quest-claim-error {
+  color: #fff;
+  background: #d32f2fad;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
 .reward-item {
