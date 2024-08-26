@@ -1,4 +1,4 @@
-use crate::errors::{PlayerError, RoomError};
+use crate::errors::{InventoryError, PlayerError, RoomError};
 use anchor_lang::prelude::*;
 
 pub mod errors;
@@ -26,6 +26,20 @@ pub mod startup_game {
         player.enforcers = 0;
         player.hitmen = 0;
         player.rooms = vec![];
+
+        Ok(())
+    }
+
+    pub fn initialize_inventory(ctx: Context<InitializeInventory>) -> Result<()> {
+        let inventory = &mut ctx.accounts.inventory;
+
+        if inventory.is_initialized {
+            return Err(PlayerError::AlreadyInitialized.into());
+        }
+
+        inventory.is_initialized = true;
+        inventory.owner = ctx.accounts.owner.key();
+        inventory.items = Vec::new();
 
         Ok(())
     }
@@ -277,6 +291,47 @@ pub mod startup_game {
         Ok(())
     }
 
+    pub fn recruit_team_member(
+        ctx: Context<RecruitTeamMember>,
+        member: InventoryItem,
+    ) -> Result<()> {
+        let player = &mut ctx.accounts.player;
+        let inventory = &mut ctx.accounts.inventory;
+
+        if !inventory.is_initialized {
+            return err!(InventoryError::UninitializedAccount);
+        }
+
+        // Check if the team member is allowed (for now, only Thief)
+        if !member.is_allowed() {
+            return err!(InventoryError::InvalidItem);
+        }
+
+        if inventory.has_team_member(member.clone()) {
+            return err!(InventoryError::AlreadyRecruited);
+        }
+
+        if player.experience < 9 {
+            return err!(InventoryError::InsufficientExperience);
+        }
+
+        if player.dirty_cash < 5000 {
+            return err!(InventoryError::InsufficientFunds);
+        }
+
+        player.dirty_cash = player
+            .dirty_cash
+            .checked_sub(5000)
+            .ok_or(InventoryError::InsufficientFunds)?;
+
+        inventory.add_team_member(member);
+
+        player.complete_quest(Player::QUEST_RECRUIT_THIEF);
+        player.experience += 1;
+
+        Ok(())
+    }
+
     pub fn claim_quest_reward(ctx: Context<ClaimQuestReward>, quest_id: u8) -> Result<()> {
         let player = &mut ctx.accounts.player;
 
@@ -309,6 +364,52 @@ pub struct InitializePlayer<'info> {
     #[account(mut)]
     pub owner: Signer<'info>,
     pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct InitializeInventory<'info> {
+    #[account(
+        init,
+        payer = owner,
+        space = 5000,
+        seeds = [b"INVENTORY", owner.key().as_ref()],
+        bump
+    )]
+    pub inventory: Account<'info, Inventory>,
+    #[account(mut)]
+    pub owner: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+#[account]
+pub struct Inventory {
+    pub is_initialized: bool,
+    pub owner: Pubkey,
+    pub items: Vec<InventoryItem>,
+}
+
+impl Inventory {
+    fn has_team_member(&self, member: InventoryItem) -> bool {
+        self.items.contains(&member)
+    }
+
+    fn add_team_member(&mut self, member: InventoryItem) {
+        self.items.push(member);
+    }
+}
+
+#[derive(Clone, AnchorSerialize, AnchorDeserialize, PartialEq)]
+pub enum InventoryItem {
+    Thief,
+    Diplomat,
+    Researcher,
+    PromoLootBox,
+}
+
+impl InventoryItem {
+    fn is_allowed(&self) -> bool {
+        matches!(self, InventoryItem::Thief)
+    }
 }
 
 #[derive(Accounts)]
@@ -354,6 +455,15 @@ pub struct RecruitUnits<'info> {
 }
 
 #[derive(Accounts)]
+pub struct RecruitTeamMember<'info> {
+    #[account(mut, has_one = owner)]
+    pub player: Account<'info, Player>,
+    #[account(mut, has_one = owner)]
+    pub inventory: Account<'info, Inventory>,
+    pub owner: Signer<'info>,
+}
+
+#[derive(Accounts)]
 pub struct ClaimQuestReward<'info> {
     #[account(mut, has_one = owner)]
     pub player: Account<'info, Player>,
@@ -378,6 +488,8 @@ pub struct Player {
 }
 
 impl Player {
+    const QUEST_RECRUIT_THIEF: u8 = 11;
+
     fn owns_room(&self, room_type: RoomType) -> bool {
         self.rooms.iter().any(|room| room.room_type == room_type)
     }

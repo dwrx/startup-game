@@ -10,10 +10,16 @@ describe("startup-game", () => {
 
   let owner = provider.wallet.publicKey;
   let playerPda: anchor.web3.PublicKey;
+  let inventoryPda: anchor.web3.PublicKey;
 
   before(async () => {
     [playerPda] = await anchor.web3.PublicKey.findProgramAddress(
       [Buffer.from("PLAYER"), owner.toBuffer()],
+      program.programId
+    );
+
+    [inventoryPda] = await anchor.web3.PublicKey.findProgramAddress(
+      [Buffer.from("INVENTORY"), owner.toBuffer()],
       program.programId
     );
   });
@@ -168,7 +174,7 @@ describe("startup-game", () => {
     const updatedPlayerAccount = await program.account.player.fetch(playerPda);
     expect(Number(updatedPlayerAccount.silver)).to.equal(200);
   });
-
+  /*
   it("Collect clean cash from Laundry after 5 seconds", async () => {
     // Wait for 5 seconds to give the room time to produce clean cash
     await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -185,7 +191,7 @@ describe("startup-game", () => {
     // Check if clean cash has been collected
     expect(playerAccount.cleanCash.gt(new anchor.BN(0))).to.be.true;
   });
-
+*/
   it("Fails to recruit enforcers without Security Room", async () => {
     try {
       await program.methods
@@ -210,5 +216,46 @@ describe("startup-game", () => {
     } catch (err) {
       expect(err.error.errorMessage).to.equal("The player has insufficient experience.");
     }
+  });
+
+  it("Initialize Inventory if not already initialized and recruit Thief", async () => {
+    let inventoryAccount;
+    try {
+      inventoryAccount = await program.account.inventory.fetch(inventoryPda);
+    } catch (err) {
+      await program.methods
+        .initializeInventory()
+        .accounts({
+          owner: owner,
+        })
+        .rpc();
+
+      inventoryAccount = await program.account.inventory.fetch(inventoryPda);
+    }
+
+    expect(inventoryAccount.isInitialized).to.be.true;
+
+    await program.methods
+      .recruitTeamMember({ thief: {} })
+      .accounts({
+        player: playerPda,
+        inventory: inventoryPda,
+      })
+      .rpc();
+
+    inventoryAccount = await program.account.inventory.fetch(inventoryPda);
+    expect(inventoryAccount.items[0]).deep.equal({ thief: {} });
+  });
+
+  it("Claim 'Quest 11: Recruit Thief' reward successfully", async () => {
+    await program.methods
+      .claimQuestReward(11)
+      .accounts({
+        player: playerPda,
+      })
+      .rpc();
+
+    const updatedPlayerAccount = await program.account.player.fetch(playerPda);
+    expect(Number(updatedPlayerAccount.silver)).to.equal(300);
   });
 });

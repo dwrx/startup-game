@@ -35,3 +35,19 @@ pub enum RoomError {
     #[msg("No Security Room.")]
     NoSecurityRoom,
 }
+
+#[error_code]
+pub enum InventoryError {
+    #[msg("The inventory account is already initialized.")]
+    AlreadyInitialized,
+    #[msg("Insufficient experience.")]
+    InsufficientExperience,
+    #[msg("Insufficient funds.")]
+    InsufficientFunds,
+    #[msg("The inventory has not been initialized.")]
+    UninitializedAccount,
+    #[msg("The inventory item is not allowed.")]
+    InvalidItem,
+    #[msg("The inventory already has this team member.")]
+    AlreadyRecruited,
+}
