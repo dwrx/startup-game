@@ -18,6 +18,7 @@ import {
 import useProgram from "../hooks/useProgram";
 import { allRooms } from "../rooms";
 import MissionsModal from "./MissionsModal";
+import TeamModal from "./TeamModal";
 import Balances from "./Balances";
 import "../styles.css";
 
@@ -52,6 +53,7 @@ const Navbar: React.FC = () => {
   const [estimatedDirtyCash, setEstimatedDirtyCash] = useState(0);
   const [estimatedCleanCash, setEstimatedCleanCash] = useState(0);
   const [missionsModalOpen, setMissionsModalOpen] = useState<boolean>(false);
+  const [teamModalOpen, setTeamModalOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -241,6 +243,9 @@ const Navbar: React.FC = () => {
                 <Button className="mobile-quests-button" variant="outlined" onClick={() => setMissionsModalOpen(true)}>
                   Quests
                 </Button>
+                <Button className="mobile-quests-button" variant="outlined" onClick={() => setTeamModalOpen(true)}>
+                  Team
+                </Button>
                 <Balances {...balances} />
               </div>
             </Drawer>
@@ -266,6 +271,21 @@ const Navbar: React.FC = () => {
             </div>
             Quests
           </Button>
+          <Button
+            variant="outlined"
+            onClick={() => setTeamModalOpen(true)}
+            className="desktop-only"
+            style={{
+              marginRight: "10px",
+              height: "100%",
+              color: "black",
+              backgroundColor: "gold",
+              borderColor: "gold",
+            }}
+          >
+            Team
+          </Button>
+
           <Box display="flex" alignItems="center" height="100%">
             <Tooltip title="Collect dirty cash generated from illegal activities.">
               <Button
@@ -317,6 +337,12 @@ const Navbar: React.FC = () => {
           </Box>
         </div>
         <MissionsModal open={missionsModalOpen} onClose={() => setMissionsModalOpen(false)} />
+        <TeamModal
+          open={teamModalOpen}
+          onClose={() => setTeamModalOpen(false)}
+          playerXp={balances.xp}
+          playerDirtyCash={balances.dirtyCash}
+        />
         <audio ref={audioRef} src="/background-music.mp3" loop />
       </div>
     </ThemeProvider>

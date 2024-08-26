@@ -22,12 +22,12 @@ const Balances: React.FC<BalancesProps> = ({
     <div className="navbar-left">
       <Tooltip title="Clean cash">
         <div className="text-center balance-item">
-          <img src="/clean-money.png" width="32" alt="Clean Cash:" /> ${cleanCash}
+          <img src="/clean-money.png" width="32" alt="Clean Cash:" /> ${cleanCash > 1000 ? (cleanCash / 1000).toFixed(1) + "K" : cleanCash}
         </div>
       </Tooltip>
       <Tooltip title="Dirty cash">
         <div className="text-center balance-item">
-          <img src="/dirty-money.png" width="32" alt="Dirty Cash:" /> ${dirtyCash}
+          <img src="/dirty-money.png" width="32" alt="Dirty Cash:" /> ${dirtyCash > 1000 ? (dirtyCash / 1000).toFixed(1) + "K" : dirtyCash}
         </div>
       </Tooltip>
       <Tooltip title="Enforcers are defensive guards that patrol the rooms.">
