@@ -109,12 +109,16 @@ const quests = [
   },
   {
     id: 11,
-    title: "Attack Level 1 competitor base",
-    description: "Coming soon.",
+    title: "Recruit thief to your team",
+    rewards: [
+      { type: "silver", amount: 100 },
+      { type: "xp", amount: 1 },
+    ],
+    description: "Albert is skilled in planning and executing high-stakes heists.",
   },
   {
     id: 12,
-    title: "Survive Big Police Raid",
+    title: "Complete the first heist",
     description: "Coming soon.",
   },
 ];
@@ -278,6 +282,10 @@ const MissionsModal: React.FC<MissionsModalProps> = ({ open, onClose }) => {
         >
           <Tab className="missions-tab-button" label="Missions" />
           <Tab className="missions-tab-button" label="Odyssey Rings" />
+          <FormControlLabel
+            control={<Switch checked={hideClaimed} onChange={() => setHideClaimed(!hideClaimed)} color="primary" />}
+            label="Hide claimed"
+          />
         </Tabs>
         {activeTab === 0 && (
           <>
@@ -285,10 +293,10 @@ const MissionsModal: React.FC<MissionsModalProps> = ({ open, onClose }) => {
               Complete these missions to progress and earn rewards.
             </Typography> */}
 
-            <FormControlLabel
+            {/* <FormControlLabel
               control={<Switch checked={hideClaimed} onChange={() => setHideClaimed(!hideClaimed)} color="primary" />}
               label="Hide claimed"
-            />
+            /> */}
 
             <ul className="mission-list">
               {quests

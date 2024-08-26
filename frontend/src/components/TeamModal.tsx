@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Box, Button, Typography, Tooltip } from "@mui/material";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { PublicKey } from "@solana/web3.js";
+import useProgram from "../hooks/useProgram";
 import "../styles.css";
 
 interface TeamModalProps {
@@ -10,10 +13,78 @@ interface TeamModalProps {
 }
 
 const TeamModal: React.FC<TeamModalProps> = ({ open, onClose, playerXp, playerDirtyCash }) => {
+  const wallet = useWallet();
+  const program = useProgram();
+  const [inventoryPda, setInventoryPda] = useState<PublicKey | null>(null);
+  const [hasThief, setHasThief] = useState<boolean>(false);
   const canRecruitAlbert = playerXp >= 9 && playerDirtyCash >= 5000;
 
-  const recruitMember = (memberName: string) => {
-    console.log("recruit member", memberName);
+  useEffect(() => {
+    const fetchInventory = async () => {
+      if (!wallet.publicKey || !program) return;
+
+      const [inventoryPda] = await PublicKey.findProgramAddress(
+        [Buffer.from("INVENTORY"), wallet.publicKey.toBuffer()],
+        program.programId
+      );
+      setInventoryPda(inventoryPda);
+
+      try {
+        // @ts-ignore
+        const inventoryAccount = await program.account.inventory.fetch(inventoryPda);
+
+        if (inventoryAccount) {
+          console.log(inventoryAccount);
+          const thiefInInventory = inventoryAccount.items.some(
+            (item: any) => JSON.stringify(item) === JSON.stringify({ thief: {} })
+          );
+          setHasThief(thiefInInventory);
+        }
+      } catch (err) {
+        console.log("Inventory not initialized or Thief not found:", err);
+      }
+    };
+
+    fetchInventory();
+  }, [wallet.publicKey, program]);
+
+  const recruitMember = async (memberName: string) => {
+    if (!wallet.publicKey || !program || !inventoryPda) return;
+
+    try {
+      // @ts-ignore
+      const inventoryAccount = await program.account.inventory.fetchNullable(inventoryPda);
+      if (!inventoryAccount) {
+        console.log("Initializing inventory...");
+        await program.methods
+          .initializeInventory()
+          .accounts({
+            inventory: inventoryPda,
+            owner: wallet.publicKey,
+          })
+          .rpc();
+      }
+
+      // Recruit Thief (Albert)
+      console.log(`Recruiting ${memberName}...`);
+      const [playerPda] = await PublicKey.findProgramAddress(
+        [Buffer.from("PLAYER"), wallet.publicKey.toBuffer()],
+        program.programId
+      );
+
+      await program.methods
+        .recruitTeamMember({ thief: {} })
+        .accounts({
+          player: playerPda,
+          inventory: inventoryPda,
+          owner: wallet.publicKey,
+        })
+        .rpc();
+
+      setHasThief(true);
+    } catch (err) {
+      console.error("Failed to recruit member:", err);
+    }
   };
 
   return (
@@ -38,18 +109,35 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, onClose, playerXp, playerDi
             <Typography variant="body1">
               <b>Albert</b> is a clever mastermind, skilled in planning and executing high-stakes heists.
             </Typography>
-            <Tooltip title="Albert unlocks Heists.">
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={!canRecruitAlbert}
-                onClick={() => recruitMember("Albert")}
-                style={{ marginTop: "10px", color: "#000000", backgroundColor: canRecruitAlbert ? "#d2ab2c" : "grey" }}
+            {!hasThief ? (
+              <Tooltip title="Albert unlocks Heists.">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  disabled={!canRecruitAlbert || hasThief}
+                  onClick={() => recruitMember("Albert")}
+                  style={{
+                    marginTop: "10px",
+                    color: "#000000",
+                    backgroundColor: canRecruitAlbert ? "#d2ab2c" : "grey",
+                  }}
+                >
+                  {playerXp < 9 ? `9 XP needed` : "Recruit for $5000"}
+                </Button>
+              </Tooltip>
+            ) : (
+              <Box
+                sx={{
+                  marginTop: "10px",
+                  padding: "10px",
+                  backgroundColor: "#fff6da",
+                  color: "#000",
+                  textAlign: "left",
+                }}
               >
-                {playerXp < 9 ? `9 XP needed` : "Recruit for $5000"}
-                {/* Recruit for $5000 <img src="/dirty-money.png" style={{ paddingLeft: "5px" }} width="32" alt="Dirty Cash" /> */}
-              </Button>
-            </Tooltip>
+                Heists are coming soon.
+              </Box>
+            )}
           </div>
         </div>
 

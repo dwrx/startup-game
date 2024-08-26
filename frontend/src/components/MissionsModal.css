@@ -70,7 +70,7 @@
 .missions-modal button {
   background-color: #ffcc00;
   color: #000;
-  margin-top: 20px;
+  /* margin-top: 20px; */
 }
 
 .missions-modal button.close,
