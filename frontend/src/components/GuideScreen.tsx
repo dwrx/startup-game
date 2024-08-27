@@ -1,9 +1,11 @@
 import React from "react";
+import SiteNavigation from './SiteNavigation';
 import "./GuideScreen.css";
 
 const GuideScreen: React.FC = () => {
   return (
     <div className="guide-container-wrapper">
+      <SiteNavigation />
       <div className="guide-container">
       <div className="toc">
           <h3>Contents</h3>

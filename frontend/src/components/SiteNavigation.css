@@ -1,0 +1,134 @@
+.top-navigation-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navigation-row {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+}
+
+.nav-left-block {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.nav-right-block {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.nav-block {
+  font-family: "Chakra Petch", "Roboto", sans-serif;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  margin-right: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.nav-block.active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-block:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-block .block-title {
+  margin: 0;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.hamburger-menu {
+  display: none;
+}
+
+.social-link {
+  margin-right: 10px;
+}
+
+.social-icon {
+  width: 26px;
+  transition: transform 0.3s ease;
+}
+
+.social-link:hover .social-icon {
+  transform: scale(1.2);
+}
+
+@media (max-width: 768px) {
+  .hamburger-menu {
+    display: block;
+    font-size: 24px;
+    color: #fff;
+  }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    flex-direction: column;
+    padding: 10px 0;
+    z-index: 999;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-block {
+    margin: 10px 0;
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+  }
+
+  .nav-right-block {
+    display: none;
+  }
+}
+
+/* Desktop Styles */
+@media (min-width: 769px) {
+  .hamburger-menu {
+    display: none;
+  }
+
+  .nav-links {
+    display: flex;
+    position: static;
+    width: auto;
+    background: none;
+    flex-direction: row;
+  }
+
+  .nav-block {
+    text-align: left;
+  }
+
+  .nav-right-block {
+    display: flex;
+  }
+}

@@ -5,10 +5,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 import { PublicKey, SystemProgram } from "@solana/web3.js";
 import { Button, CircularProgress, Box, Alert, Link, LinearProgress } from "@mui/material";
+import SiteNavigation from "./SiteNavigation";
 import HowToModal from "./HowToModal";
 import ClaimLootboxModal from "./ClaimLootboxModal";
 import useProgram from "../hooks/useProgram";
 import "./HomeScreen.css";
+import "./SiteNavigation.css";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -232,17 +234,19 @@ const HomeScreen: React.FC = () => {
 
   return (
     <div className="home-screen">
+      <SiteNavigation />
+
       {message && <div className={`message-box ${messageType}`}>{message}</div>}
       <div className="content-wrapper">
         <div className="content-wrappper-details">
           <div className={`left-block ${!wallet.connected ? "centered" : ""}`}>
             {showMobileWalletButton ? (
-              <Box mt={4}>
+              <Box>
                 <Button
                   variant="contained"
                   color="secondary"
                   onClick={handleMobileWalletConnect}
-                  style={{ backgroundColor: "#ffcc00", color: "#000" }}
+                  style={{ backgroundColor: "#ffcc00", color: "#000", width: "100%" }}
                 >
                   Connect Mobile Wallet
                 </Button>
@@ -280,18 +284,6 @@ const HomeScreen: React.FC = () => {
                     </Button>
                   )}
                 </Box>
-                <div className="bottom-main-block">
-                  <div>
-                    <a href="https://x.com/playstartupio" target="_blank" rel="noopener noreferrer">
-                      <img src="/icons/x.png" className="socials" width="26" alt="Twitter" />
-                    </a>
-                  </div>
-                  <div>
-                    <a href="https://discord.gg/fckhkP5p5Z" target="_blank" rel="noopener noreferrer">
-                      <img src="/icons/discord.png" className="socials" width="32" alt="Discord" />
-                    </a>
-                  </div>
-                </div>
               </>
             )}
           </div>
@@ -337,24 +329,6 @@ const HomeScreen: React.FC = () => {
                 </>
               )}
             </div>
-            <Box mt={2} textAlign="right" width="100%">
-              <Button
-                variant="outlined"
-                color="secondary"
-                className="how-to-play"
-                onClick={() => navigate("/guide")}
-                style={{
-                  margin: "0 auto",
-                  color: "#ffcc00",
-                  borderColor: "#ffcc00",
-                  padding: "10px 20px",
-                  fontSize: "18px",
-                  width: "200px",
-                }}
-              >
-                How to Play
-              </Button>
-            </Box>
           </div>
         </div>
       </div>

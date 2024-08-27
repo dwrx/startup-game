@@ -7,6 +7,7 @@
   padding: 20px;
   max-width: 800px;
   margin: 0 auto;
+  margin-top: 50px;
   color: white;
   background-color: #161f26;
   border-radius: 8px;
@@ -14,12 +15,16 @@
   line-height: 1.6;
 }
 
-.guide-container h1, h2, h3 {
+.guide-container h1,
+h2,
+h3 {
   color: #ffcc00;
   text-align: left;
 }
 
-.guide-container p, ul, li {
+.guide-container p,
+ul,
+li {
   font-size: 18px;
   margin-bottom: 10px;
   text-align: left;
@@ -129,11 +134,13 @@
 
 @media (max-width: 768px) {
   .guide-container {
-      padding: 10px;
+    padding: 10px;
   }
 
-  .guide-container p, ul, li {
-      font-size: 16px;
+  .guide-container p,
+  ul,
+  li {
+    font-size: 16px;
   }
 
   .lootbox-images {
