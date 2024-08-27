@@ -28,9 +28,9 @@ const SiteNavigation: React.FC = () => {
             <div className={getNavLinkClass("/inventory")} onClick={() => navigate("/inventory")}>
               <p className="block-title">Inventory</p>
             </div>
-            <div className={getNavLinkClass("/leaderboard")} onClick={() => navigate("/leaderboard")}>
+            {/* <div className={getNavLinkClass("/leaderboard")} onClick={() => navigate("/leaderboard")}>
               <p className="block-title">Leaderboard</p>
-            </div>
+            </div> */}
             <div className={getNavLinkClass("/guide")} onClick={() => navigate("/guide")}>
               <p className="block-title">How to play?</p>
             </div>
@@ -39,7 +39,7 @@ const SiteNavigation: React.FC = () => {
 
         <div className="nav-right-block">
           <a href="https://x.com/playstartupio" target="_blank" rel="noopener noreferrer" className="social-link">
-            <img src="/icons/x.png" alt="Twitter" className="social-icon" style={{ width: "24px" }} />
+            <img src="/icons/x.png" alt="Twitter" className="social-icon" style={{ width: "22px" }} />
           </a>
           <a href="https://discord.gg/fckhkP5p5Z" target="_blank" rel="noopener noreferrer" className="social-link">
             <img src="/icons/discord.png" alt="Discord" className="social-icon" />

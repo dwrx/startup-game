@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomeScreen from './components/HomeScreen';
+import InventoryScreen from './components/InventoryScreen';
 import GuideScreen from './components/GuideScreen';
 import GameScreen from './components/GameScreen';
 import WalletContextProvider from './context/WalletContext';
@@ -14,6 +15,7 @@ const App: React.FC = () => {
                     <Route path="/" element={<HomeScreen />} />
                     <Route path="/game" element={<GameScreen />} />
                     <Route path="/guide" element={<GuideScreen />} />
+                    <Route path="/inventory" element={<InventoryScreen />} />
                 </Routes>
             </Router>
         </WalletContextProvider>

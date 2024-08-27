@@ -1,0 +1,131 @@
+
+.inventory-page {
+  padding-top: 60px;
+  height: 100vh;
+  background: url("../../public/team-background.png") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.inventory-page-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.inventory-page-container p {
+  font-family: "Chakra Petch", "Roboto", sans-serif;
+  text-transform: uppercase;
+}
+
+.inventory-page-container h6 {
+  color: #fff;
+  font-family: "Chakra Petch", "Roboto", sans-serif;
+}
+
+.inventory-page-container .loading {
+  color: #fff;
+  text-align: center;
+}
+
+.balances {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.error {
+  text-align: center;
+  color: red;
+}
+
+.inventory-grid {
+  margin-top: 20px;
+}
+
+.inventory-grid-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inventory-item {
+  position: relative;
+  width: 100%;
+  padding-top: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid #ffffff2e;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.inventory-item img {
+  position: absolute;
+  max-width: 80%;
+  max-height: 80%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.inventory-item.empty {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.item-label {
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.shining-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.shining-effect {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shine 2s infinite;
+}
+
+@keyframes shine {
+  from {
+    left: -100%;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .inventory-grid-item {
+    width: 33.33%;
+  }
+}
