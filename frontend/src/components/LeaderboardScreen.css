@@ -3,6 +3,8 @@
     min-height: 100vh;
     background: url('../../public/team-background.png');
     background-size: cover;
+    height: 100vh;
+    overflow-y: auto;
   }
   
   .leaderboard-header {
