@@ -47,6 +47,8 @@ const LeaderboardScreen = () => {
           if (result.leaderboard[0]?.position !== undefined) {
             setPlayerPosition(result.leaderboard[0]);
             setLeaderboard(result.leaderboard.slice(1));
+          } else if (result.leaderboard[0] === null) {
+            setLeaderboard(result.leaderboard.slice(1));
           } else {
             setLeaderboard(result.leaderboard);
           }
