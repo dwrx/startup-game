@@ -28,9 +28,9 @@ const SiteNavigation: React.FC = () => {
             <div className={getNavLinkClass("/inventory")} onClick={() => navigate("/inventory")}>
               <p className="block-title">Inventory</p>
             </div>
-            {/* <div className={getNavLinkClass("/leaderboard")} onClick={() => navigate("/leaderboard")}>
+            <div className={getNavLinkClass("/leaderboard")} onClick={() => navigate("/leaderboard")}>
               <p className="block-title">Leaderboard</p>
-            </div> */}
+            </div>
             <div className={getNavLinkClass("/guide")} onClick={() => navigate("/guide")}>
               <p className="block-title">How to play?</p>
             </div>

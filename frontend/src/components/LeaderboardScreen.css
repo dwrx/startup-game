@@ -1,0 +1,107 @@
+.leaderboard-page {
+    padding: 100px 20px 20px 20px;
+    min-height: 100vh;
+    background: url('../../public/team-background.png');
+    background-size: cover;
+  }
+  
+  .leaderboard-header {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: #00000094;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+  }
+  
+  .guide-link {
+    color: gold;
+    text-decoration: underline;
+  }
+  
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .leaderboard-table-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  table.leaderboard-table {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border-collapse: collapse;
+  }
+  
+  .leaderboard-table thead th,
+  .leaderboard-table tbody td {
+    text-transform: uppercase;
+    padding: 16px;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+  }
+  
+  .leaderboard-table th {
+    background-color: #171717;
+  }
+  
+  .leaderboard-table td {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .player-position-row {
+    background-color: #c775fb;
+    color: #000;
+  }
+
+  @keyframes whiteShine {
+    from {
+      background-position: -300px;
+    }
+    to {
+      background-position: 300px;
+    }
+  }
+  
+  .shining-row {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%);
+    background-size: 200% 100%;
+    animation: whiteShine 3s infinite linear;
+  }
+  
+  @media (max-width: 768px) {
+    .leaderboard-table-container {
+      overflow-x: auto;
+    }
+  
+    .leaderboard-table th:nth-child(3),
+    .leaderboard-table th:nth-child(4),
+    .leaderboard-table th:nth-child(5),
+    .leaderboard-table td:nth-child(3),
+    .leaderboard-table td:nth-child(4),
+    .leaderboard-table td:nth-child(5) {
+      display: none;
+    }
+  
+    .leaderboard-table th,
+    .leaderboard-table td {
+      font-size: 14px;
+      padding: 8px;
+    }
+  
+    .leaderboard-header p {
+      font-size: 14px;
+    }
+  }
+  
