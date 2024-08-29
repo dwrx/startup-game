@@ -24,6 +24,22 @@
       "args": []
     },
     {
+      "name": "claim_okx_lootbox",
+      "discriminator": [133, 111, 45, 165, 100, 84, 52, 133],
+      "accounts": [
+        {
+          "name": "inventory",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": ["inventory"]
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "claim_quest_reward",
       "discriminator": [73, 123, 191, 206, 63, 127, 247, 12],
       "accounts": [
@@ -129,6 +145,22 @@
           }
         },
         {
+          "name": "inventory",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [73, 78, 86, 69, 78, 84, 79, 82, 89]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
           "name": "owner",
           "writable": true,
           "signer": true
@@ -136,6 +168,26 @@
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "open_okx_lootbox",
+      "discriminator": [204, 65, 133, 166, 247, 77, 102, 84],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true
+        },
+        {
+          "name": "inventory",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": ["player", "inventory"]
         }
       ],
       "args": []
@@ -276,6 +328,21 @@
       "code": 6005,
       "name": "AlreadyRecruited",
       "msg": "The inventory already has this team member."
+    },
+    {
+      "code": 6006,
+      "name": "AlreadyClaimed",
+      "msg": "Item already claimed."
+    },
+    {
+      "code": 6007,
+      "name": "LootboxNotFound",
+      "msg": "Lootbox not found in inventory."
+    },
+    {
+      "code": 6008,
+      "name": "Overflow",
+      "msg": "Overflow occurred."
     }
   ],
   "types": [
@@ -320,7 +387,10 @@
             "name": "Researcher"
           },
           {
-            "name": "PromoLootBox"
+            "name": "OkxLootbox"
+          },
+          {
+            "name": "OpenedOkxLootbox"
           }
         ]
       }
