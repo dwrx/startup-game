@@ -136,9 +136,15 @@ const HomeScreen: React.FC = () => {
       program.programId
     );
 
+    const [inventoryPda] = await PublicKey.findProgramAddress(
+      [Buffer.from("INVENTORY"), wallet.publicKey.toBuffer()],
+      program.programId
+    );
+
     await program.rpc.initializePlayer({
       accounts: {
         player: playerPda,
+        inventory: inventoryPda,
         owner: wallet.publicKey,
         systemProgram: SystemProgram.programId,
       },
