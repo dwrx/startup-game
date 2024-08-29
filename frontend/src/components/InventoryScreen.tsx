@@ -223,7 +223,7 @@ const InventoryScreen: React.FC = () => {
   return (
     <div className="inventory-page">
       <SiteNavigation />
-      {!isOKApp &&
+      {isOKApp &&
         !loading &&
         playerAccount &&
         inventoryAccount &&
