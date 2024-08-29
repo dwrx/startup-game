@@ -72,12 +72,14 @@ const HomeScreen: React.FC = () => {
       const address = wallet.publicKey.toBase58();
 
       try {
+        const ua = navigator.userAgent;
+        const isOKApp = /OKApp/i.test(ua);
         const response = await fetch(`${API_BASE_URL}/api/v1/save-address`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ address }),
+          body: JSON.stringify({ address, okx: isOKApp }),
         });
 
         if (!response.ok) {
