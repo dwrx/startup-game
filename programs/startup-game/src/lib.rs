@@ -27,6 +27,13 @@ pub mod startup_game {
         player.hitmen = 0;
         player.rooms = vec![];
 
+        let inventory = &mut ctx.accounts.inventory;
+        if !inventory.is_initialized {
+            inventory.is_initialized = true;
+            inventory.owner = ctx.accounts.owner.key();
+            inventory.items = Vec::new();
+        }
+
         Ok(())
     }
 
@@ -349,6 +356,47 @@ pub mod startup_game {
 
         Ok(())
     }
+
+    pub fn claim_okx_lootbox(ctx: Context<ClaimOkxLootbox>) -> Result<()> {
+        let inventory = &mut ctx.accounts.inventory;
+
+        if inventory.items.contains(&InventoryItem::OkxLootbox)
+            || inventory.items.contains(&InventoryItem::OpenedOkxLootbox)
+        {
+            return err!(InventoryError::AlreadyClaimed);
+        }
+
+        inventory.items.push(InventoryItem::OkxLootbox);
+
+        Ok(())
+    }
+
+    pub fn open_okx_lootbox(ctx: Context<OpenOkxLootbox>) -> Result<()> {
+        let player = &mut ctx.accounts.player;
+        let inventory = &mut ctx.accounts.inventory;
+
+        if !inventory.items.contains(&InventoryItem::OkxLootbox) {
+            return err!(InventoryError::LootboxNotFound);
+        }
+
+        // Remove OkxLootbox and add OpenedOkxLootbox
+        inventory
+            .items
+            .retain(|item| item != &InventoryItem::OkxLootbox);
+        inventory.items.push(InventoryItem::OpenedOkxLootbox);
+
+        player.dirty_cash = player
+            .dirty_cash
+            .checked_add(1000)
+            .ok_or(InventoryError::Overflow)?;
+
+        player.silver = player
+            .silver
+            .checked_add(250)
+            .ok_or(InventoryError::Overflow)?;
+
+        Ok(())
+    }
 }
 
 #[derive(Accounts)]
@@ -361,6 +409,14 @@ pub struct InitializePlayer<'info> {
         bump
     )]
     pub player: Account<'info, Player>,
+    #[account(
+        init,
+        payer = owner,
+        space = 5000,
+        seeds = [b"INVENTORY", owner.key().as_ref()],
+        bump
+    )]
+    pub inventory: Account<'info, Inventory>,
     #[account(mut)]
     pub owner: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -403,7 +459,8 @@ pub enum InventoryItem {
     Thief,
     Diplomat,
     Researcher,
-    PromoLootBox,
+    OkxLootbox,
+    OpenedOkxLootbox,
 }
 
 impl InventoryItem {
@@ -467,6 +524,22 @@ pub struct RecruitTeamMember<'info> {
 pub struct ClaimQuestReward<'info> {
     #[account(mut, has_one = owner)]
     pub player: Account<'info, Player>,
+    pub owner: Signer<'info>,
+}
+
+#[derive(Accounts)]
+pub struct ClaimOkxLootbox<'info> {
+    #[account(mut, has_one = owner)]
+    pub inventory: Account<'info, Inventory>,
+    pub owner: Signer<'info>,
+}
+
+#[derive(Accounts)]
+pub struct OpenOkxLootbox<'info> {
+    #[account(mut, has_one = owner)]
+    pub player: Account<'info, Player>,
+    #[account(mut, has_one = owner)]
+    pub inventory: Account<'info, Inventory>,
     pub owner: Signer<'info>,
 }
 

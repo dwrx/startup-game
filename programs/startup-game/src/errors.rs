@@ -50,4 +50,10 @@ pub enum InventoryError {
     InvalidItem,
     #[msg("The inventory already has this team member.")]
     AlreadyRecruited,
+    #[msg("Item already claimed.")]
+    AlreadyClaimed,
+    #[msg("Lootbox not found in inventory.")]
+    LootboxNotFound,
+    #[msg("Overflow occurred.")]
+    Overflow,
 }
