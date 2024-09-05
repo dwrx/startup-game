@@ -13,6 +13,8 @@ import "./HomeScreen.css";
 import "./SiteNavigation.css";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const NETWORK = process.env.REACT_APP_NETWORK || "origin";
+const { NETWORK_NAME } = require("../config.json")[NETWORK];
 
 const HomeScreen: React.FC = () => {
   const location = useLocation();
@@ -79,7 +81,7 @@ const HomeScreen: React.FC = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ address, okx: isOKApp }),
+          body: JSON.stringify({ address, okx: isOKApp, network: NETWORK }),
         });
 
         if (!response.ok) {
@@ -266,7 +268,7 @@ const HomeScreen: React.FC = () => {
               <>
                 <Box mt={4}>
                   <Alert severity="warning">
-                    Switch wallet to <b>Sonic Origin</b> network (<Link href="/guide#connect-wallet">How?</Link>) and
+                    Switch wallet to <b>{NETWORK_NAME}</b> network (<Link href="/guide#connect-wallet">How?</Link>) and
                     request SOL from{" "}
                     <a href="https://faucet.sonic.game/" target="_blank" rel="noreferrer noopener">
                       faucet

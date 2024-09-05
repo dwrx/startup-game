@@ -4,6 +4,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import "./ClaimLootboxModal.css";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const NETWORK = process.env.REACT_APP_NETWORK || "origin";
 
 interface ClaimLootboxModalProps {
   open: boolean;
@@ -57,6 +58,7 @@ const ClaimLootboxModal: React.FC<ClaimLootboxModalProps> = ({
           message,
           publicKey: wallet.publicKey.toBase58(),
           signature: btoa(String.fromCharCode(...signature)),
+          network: NETWORK,
         }),
       });
 

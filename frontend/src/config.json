@@ -1,0 +1,14 @@
+{
+  "origin": {
+    "NETWORK_NAME": "Sonic Origin",
+    "BACKPACK_GUIDE": "https://blog.sonic.game/sonic-network-settings---backpack-wallet",
+    "NIGHTLY_GUIDE": "https://blog.sonic.game/sonic-network-settings---nightly-wallet",
+    "OKX_GUIDE": "https://blog.sonic.game/sonic-origin-network-settings---okx-wallet"
+  },
+  "frontier": {
+    "NETWORK_NAME": "Sonic Frontier",
+    "BACKPACK_GUIDE": "https://blog.sonic.game/sonic-frontier-network-settings---backpack-wallet",
+    "NIGHTLY_GUIDE": "https://blog.sonic.game/sonic-frontier-network-settings---nightly-wallet",
+    "OKX_GUIDE": "https://blog.sonic.game/sonic-frontier-network-settings---okx-wallet"
+  }
+}

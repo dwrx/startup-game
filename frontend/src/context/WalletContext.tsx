@@ -1,12 +1,13 @@
-import React, { FC, ReactNode, useMemo } from 'react';
+import { FC, ReactNode, useMemo } from 'react';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { clusterApiUrl } from '@solana/web3.js';
 
 require('@solana/wallet-adapter-react-ui/styles.css');
 
+const RPC = process.env.REACT_APP_RPC || 'https://devnet.sonic.game';
+
 const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
-    const endpoint = useMemo(() => "https://devnet.sonic.game", []);
+    const endpoint = useMemo(() => RPC, []);
     const wallets = useMemo(() => [], []);
 
     return (

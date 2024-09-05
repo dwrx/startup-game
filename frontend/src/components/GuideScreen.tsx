@@ -2,6 +2,9 @@ import React from "react";
 import SiteNavigation from './SiteNavigation';
 import "./GuideScreen.css";
 
+const NETWORK = process.env.REACT_APP_NETWORK || "origin";
+const { NETWORK_NAME, BACKPACK_GUIDE, NIGHTLY_GUIDE, OKX_GUIDE } = require("../config.json")[NETWORK];
+
 const GuideScreen: React.FC = () => {
   return (
     <div className="guide-container-wrapper">
@@ -29,7 +32,7 @@ const GuideScreen: React.FC = () => {
 
         <h2 id="connect-wallet">Connect Your Wallet to Sonic</h2>
         <p>
-          To play <b>Startup</b>, you need a wallet that supports the <b>Sonic Origin</b> network. We recommend
+          To play <b>Startup</b>, you need a wallet that supports the <b>{NETWORK_NAME}</b> network. We recommend
           using either{" "}
           <a href="https://www.backpack.app/" target="_blank" rel="noopener noreferrer">
             Backpack
@@ -45,7 +48,7 @@ const GuideScreen: React.FC = () => {
         <ul>
           <li>
             <a
-              href="https://blog.sonic.game/sonic-network-settings---backpack-wallet"
+              href={BACKPACK_GUIDE}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -54,7 +57,7 @@ const GuideScreen: React.FC = () => {
           </li>
           <li>
             <a
-              href="https://blog.sonic.game/sonic-network-settings---nightly-wallet"
+              href={NIGHTLY_GUIDE}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -63,7 +66,7 @@ const GuideScreen: React.FC = () => {
           </li>
           <li>
             <a
-              href="https://blog.sonic.game/sonic-origin-network-settings---okx-wallet"
+              href={OKX_GUIDE}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -74,7 +77,7 @@ const GuideScreen: React.FC = () => {
         <p>
           Once your wallet is set up, request test SOL from the{" "}
           <a href="https://faucet.sonic.game/" target="_blank" rel="noopener noreferrer">
-            Sonic Origin Faucet
+            {NETWORK_NAME} Faucet
           </a>
           .
         </p>
