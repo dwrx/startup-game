@@ -93,6 +93,62 @@
       "args": []
     },
     {
+      "name": "complete_heist",
+      "discriminator": [185, 174, 211, 35, 60, 108, 102, 117],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true
+        },
+        {
+          "name": "heists",
+          "writable": true
+        },
+        {
+          "name": "inventory",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": ["player", "heists", "inventory"]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_heists",
+      "discriminator": [247, 49, 165, 75, 216, 46, 97, 80],
+      "accounts": [
+        {
+          "name": "heists",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [72, 69, 73, 83, 84, 83]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "initialize_inventory",
       "discriminator": [75, 221, 38, 238, 9, 187, 237, 157],
       "accounts": [
@@ -272,6 +328,40 @@
       ]
     },
     {
+      "name": "start_heist",
+      "discriminator": [188, 89, 251, 224, 186, 94, 93, 47],
+      "accounts": [
+        {
+          "name": "heists",
+          "writable": true
+        },
+        {
+          "name": "player",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true,
+          "relations": ["heists", "player"]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "enforcers",
+          "type": "u64"
+        },
+        {
+          "name": "hitmen",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "upgrade_lootbox",
       "discriminator": [144, 140, 90, 37, 238, 178, 86, 108],
       "accounts": [
@@ -289,6 +379,10 @@
     }
   ],
   "accounts": [
+    {
+      "name": "Heists",
+      "discriminator": [2, 178, 113, 177, 31, 134, 161, 52]
+    },
     {
       "name": "Inventory",
       "discriminator": [97, 218, 167, 233, 216, 170, 49, 27]
@@ -347,6 +441,86 @@
   ],
   "types": [
     {
+      "name": "CompletedHeist",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "win",
+            "type": "bool"
+          },
+          {
+            "name": "thief_died",
+            "type": "bool"
+          },
+          {
+            "name": "enforcers_lost",
+            "type": "u64"
+          },
+          {
+            "name": "hitmen_lost",
+            "type": "u64"
+          },
+          {
+            "name": "xp_reward",
+            "type": "u64"
+          },
+          {
+            "name": "silver_reward",
+            "type": "u64"
+          },
+          {
+            "name": "loot_reward",
+            "type": {
+              "option": {
+                "defined": {
+                  "name": "InventoryItem"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Heists",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "heist_level",
+            "type": "u8"
+          },
+          {
+            "name": "heist_timestamp",
+            "type": "u64"
+          },
+          {
+            "name": "enforcers_on_heist",
+            "type": "u64"
+          },
+          {
+            "name": "hitmen_on_heist",
+            "type": "u64"
+          },
+          {
+            "name": "completed_heists",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "CompletedHeist"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "Inventory",
       "type": {
         "kind": "struct",
@@ -391,6 +565,27 @@
           },
           {
             "name": "OpenedOkxLootbox"
+          },
+          {
+            "name": "WashingMachine"
+          },
+          {
+            "name": "MicrowaveOven"
+          },
+          {
+            "name": "Whiskey"
+          },
+          {
+            "name": "SlotMachine"
+          },
+          {
+            "name": "CannabisSeeds"
+          },
+          {
+            "name": "VipLoungeFurniture"
+          },
+          {
+            "name": "BoxingSandbag"
           }
         ]
       }

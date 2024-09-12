@@ -135,7 +135,7 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, onClose, playerXp, playerDi
                   textAlign: "left",
                 }}
               >
-                Heists are coming soon.
+                You can now plan heists.
               </Box>
             )}
           </div>

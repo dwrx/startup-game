@@ -119,7 +119,18 @@ const quests = [
   {
     id: 12,
     title: "Complete the first heist",
-    description: "Coming soon.",
+    description: "Time to put your skills to the test.",
+    rewards: [
+      { type: "silver", amount: 100 },
+    ],
+  },
+  {
+    id: 13,
+    title: "Complete 10 heists",
+    description: "We are getting closer to the domination in this region.",
+    rewards: [
+      { type: "silver", amount: 100 },
+    ],
   },
 ];
 

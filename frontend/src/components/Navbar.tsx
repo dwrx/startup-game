@@ -19,6 +19,7 @@ import useProgram from "../hooks/useProgram";
 import { allRooms } from "../rooms";
 import MissionsModal from "./MissionsModal";
 import TeamModal from "./TeamModal";
+import HeistsModal from "./HeistsModal";
 import Balances from "./Balances";
 import "../styles.css";
 
@@ -54,6 +55,7 @@ const Navbar: React.FC = () => {
   const [estimatedCleanCash, setEstimatedCleanCash] = useState(0);
   const [missionsModalOpen, setMissionsModalOpen] = useState<boolean>(false);
   const [teamModalOpen, setTeamModalOpen] = useState(false);
+  const [heistsModalOpen, setHeistsModalOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -285,6 +287,20 @@ const Navbar: React.FC = () => {
           >
             Team
           </Button>
+          <Button
+            variant="outlined"
+            onClick={() => setHeistsModalOpen(true)}
+            className="desktop-only"
+            style={{
+              marginRight: "10px",
+              height: "100%",
+              color: "black",
+              backgroundColor: "gold",
+              borderColor: "gold",
+            }}
+          >
+            Heists
+          </Button>
 
           <Box display="flex" alignItems="center" height="100%">
             <Tooltip title="Collect dirty cash generated from illegal activities.">
@@ -295,8 +311,8 @@ const Navbar: React.FC = () => {
                   marginRight: "10px",
                   height: "100%",
                   color: "white",
-                  backgroundColor: "#723ea7",
-                  borderColor: "#723ea7",
+                  borderColor: '#04c983',
+                  backgroundColor: 'rgba(16, 185, 129, .3)',
                 }}
               >
                 Collect ${estimatedDirtyCash}{" "}
@@ -311,8 +327,8 @@ const Navbar: React.FC = () => {
                   marginRight: "10px",
                   height: "100%",
                   color: "white",
-                  backgroundColor: "#723ea7",
-                  borderColor: "#723ea7",
+                  borderColor: '#04c983',
+                  backgroundColor: 'rgba(16, 185, 129, .3)',
                 }}
               >
                 Launder ${estimatedCleanCash}{" "}
@@ -337,6 +353,7 @@ const Navbar: React.FC = () => {
           </Box>
         </div>
         <MissionsModal open={missionsModalOpen} onClose={() => setMissionsModalOpen(false)} />
+        <HeistsModal open={heistsModalOpen} enforcers={balances.enforcers} hitmen={balances.hitmen} onClose={() => setHeistsModalOpen(false)} />
         <TeamModal
           open={teamModalOpen}
           onClose={() => setTeamModalOpen(false)}

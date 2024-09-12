@@ -112,6 +112,20 @@ const InventoryScreen: React.FC = () => {
           items.push({ name: "OKX LOOTBOX", image: "/okx-promo.png", opened: false });
         } else if (item.openedOkxLootbox) {
           items.push({ name: "OKX LOOTBOX", image: "/okx-promo.png", opened: true });
+        } else if (item.washingMachine) {
+          items.push({ name: "Washing Machine", image: "/loot/washing-machine.png" });
+        } else if (item.microwaveOven) {
+          items.push({ name: "Microwave Oven", image: "/loot/microwave-oven.png" });
+        } else if (item.whiskey) {
+          items.push({ name: "Whiskey", image: "/loot/whiskey.png" });
+        } else if (item.slotMachine) {
+          items.push({ name: "Slot Machine", image: "/loot/slot-machine.png" });
+        } else if (item.cannabisSeeds) {
+          items.push({ name: "Cannabis Seeds", image: "/loot/cannabis-seeds.png" });
+        } else if (item.vipLoungeFurniture) {
+          items.push({ name: "VIP Lounge Furniture", image: "/loot/vip-lounge-furniture.png" });
+        } else if (item.boxingSandbag) {
+          items.push({ name: "Boxing Sandbag", image: "/loot/boxing-sandbag.png" });
         }
       });
 

@@ -1,0 +1,15 @@
+ .heists .MuiTextField-root {
+    margin-bottom: 15px;
+  }
+  
+   .heists .MuiTextField-root input {
+    color: #fff;
+  }
+  
+   .heists fieldset {
+    border-color: rgba(255, 255, 255, 0.7);
+  }
+
+button.heist-button:disabled {
+    color: #f2b24e;
+  }
