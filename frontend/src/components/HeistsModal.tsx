@@ -338,6 +338,7 @@ const HeistsModal: React.FC<HeistsModalProps> = ({ open, onClose, enforcers, hit
           justifyContent: "center",
           alignItems: "center",
           minHeight: "100vh",
+          padding: '20px'
         }}
       >
         <Box
@@ -345,8 +346,9 @@ const HeistsModal: React.FC<HeistsModalProps> = ({ open, onClose, enforcers, hit
             background: `url('/heists-warehouse-background.png') no-repeat center`,
             backgroundSize: "cover",
             maxWidth: "800px",
-            width: "90%",
+            width: "100%",
             padding: "20px",
+            maxHeight: '90vh',
             borderRadius: "10px",
             color: "#fff",
             boxShadow: 24,
@@ -354,6 +356,7 @@ const HeistsModal: React.FC<HeistsModalProps> = ({ open, onClose, enforcers, hit
             flexDirection: "column",
             gap: 2,
             position: "relative",
+            overflowY: "auto"
           }}
         >
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -429,7 +432,14 @@ const HeistsModal: React.FC<HeistsModalProps> = ({ open, onClose, enforcers, hit
                 </Typography>
                 <Typography>Loot probability: 35%</Typography>
                 <Typography>Possible loot rewards:</Typography>
-                <Box display="flex" gap={1} mt={1}>
+                <Box
+                  display="flex"
+                  gap={1}
+                  mt={1}
+                  flexWrap="wrap"
+                  justifyContent="left"
+                  sx={{ maxWidth: "100%", overflow: "hidden" }}
+                >
                   <Tooltip title="Washing Machine. 5% chance to drop.">
                     <img
                       src="/loot/washing-machine.png"
