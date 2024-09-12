@@ -248,6 +248,9 @@ const Navbar: React.FC = () => {
                 <Button className="mobile-quests-button" variant="outlined" onClick={() => setTeamModalOpen(true)}>
                   Team
                 </Button>
+                <Button className="mobile-quests-button" variant="outlined" onClick={() => setHeistsModalOpen(true)}>
+                  Heists
+                </Button>
                 <Balances {...balances} />
               </div>
             </Drawer>
