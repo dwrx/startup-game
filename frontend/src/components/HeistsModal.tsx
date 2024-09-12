@@ -326,6 +326,29 @@ const HeistsModal: React.FC<HeistsModalProps> = ({ open, onClose, enforcers, hit
     );
   };
 
+  const renderHeistAlerts = () => {
+    const minEnemyStrength = heistLevel * 500;
+    const maxEnemyStrength = minEnemyStrength + 500;
+
+    const totalPlayerStrength = selectedEnforcers * 10 + selectedHitmen * 40;
+    if (totalPlayerStrength < minEnemyStrength) {
+      return (
+        <Typography sx={{ color: "red", fontWeight: "bold" }}>
+          You are guaranteed to fail this heist. Your total strength <b>{totalPlayerStrength}</b> is less than enemy
+          guards' strength <b>{minEnemyStrength}</b>.
+        </Typography>
+      );
+    } else if (totalPlayerStrength < maxEnemyStrength) {
+      return (
+        <Typography sx={{ color: "#f2b24e", fontWeight: "bold" }}>
+          There is a chance for failure. Your total strength <b>{totalPlayerStrength}</b> is less than the maximum enemy
+          guards' strength <b>{maxEnemyStrength}</b>.
+        </Typography>
+      );
+    }
+    return null;
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -338,7 +361,7 @@ const HeistsModal: React.FC<HeistsModalProps> = ({ open, onClose, enforcers, hit
           justifyContent: "center",
           alignItems: "center",
           minHeight: "100vh",
-          padding: '20px'
+          padding: "20px",
         }}
       >
         <Box
@@ -348,7 +371,7 @@ const HeistsModal: React.FC<HeistsModalProps> = ({ open, onClose, enforcers, hit
             maxWidth: "800px",
             width: "100%",
             padding: "20px",
-            maxHeight: '90vh',
+            maxHeight: "90vh",
             borderRadius: "10px",
             color: "#fff",
             boxShadow: 24,
@@ -356,7 +379,7 @@ const HeistsModal: React.FC<HeistsModalProps> = ({ open, onClose, enforcers, hit
             flexDirection: "column",
             gap: 2,
             position: "relative",
-            overflowY: "auto"
+            overflowY: "auto",
           }}
         >
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -532,6 +555,7 @@ const HeistsModal: React.FC<HeistsModalProps> = ({ open, onClose, enforcers, hit
               <Box mt={2}>
                 <Typography>Your total strength: {calculateTotalStrength()}</Typography>
                 <Typography>Your max carrying capacity: {calculateCarryingCapacity()}</Typography>
+                {renderHeistAlerts()}
               </Box>
 
               {hasThief ? (
