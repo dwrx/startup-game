@@ -248,6 +248,39 @@ const HomeScreen: React.FC = () => {
 
       {message && <div className={`message-box ${messageType}`}>{message}</div>}
       <div className="content-wrapper">
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSc4mAB7GBgYlGgB0KIEWhzTaBd_5HAg4Q8LfRSfTRmZC0IF5w/viewform" target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none'}}>
+        <p
+          className="block-title"
+          style={{
+            textAlign: "center",
+            background: "#00000087",
+            width: "100%",
+            maxWidth: "720px",
+            margin: "0 auto",
+            marginBottom: "25px",
+            borderRadius: "5px",
+            color: "#fff",
+            padding: "10px 0",
+            textTransform: "uppercase",
+            fontFamily: "'Chakra Petch', 'Roboto', 'sans-serif'",
+            fontWeight: "bold",
+            textDecoration: "none",
+          }}
+        >
+          <img
+            src="/sonic-logo.png"
+            alt="Sonic Node WL"
+            style={{
+              width: "32px",
+              height: "32px",
+              borderRadius: "50%",
+              verticalAlign: "middle",
+              marginRight: "8px",
+            }}
+          />
+          Sonic Node WL
+        </p>
+        </a>
         <div className="content-wrappper-details">
           <div className={`left-block ${!wallet.connected ? "centered" : ""}`}>
             {showMobileWalletButton ? (
