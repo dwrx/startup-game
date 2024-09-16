@@ -120,17 +120,13 @@ const quests = [
     id: 12,
     title: "Complete the first heist",
     description: "Time to put your skills to the test.",
-    rewards: [
-      { type: "silver", amount: 100 },
-    ],
+    rewards: [{ type: "silver", amount: 100 }],
   },
   {
     id: 13,
     title: "Complete 10 heists",
     description: "We are getting closer to the domination in this region.",
-    rewards: [
-      { type: "silver", amount: 100 },
-    ],
+    rewards: [{ type: "silver", amount: 100 }],
   },
 ];
 
@@ -155,6 +151,27 @@ const odysseyQuests = [
     xpRequired: 15,
     rewards: [{ type: "rings", amount: 5 }],
     description: "Earn 15 XP to claim 5 rings.",
+  },
+  {
+    id: 1003,
+    title: "Earn 25 XP",
+    xpRequired: 25,
+    rewards: [{ type: "rings", amount: 15 }],
+    description: "Earn 25 XP to claim 15 rings.",
+  },
+  {
+    id: 1004,
+    title: "Earn 50 XP",
+    xpRequired: 50,
+    rewards: [{ type: "rings", amount: 35 }],
+    description: "Earn 50 XP to claim 35 rings.",
+  },
+  {
+    id: 1005,
+    title: "Earn 100 XP",
+    xpRequired: 100,
+    rewards: [{ type: "rings", amount: 100 }],
+    description: "Earn 100 XP to claim 100 rings.",
   },
 ];
 
@@ -393,55 +410,60 @@ const MissionsModal: React.FC<MissionsModalProps> = ({ open, onClose }) => {
               </Typography>
             )}
             <ul className="mission-list">
-              {odysseyQuests.map((quest) => {
-                const canClaim = xp >= quest.xpRequired;
-                const isClaimed = claimedQuests.includes(quest.id);
-                return (
-                  <li key={quest.id} className={`mission-item`}>
-                    <div className="mission-details">
-                      <Typography variant="h6">{quest.title}</Typography>
-                      <div className="mission-rewards">
-                        <div className="reward-item">
-                          <img
-                            src="/rings.png"
-                            alt="Rings"
-                            width="24"
-                            style={{ verticalAlign: "middle", marginRight: "4px" }}
-                          />
-                          {quest.rewards[0].amount} Rings
+              {odysseyQuests
+                .filter((quest) => !hideClaimed || !claimedQuests.includes(quest.id))
+                .map((quest) => {
+                  const canClaim = xp >= quest.xpRequired;
+                  const isClaimed = claimedQuests.includes(quest.id);
+                  return (
+                    <li key={quest.id} className={`mission-item`}>
+                      <div className="mission-details">
+                        <Typography variant="h6">{quest.title}</Typography>
+                        <div className="mission-rewards">
+                          <div className="reward-item">
+                            <img
+                              src="/rings.png"
+                              alt="Rings"
+                              width="24"
+                              style={{ verticalAlign: "middle", marginRight: "4px" }}
+                            />
+                            {quest.rewards[0].amount} Rings
+                          </div>
                         </div>
-                      </div>
-                      {/* <Typography variant="body2" className="mission-description">
+                        {/* <Typography variant="body2" className="mission-description">
                         {quest.description}
                       </Typography> */}
-                    </div>
-                    <div className="mission-action">
-                      {!isClaimed ? (
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => handleOdysseyClaim(quest.id, "odyssey")}
-                          disabled={!canClaim}
-                          style={{ backgroundColor: canClaim ? "#ffcc00" : "gray", color: canClaim ? "#000" : "#fff" }}
-                        >
-                          {canClaim ? "Claim" : "Not Enough XP"}
-                        </Button>
-                      ) : (
-                        <div>
-                          <a
-                            style={{ color: "#ffcc00", fontSize: "14px" }}
-                            href={`https://explorer.sonic.game/tx/${transactions[quest.id]}?cluster=devnet`}
-                            target="_blank"
-                            rel="noreferrer noopener"
+                      </div>
+                      <div className="mission-action">
+                        {!isClaimed ? (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handleOdysseyClaim(quest.id, "odyssey")}
+                            disabled={!canClaim}
+                            style={{
+                              backgroundColor: canClaim ? "#ffcc00" : "gray",
+                              color: canClaim ? "#000" : "#fff",
+                            }}
                           >
-                            Transaction
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  </li>
-                );
-              })}
+                            {canClaim ? "Claim" : "Not Enough XP"}
+                          </Button>
+                        ) : (
+                          <div>
+                            <a
+                              style={{ color: "#ffcc00", fontSize: "14px" }}
+                              href={`https://explorer.sonic.game/tx/${transactions[quest.id]}?cluster=devnet`}
+                              target="_blank"
+                              rel="noreferrer noopener"
+                            >
+                              Transaction
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
             </ul>
           </>
         )}
