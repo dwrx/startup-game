@@ -18,6 +18,16 @@ pub enum PlayerError {
     MaxLevelReached,
     #[msg("The player does not have enough silver.")]
     InsufficientSilver,
+    #[msg("Heist already in progress.")]
+    HeistAlreadyInProgress,
+    #[msg("Insufficient units for heist.")]
+    InsufficientUnitsForHeist,
+    #[msg("Not enough time has passed to complete the heist.")]
+    HeistNotYetComplete,
+    #[msg("No active heist.")]
+    NoActiveHeist,
+    #[msg("Timestamp overflow.")]
+    TimeOverflow,
 }
 
 #[error_code]

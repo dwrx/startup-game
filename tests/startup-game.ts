@@ -11,6 +11,7 @@ describe("startup-game", () => {
   let owner = provider.wallet.publicKey;
   let playerPda: anchor.web3.PublicKey;
   let inventoryPda: anchor.web3.PublicKey;
+  let heistsPda: anchor.web3.PublicKey;
 
   before(async () => {
     [playerPda] = await anchor.web3.PublicKey.findProgramAddress(
@@ -20,6 +21,11 @@ describe("startup-game", () => {
 
     [inventoryPda] = await anchor.web3.PublicKey.findProgramAddress(
       [Buffer.from("INVENTORY"), owner.toBuffer()],
+      program.programId
+    );
+
+    [heistsPda] = await anchor.web3.PublicKey.findProgramAddress(
+      [Buffer.from("HEISTS"), owner.toBuffer()],
       program.programId
     );
   });
@@ -324,5 +330,66 @@ describe("startup-game", () => {
 
     const inventoryAccount = await program.account.inventory.fetch(inventoryPda);
     expect(inventoryAccount.items.filter((item) => item.okxLootbox || item.openedOkxLootbox).length).to.equal(1);
+  });
+
+  it("Initializes Heists account if not already initialized", async () => {
+    let heistsAccount;
+    try {
+      heistsAccount = await program.account.heists.fetch(heistsPda);
+      console.log("Heists account found:", heistsAccount);
+    } catch (err) {
+      console.log("Heists account not found, initializing...");
+      await program.methods
+        .initializeHeists()
+        .accounts({
+          // heists: heistsPda,
+          owner: owner,
+        })
+        .rpc();
+
+      heistsAccount = await program.account.heists.fetch(heistsPda);
+    }
+
+    expect(heistsAccount.owner.toString()).to.equal(owner.toString());
+    expect(heistsAccount.heistLevel).to.equal(1);
+  });
+
+  it("Fails to start heist due to insufficient units", async () => {
+    try {
+      await program.methods
+        .startHeist(new anchor.BN(1), new anchor.BN(1))
+        .accounts({
+          player: playerPda,
+          heists: heistsPda,
+          // owner: owner,
+        })
+        .rpc();
+    } catch (err) {
+      expect(err.error.errorMessage).to.equal("Insufficient units for heist.");
+    }
+
+    const playerAccount = await program.account.player.fetch(playerPda);
+    expect(playerAccount.enforcers.toNumber()).to.equal(0);
+    expect(playerAccount.hitmen.toNumber()).to.equal(0);
+  });
+
+  it("Fails to complete a heist with no active heist", async () => {
+    try {
+      await program.methods
+        .completeHeist()
+        .accounts({
+          player: playerPda,
+          heists: heistsPda,
+          inventory: inventoryPda,
+          // owner: owner,
+        })
+        .rpc();
+    } catch (err) {
+      expect(err.error.errorMessage).to.equal("No active heist.");
+    }
+
+    const heistsAccount = await program.account.heists.fetch(heistsPda);
+    expect(heistsAccount.heistTimestamp.toNumber()).to.equal(0);
+    expect(heistsAccount.completedHeists.length).to.equal(0);
   });
 });

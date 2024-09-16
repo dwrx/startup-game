@@ -51,6 +51,175 @@ pub mod startup_game {
         Ok(())
     }
 
+    pub fn initialize_heists(ctx: Context<InitializeHeists>) -> Result<()> {
+        let heists = &mut ctx.accounts.heists;
+        heists.owner = ctx.accounts.owner.key();
+        heists.heist_level = 1;
+        heists.heist_timestamp = 0;
+        heists.enforcers_on_heist = 0;
+        heists.hitmen_on_heist = 0;
+        heists.completed_heists = Vec::new();
+        Ok(())
+    }
+
+    pub fn start_heist(ctx: Context<StartHeist>, enforcers: u64, hitmen: u64) -> Result<()> {
+        let player = &mut ctx.accounts.player;
+        let heists = &mut ctx.accounts.heists;
+
+        if heists.heist_timestamp != 0 {
+            return err!(PlayerError::HeistAlreadyInProgress);
+        }
+
+        if enforcers == 0 && hitmen == 0 {
+            return err!(PlayerError::InsufficientUnitsForHeist);
+        }
+
+        if player.enforcers < enforcers {
+            return err!(PlayerError::InsufficientUnitsForHeist);
+        }
+
+        if player.hitmen < hitmen {
+            return err!(PlayerError::InsufficientUnitsForHeist);
+        }
+
+        let clock = Clock::get()?;
+
+        player.enforcers = player
+            .enforcers
+            .checked_sub(enforcers)
+            .ok_or(PlayerError::InsufficientUnitsForHeist)?;
+        player.hitmen = player
+            .hitmen
+            .checked_sub(hitmen)
+            .ok_or(PlayerError::InsufficientUnitsForHeist)?;
+
+        heists.heist_timestamp = clock.unix_timestamp as u64;
+        heists.enforcers_on_heist = enforcers;
+        heists.hitmen_on_heist = hitmen;
+
+        Ok(())
+    }
+
+    pub fn complete_heist(ctx: Context<CompleteHeist>) -> Result<()> {
+        let player = &mut ctx.accounts.player;
+        let heists = &mut ctx.accounts.heists;
+
+        if heists.heist_timestamp == 0 {
+            return err!(PlayerError::NoActiveHeist);
+        }
+
+        // The minimal heist duration is 10 minutes
+        let clock = Clock::get()?;
+        let current_time = clock.unix_timestamp as u64;
+        let elapsed_time = current_time
+            .checked_sub(heists.heist_timestamp)
+            .ok_or(PlayerError::TimeOverflow)?;
+
+        if elapsed_time < 10 * 60 {
+            return err!(PlayerError::HeistNotYetComplete);
+        }
+
+        // Pseudo-random defense strength based on Solana clock
+        let heist_level = heists.heist_level as u64;
+        let min_defense = 500 * heist_level;
+        let max_defense = min_defense + 500;
+
+        let random_strength = (min_defense + (clock.slot % (max_defense - min_defense + 1))) as u64;
+
+        // Player's strength
+        let enforcer_strength = heists.enforcers_on_heist * 10;
+        let hitmen_strength = heists.hitmen_on_heist * 40;
+        let total_player_strength = enforcer_strength + hitmen_strength;
+
+        let win = total_player_strength > random_strength;
+
+        let mut enforcers_lost = 0;
+        let mut hitmen_lost = 0;
+
+        if !win {
+            enforcers_lost = heists.enforcers_on_heist;
+            hitmen_lost = heists.hitmen_on_heist;
+            heists.enforcers_on_heist = 0;
+            heists.hitmen_on_heist = 0;
+        } else {
+            // If the player wins, remaining units return to the player's account
+            let remaining_defense = random_strength;
+            if remaining_defense <= enforcer_strength {
+                enforcers_lost = remaining_defense / 10;
+            } else {
+                enforcers_lost = heists.enforcers_on_heist;
+                hitmen_lost = (remaining_defense - enforcer_strength) / 40;
+            }
+
+            player.enforcers += heists
+                .enforcers_on_heist
+                .checked_sub(enforcers_lost)
+                .unwrap_or(0);
+            player.hitmen += heists.hitmen_on_heist.checked_sub(hitmen_lost).unwrap_or(0);
+        }
+
+        heists.heist_timestamp = 0;
+        heists.enforcers_on_heist = 0;
+        heists.hitmen_on_heist = 0;
+
+        let xp_reward = (clock.slot % 5 + 1) as u64;
+        let silver_reward = (clock.slot % 100 + 1) as u64;
+
+        let mut completed_heist = CompletedHeist {
+            win,
+            thief_died: false,
+            enforcers_lost,
+            hitmen_lost,
+            xp_reward: if win { xp_reward } else { 0 },
+            silver_reward: if win { silver_reward } else { 0 },
+            loot_reward: None,
+        };
+        if win {
+            player.experience += xp_reward;
+            player.silver += silver_reward;
+            heists.heist_level += 1;
+
+            // 35% chance of receiving a random loot item
+            if (clock.slot % 100) < 35 {
+                let loot_index = clock.slot % 7;
+                let loot_item = match loot_index {
+                    0 => InventoryItem::WashingMachine,
+                    1 => InventoryItem::MicrowaveOven,
+                    2 => InventoryItem::Whiskey,
+                    3 => InventoryItem::SlotMachine,
+                    4 => InventoryItem::CannabisSeeds,
+                    5 => InventoryItem::VipLoungeFurniture,
+                    6 => InventoryItem::BoxingSandbag,
+                    _ => InventoryItem::WashingMachine,
+                };
+                completed_heist.loot_reward = Some(loot_item.clone());
+                msg!("Player won a heist and received loot: {:?}", loot_item);
+                ctx.accounts.inventory.items.push(loot_item);
+            }
+        }
+
+        if heists.completed_heists.len() == 10 {
+            heists.completed_heists.remove(0);
+        }
+        heists.completed_heists.push(completed_heist);
+
+        let total_completed_heists = heists.completed_heists.len() as u64;
+
+        if !player.is_quest_completed(Player::QUEST_COMPLETE_ONE_HEIST)
+            && total_completed_heists >= 1
+        {
+            player.complete_quest(Player::QUEST_COMPLETE_ONE_HEIST);
+        }
+
+        if !player.is_quest_completed(Player::QUEST_COMPLETE_TEN_HEISTS)
+            && total_completed_heists >= 10
+        {
+            player.complete_quest(Player::QUEST_COMPLETE_TEN_HEISTS);
+        }
+
+        Ok(())
+    }
+
     pub fn claim_lootbox(ctx: Context<ClaimLootbox>) -> Result<()> {
         let player = &mut ctx.accounts.player;
 
@@ -454,19 +623,63 @@ impl Inventory {
     }
 }
 
-#[derive(Clone, AnchorSerialize, AnchorDeserialize, PartialEq)]
+#[derive(Clone, AnchorSerialize, AnchorDeserialize, PartialEq, Debug)]
 pub enum InventoryItem {
     Thief,
     Diplomat,
     Researcher,
     OkxLootbox,
     OpenedOkxLootbox,
+    WashingMachine,
+    MicrowaveOven,
+    Whiskey,
+    SlotMachine,
+    CannabisSeeds,
+    VipLoungeFurniture,
+    BoxingSandbag,
 }
 
 impl InventoryItem {
     fn is_allowed(&self) -> bool {
         matches!(self, InventoryItem::Thief)
     }
+}
+
+#[derive(Accounts)]
+pub struct InitializeHeists<'info> {
+    #[account(
+        init,
+        payer = owner,
+        space = 5000,
+        seeds = [b"HEISTS", owner.key().as_ref()],
+        bump
+    )]
+    pub heists: Account<'info, Heists>,
+    #[account(mut)]
+    pub owner: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct StartHeist<'info> {
+    #[account(mut, has_one = owner)]
+    pub heists: Account<'info, Heists>,
+    #[account(mut, has_one = owner)]
+    pub player: Account<'info, Player>,
+    #[account(mut)]
+    pub owner: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct CompleteHeist<'info> {
+    #[account(mut, has_one = owner)]
+    pub player: Account<'info, Player>,
+    #[account(mut, has_one = owner)]
+    pub heists: Account<'info, Heists>,
+    #[account(mut, has_one = owner)]
+    pub inventory: Account<'info, Inventory>,
+    pub owner: Signer<'info>,
 }
 
 #[derive(Accounts)]
@@ -562,6 +775,8 @@ pub struct Player {
 
 impl Player {
     const QUEST_RECRUIT_THIEF: u8 = 11;
+    const QUEST_COMPLETE_ONE_HEIST: u8 = 12;
+    const QUEST_COMPLETE_TEN_HEISTS: u8 = 13;
 
     fn owns_room(&self, room_type: RoomType) -> bool {
         self.rooms.iter().any(|room| room.room_type == room_type)
@@ -710,4 +925,25 @@ impl RoomType {
     fn upgraded_storage_capacity(&self, level: u8) -> u64 {
         (self.storage_capacity() as f64 * 1.10_f64.powi(level as i32 - 1)) as u64
     }
+}
+
+#[account]
+pub struct Heists {
+    pub owner: Pubkey,
+    pub heist_level: u8,
+    pub heist_timestamp: u64,
+    pub enforcers_on_heist: u64,
+    pub hitmen_on_heist: u64,
+    pub completed_heists: Vec<CompletedHeist>,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+pub struct CompletedHeist {
+    pub win: bool,
+    pub thief_died: bool,
+    pub enforcers_lost: u64,
+    pub hitmen_lost: u64,
+    pub xp_reward: u64,
+    pub silver_reward: u64,
+    pub loot_reward: Option<InventoryItem>,
 }
