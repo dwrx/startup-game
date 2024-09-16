@@ -248,7 +248,7 @@ const HomeScreen: React.FC = () => {
 
       {message && <div className={`message-box ${messageType}`}>{message}</div>}
       <div className="content-wrapper">
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSc4mAB7GBgYlGgB0KIEWhzTaBd_5HAg4Q8LfRSfTRmZC0IF5w/viewform" target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none'}}>
+        <a href="https://docs.google.com/spreadsheets/d/1AQSTzpImffgfps5XaMM1-H-z77KzPMdAtORlzLyM_Eo" target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none'}}>
         <p
           className="block-title"
           style={{
@@ -267,18 +267,7 @@ const HomeScreen: React.FC = () => {
             textDecoration: "none",
           }}
         >
-          <img
-            src="/sonic-logo.png"
-            alt="Sonic Node WL"
-            style={{
-              width: "32px",
-              height: "32px",
-              borderRadius: "50%",
-              verticalAlign: "middle",
-              marginRight: "8px",
-            }}
-          />
-          Sonic Node WL
+          🏆 Sonic Node WL Winners 🏆
         </p>
         </a>
         <div className="content-wrappper-details">
