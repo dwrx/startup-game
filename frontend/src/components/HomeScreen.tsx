@@ -248,7 +248,7 @@ const HomeScreen: React.FC = () => {
 
       {message && <div className={`message-box ${messageType}`}>{message}</div>}
       <div className="content-wrapper">
-        <a href="https://docs.google.com/spreadsheets/d/1AQSTzpImffgfps5XaMM1-H-z77KzPMdAtORlzLyM_Eo" target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none'}}>
+        <a href="https://discord.gg/fckhkP5p5Z" target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none'}}>
         <p
           className="block-title"
           style={{
@@ -267,7 +267,7 @@ const HomeScreen: React.FC = () => {
             textDecoration: "none",
           }}
         >
-          🏆 Sonic Node WL Winners 🏆
+          <img src="/icons/discord.png" alt="Discord" className="social-icon" style={{verticalAlign: "middle"}} /> Chat with us on Discord
         </p>
         </a>
         <div className="content-wrappper-details">
