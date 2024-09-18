@@ -130,7 +130,7 @@ const LeaderboardScreen = () => {
                   <TableCell align="left" style={{ color: "gold", fontSize: "18px" }}>
                     {index + 1}
                   </TableCell>
-                  <TableCell align="left">{formatPlayerName(player.username, player.address)}</TableCell>
+                  <TableCell align="left"><Link to={`/inventory?player=${player.address}`} style={{color: 'white'}}>{formatPlayerName(player.username, player.address)}</Link></TableCell>
                   <TableCell align="right">{player.xp}</TableCell>
                   <TableCell align="right">{player.silver}</TableCell>
                   <TableCell align="right">

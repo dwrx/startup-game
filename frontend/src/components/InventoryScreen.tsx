@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { PublicKey, SystemProgram } from "@solana/web3.js";
 import { Button, Grid, Typography, Box } from "@mui/material";
+import { useLocation } from "react-router-dom";
 import SiteNavigation from "./SiteNavigation";
 import useProgram from "../hooks/useProgram";
 import "./InventoryScreen.css";
 
 const InventoryScreen: React.FC = () => {
+  const location = useLocation()
   const wallet = useWallet();
   const connection = useConnection();
   const program = useProgram();
@@ -19,8 +21,24 @@ const InventoryScreen: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showInfoWindow, setShowInfoWindow] = useState<boolean>(false);
 
-  const fetchAccounts = async () => {
-    if (!wallet.publicKey || !program) {
+  const getPlayerFromUrl = (): PublicKey | null => {
+    const params = new URLSearchParams(location.search);
+    const playerParam = params.get("player");
+
+    if (playerParam) {
+      try {
+        return new PublicKey(playerParam);
+      } catch (e) {
+        console.error("Invalid public key in URL:", playerParam);
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const fetchAccounts = async (playerAddress: PublicKey | null = null) => {
+    const pubKey = playerAddress !== null ? playerAddress : wallet.publicKey;
+    if (!pubKey || !program) {
       setLoading(false);
       setError("Wallet is not connected");
       return;
@@ -31,12 +49,12 @@ const InventoryScreen: React.FC = () => {
 
     try {
       const [playerPda] = await PublicKey.findProgramAddress(
-        [Buffer.from("PLAYER"), wallet.publicKey.toBuffer()],
+        [Buffer.from("PLAYER"), pubKey.toBuffer()],
         program.programId
       );
 
       const [inventoryPda] = await PublicKey.findProgramAddress(
-        [Buffer.from("INVENTORY"), wallet.publicKey.toBuffer()],
+        [Buffer.from("INVENTORY"), pubKey.toBuffer()],
         program.programId
       );
 
@@ -66,7 +84,15 @@ const InventoryScreen: React.FC = () => {
     const ua = navigator.userAgent;
     setIsOKApp(/OKApp/i.test(ua));
 
-    fetchAccounts();
+    const playerFromUrl = getPlayerFromUrl();
+    if (playerFromUrl) {
+      fetchAccounts(playerFromUrl);
+    } else if (wallet.publicKey) {
+      fetchAccounts();
+    } else {
+      setLoading(false);
+      setError("Wallet is not connected");
+    }
   }, [wallet.publicKey, program]);
 
   const initializeInventory = async () => {
@@ -235,7 +261,7 @@ const InventoryScreen: React.FC = () => {
   };
 
   return (
-    <div className="inventory-page">
+    <div className="inventory-page" style={{overflowY: 'scroll'}}>
       <SiteNavigation />
       {isOKApp &&
         !loading &&
@@ -260,7 +286,7 @@ const InventoryScreen: React.FC = () => {
             </Box>
           </Box>
         )}
-      <Box p={2} className="inventory-page-container">
+      <Box p={2} className="inventory-page-container" style={{marginBottom: '75px'}}>
         {loading && <p className="loading">Loading...</p>}
         {error && <p className="error">{error}</p>}
         {showInfoWindow && (
