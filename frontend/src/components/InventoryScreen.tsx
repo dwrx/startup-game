@@ -8,7 +8,7 @@ import useProgram from "../hooks/useProgram";
 import "./InventoryScreen.css";
 
 const InventoryScreen: React.FC = () => {
-  const location = useLocation()
+  const location = useLocation();
   const wallet = useWallet();
   const connection = useConnection();
   const program = useProgram();
@@ -124,79 +124,117 @@ const InventoryScreen: React.FC = () => {
   };
 
   const renderInventoryItems = () => {
-    const items: any = [];
+    const itemsMap: { [key: string]: any } = {};
+
+    // Add Lootbox if claimed in player account
+    if (playerAccount && playerAccount.lootboxLevel > 0) {
+      const lootboxImage = `/lootbox-${playerAccount.lootboxLevel}.png`;
+      const lootboxKey = `LOOTBOX LVL${playerAccount.lootboxLevel}`;
+      itemsMap[lootboxKey] = {
+        name: lootboxKey,
+        image: lootboxImage,
+        count: 1,
+      };
+    }
 
     // Add hardcoded "PRE-SEASON BADGE"
-    items.push({ name: "PRE-SEASON BADGE", image: "/early-bird.png" });
+    // itemsMap["PRE-SEASON BADGE"] = {
+    //   name: "PRE-SEASON BADGE",
+    //   image: "/early-bird.png",
+    //   count: 1,
+    // };
 
     if (inventoryAccount) {
-      // Add items from inventory account
       inventoryAccount.items.forEach((item: any) => {
+        let itemKey = "";
+        let itemImage = "";
+
         if (item.thief) {
-          items.push({ name: "Albert - LVL1", image: "/albert.png" });
+          itemKey = "Albert - LVL1";
+          itemImage = "/albert.png";
         } else if (item.okxLootbox) {
-          items.push({ name: "OKX LOOTBOX", image: "/okx-promo.png", opened: false });
+          itemKey = "OKX LOOTBOX";
+          itemImage = "/okx-promo.png";
         } else if (item.openedOkxLootbox) {
-          items.push({ name: "OKX LOOTBOX", image: "/okx-promo.png", opened: true });
+          itemKey = "OKX LOOTBOX (Opened)";
+          itemImage = "/okx-promo.png";
         } else if (item.washingMachine) {
-          items.push({ name: "Washing Machine", image: "/loot/washing-machine.png" });
+          itemKey = "Washing Machine";
+          itemImage = "/loot/washing-machine.png";
         } else if (item.microwaveOven) {
-          items.push({ name: "Microwave Oven", image: "/loot/microwave-oven.png" });
+          itemKey = "Microwave Oven";
+          itemImage = "/loot/microwave-oven.png";
         } else if (item.whiskey) {
-          items.push({ name: "Whiskey", image: "/loot/whiskey.png" });
+          itemKey = "Whiskey";
+          itemImage = "/loot/whiskey.png";
         } else if (item.slotMachine) {
-          items.push({ name: "Slot Machine", image: "/loot/slot-machine.png" });
+          itemKey = "Slot Machine";
+          itemImage = "/loot/slot-machine.png";
         } else if (item.cannabisSeeds) {
-          items.push({ name: "Cannabis Seeds", image: "/loot/cannabis-seeds.png" });
+          itemKey = "Cannabis Seeds";
+          itemImage = "/loot/cannabis-seeds.png";
         } else if (item.vipLoungeFurniture) {
-          items.push({ name: "VIP Lounge Furniture", image: "/loot/vip-lounge-furniture.png" });
+          itemKey = "VIP Lounge Furniture";
+          itemImage = "/loot/vip-lounge-furniture.png";
         } else if (item.boxingSandbag) {
-          items.push({ name: "Boxing Sandbag", image: "/loot/boxing-sandbag.png" });
+          itemKey = "Boxing Sandbag";
+          itemImage = "/loot/boxing-sandbag.png";
+        }
+
+        if (itemKey) {
+          if (itemsMap[itemKey]) {
+            itemsMap[itemKey].count++;
+          } else {
+            itemsMap[itemKey] = {
+              name: itemKey,
+              image: itemImage,
+              count: 1,
+              opened: itemKey.includes("Opened") ? true : undefined,
+            };
+          }
         }
       });
-
-      // Add Lootbox if claimed in player account
-      if (playerAccount && playerAccount.lootboxLevel > 0) {
-        const lootboxImage = `/lootbox-${playerAccount.lootboxLevel}.png`;
-        items.push({ name: `LOOTBOX LVL${playerAccount.lootboxLevel}`, image: lootboxImage });
-      }
     }
 
     // Ensure at least 9 grid items
-    while (items.length < 9) {
-      items.push({ name: "", image: "" });
+    const itemsArray = Object.values(itemsMap);
+    while (itemsArray.length < 9) {
+      itemsArray.push({ name: "", image: "", count: 0 });
     }
 
-    return items.map((item: { name: string; image: string; opened: boolean | undefined }, index: number) => (
-      <Grid item xs={4} key={index} className="inventory-grid-item">
-        {item.image ? (
-          <div className={`inventory-item ${item.opened ? "grayscale" : ""}`}>
-            <div className="shining-container">
-              <div className="shining-effect"></div>
+    return itemsArray.map(
+      (item: { name: string; image: string; count: number; opened: boolean | undefined }, index: number) => (
+        <Grid item xs={4} key={index} className="inventory-grid-item">
+          {item.image ? (
+            <div className={`inventory-item ${item.opened ? "grayscale" : ""}`}>
+              <div className="shining-container">
+                <div className="shining-effect"></div>
+              </div>
+              <img src={item.image} alt={item.name} />
+              {item.count > 1 && <span className="item-count">{item.count}</span>}
+              {item.opened && <span className="opened-label">OPENED</span>}
+              <Typography className="item-label">
+                {item.opened ? (
+                  item.name
+                ) : item.name === "OKX LOOTBOX" ? (
+                  <Button
+                    variant="contained"
+                    style={{ backgroundColor: "#f2b24e", color: "#000", marginTop: "10px" }}
+                    onClick={() => openLootbox()}
+                  >
+                    Open
+                  </Button>
+                ) : (
+                  item.name
+                )}
+              </Typography>
             </div>
-            <img src={item.image} alt={item.name} />
-            {item.opened && <span className="opened-label">OPENED</span>}
-            <Typography className="item-label">
-              {item.opened ? (
-                item.name
-              ) : item.name === "OKX LOOTBOX" ? (
-                <Button
-                  variant="contained"
-                  style={{ backgroundColor: "#f2b24e", color: "#000", marginTop: "10px" }}
-                  onClick={() => openLootbox()}
-                >
-                  Open
-                </Button>
-              ) : (
-                item.name
-              )}
-            </Typography>
-          </div>
-        ) : (
-          <div className="inventory-item empty"></div>
-        )}
-      </Grid>
-    ));
+          ) : (
+            <div className="inventory-item empty"></div>
+          )}
+        </Grid>
+      )
+    );
   };
 
   const claimLootbox = async () => {
@@ -261,7 +299,7 @@ const InventoryScreen: React.FC = () => {
   };
 
   return (
-    <div className="inventory-page" style={{overflowY: 'scroll'}}>
+    <div className="inventory-page" style={{ overflowY: "scroll" }}>
       <SiteNavigation />
       {isOKApp &&
         !loading &&
@@ -286,7 +324,7 @@ const InventoryScreen: React.FC = () => {
             </Box>
           </Box>
         )}
-      <Box p={2} className="inventory-page-container" style={{marginBottom: '75px'}}>
+      <Box p={2} className="inventory-page-container" style={{ marginBottom: "75px" }}>
         {loading && <p className="loading">Loading...</p>}
         {error && <p className="error">{error}</p>}
         {showInfoWindow && (
