@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Box, Typography, Button, TextField } from "@mui/material";
+import { Modal, Box, Typography, Button, Slider } from "@mui/material";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
@@ -16,10 +16,12 @@ interface RoomDetailsModalProps {
 const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room }) => {
   const [enforcers, setEnforcers] = useState<number>(0);
   const [hitmen, setHitmen] = useState<number>(0);
-  const [sufficientFunds, setSufficientFunds] = useState<{ enforcers: boolean; hitmen: boolean }>({
-    enforcers: true,
-    hitmen: true,
+  const [playerCash, setPlayerCash] = useState<{ cleanCash: number; dirtyCash: number }>({
+    cleanCash: 0,
+    dirtyCash: 0,
   });
+  const [maxEnforcers, setMaxEnforcers] = useState<number>(0);
+  const [maxHitmen, setMaxHitmen] = useState<number>(0);
 
   const wallet = useWallet();
   const program = useProgram();
@@ -38,9 +40,13 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
     try {
       // @ts-ignore
       const playerAccount = await program.account.player.fetch(playerPda);
-      const hasEnoughCleanCash = playerAccount.cleanCash.toNumber() >= enforcers * ENFORCER_COST;
-      const hasEnoughDirtyCash = playerAccount.dirtyCash.toNumber() >= hitmen * HITMAN_COST;
-      setSufficientFunds({ enforcers: hasEnoughCleanCash, hitmen: hasEnoughDirtyCash });
+      const cleanCash = playerAccount.cleanCash.toNumber();
+      const dirtyCash = playerAccount.dirtyCash.toNumber();
+      setPlayerCash({ cleanCash, dirtyCash });
+
+      // Calculate max enforcers and hitmen based on available cash
+      setMaxEnforcers(Math.floor(cleanCash / ENFORCER_COST));
+      setMaxHitmen(Math.floor(dirtyCash / HITMAN_COST));
 
       return playerAccount;
     } catch (err) {
@@ -60,7 +66,7 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
         [Buffer.from("PLAYER"), wallet.publicKey.toBuffer()],
         program.programId
       );
-
+      console.log(`Recruiting ${enforcers} enforcers and ${hitmen} hitmen...`);
       await program.methods
         .recruitUnits(new anchor.BN(enforcers), new anchor.BN(hitmen))
         .accounts({
@@ -75,6 +81,13 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
       fetchPlayer();
     } catch (err) {
       console.error("Failed to recruit units", err);
+    }
+  };
+
+  const handleSliderChange = (event: any, newValue: number | number[], unitType: string) => {
+    if (typeof newValue === "number") {
+      if (unitType === "enforcers") setEnforcers(newValue);
+      else if (unitType === "hitmen") setHitmen(newValue);
     }
   };
 
@@ -97,41 +110,40 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
         {room.name === "Security Room" && (
           <>
             <Typography variant="h6">Recruit Units</Typography>
-            <Box mb={2}>
-              <TextField
-                className="recruitment-input"
-                label="Enforcers"
-                type="number"
-                InputProps={{
-                  inputProps: {
-                    min: 0,
-                  },
-                }}
+            <Box mt={2}>
+              <Typography>
+                <b>Enforcers</b> - ${ENFORCER_COST}{" "}
+                <img src="/clean-money.png" width="24" alt="clean cash" style={{ verticalAlign: "middle" }} />
+              </Typography>
+              <Slider
                 value={enforcers}
-                onChange={(e) => setEnforcers(parseInt(e.target.value))}
-                fullWidth
-                margin="normal"
-                helperText={`Price: $${ENFORCER_COST} clean cash each`}
-                error={!sufficientFunds.enforcers}
-                //disabled={player.clean_cash < ENFORCER_COST}
+                min={0}
+                max={maxEnforcers}
+                onChange={(e, val) => handleSliderChange(e, val, "enforcers")}
+                step={1}
+                style={{ color: "#f2b24e" }}
               />
-              <TextField
-                className="recruitment-input"
-                label="Hitmen"
-                type="number"
-                InputProps={{
-                  inputProps: {
-                    min: 0,
-                  },
-                }}
-                value={hitmen}
-                onChange={(e) => setHitmen(parseInt(e.target.value))}
-                fullWidth
-                margin="normal"
-                helperText={`Price: $${HITMAN_COST} dirty cash each`}
-                error={!sufficientFunds.hitmen}
-                //disabled={player.dirty_cash < HITMAN_COST}
-              />
+              <pre>
+                Selected: {enforcers} | Cost: ${enforcers * ENFORCER_COST}
+              </pre>
+
+              <Box mt={2}>
+                <Typography>
+                  <b>Hitmen</b> - ${HITMAN_COST}{" "}
+                  <img src="/dirty-money.png" width="24" alt="dirty cash" style={{ verticalAlign: "middle" }} />
+                </Typography>
+                <Slider
+                  value={hitmen}
+                  min={0}
+                  max={maxHitmen}
+                  onChange={(e, val) => handleSliderChange(e, val, "hitmen")}
+                  step={1}
+                  style={{ color: "#f2b24e" }}
+                />
+                <pre>
+                  Selected: {hitmen} | Cost: ${hitmen * HITMAN_COST}
+                </pre>
+              </Box>
             </Box>
           </>
         )}
@@ -142,7 +154,7 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
               variant="contained"
               color="primary"
               onClick={handleRecruit}
-              disabled={!sufficientFunds.enforcers || !sufficientFunds.hitmen || (enforcers === 0 && hitmen === 0)}
+              disabled={enforcers === 0 && hitmen === 0}
             >
               Recruit
             </Button>
