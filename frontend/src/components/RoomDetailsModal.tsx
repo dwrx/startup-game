@@ -56,7 +56,7 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
 
   useEffect(() => {
     fetchPlayer();
-  }, [enforcers, hitmen, wallet.publicKey]);
+  }, [open]);
 
   const handleRecruit = async () => {
     if (!wallet.connected || !wallet.publicKey || !program) return;
