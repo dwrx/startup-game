@@ -64,12 +64,15 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
         );
         // @ts-ignore
         const inventory = await program.account.inventory.fetch(inventoryPda);
+        console.log("Re-fetching inventory account:", inventory);
         setInventoryAccount(inventory);
         if (inventory && inventory.items.length > 0 && room.upgradeItem) {
           // find if player has required item in inventory
           const playerHasItem = inventory.items.find((item: any) => item[room.upgradeItem.name]);
           if (playerHasItem) {
             setUpgradeItem(room.upgradeItem);
+          } else {
+            setUpgradeItem(null);
           }
         }
       } catch (err) {
@@ -89,6 +92,27 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
 
   const handleUpgrade = async () => {
     if (!wallet.connected || !wallet.publicKey || !program) return;
+
+    try {
+      const [playerPda] = await PublicKey.findProgramAddress(
+        [Buffer.from("PLAYER"), wallet.publicKey.toBuffer()],
+        program.programId
+      );
+      const [inventoryPda] = await PublicKey.findProgramAddress(
+        [Buffer.from("INVENTORY"), wallet.publicKey.toBuffer()],
+        program.programId
+      );
+      await program.methods
+        .upgradeRoom(room.roomType)
+        .accounts({
+          player: playerPda,
+          inventory: inventoryPda,
+        })
+        .rpc();
+      await fetchPlayer();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleRecruit = async () => {
@@ -127,7 +151,6 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
   const nextLevel = roomLevel + 1;
   const nextYield = nextLevel * room.yield;
   const nextCapacity = nextLevel * room.capacity;
-  const nextCost = nextLevel * 10000;
 
   return (
     <Modal open={open} onClose={onClose} className="room-details-modal">
@@ -142,8 +165,8 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
                 <pre>
                   <b>Current Level:</b> {roomLevel}
                 </pre>
-                <pre>Yield: ${room.yield}/min</pre>
-                <pre>Max Capacity: ${room.capacity}</pre>
+                <pre>Yield: ${room.yield * roomLevel}/min</pre>
+                <pre>Max Capacity: ${room.capacity * roomLevel}</pre>
               </Box>
 
               {room.upgradeItem && (

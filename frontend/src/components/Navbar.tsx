@@ -117,7 +117,7 @@ const Navbar: React.FC = () => {
         const roomInfo = allRooms.find((r) => Object.keys(r.roomType)[0] === Object.keys(room.roomType)[0]);
         if (!roomInfo) return;
 
-        const yieldPerSecond = roomInfo.yield / 60;
+        const yieldPerSecond = roomInfo.yield * room.level / 60;
         const potentialReward = Math.min(elapsedTime * yieldPerSecond, room.storageCapacity.toNumber());
 
         if (["unlicensedBar", "cannabisFarm", "stripClub", "casino"].includes(Object.keys(room.roomType)[0])) {

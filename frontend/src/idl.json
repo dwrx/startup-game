@@ -376,6 +376,35 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "upgrade_room",
+      "discriminator": [20, 247, 113, 177, 217, 68, 87, 243],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true
+        },
+        {
+          "name": "inventory",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": ["player", "inventory"]
+        }
+      ],
+      "args": [
+        {
+          "name": "room_type",
+          "type": {
+            "defined": {
+              "name": "RoomType"
+            }
+          }
+        }
+      ]
     }
   ],
   "accounts": [
@@ -396,47 +425,67 @@
     {
       "code": 6000,
       "name": "AlreadyInitialized",
-      "msg": "The inventory account is already initialized."
+      "msg": "The player account is already initialized."
     },
     {
       "code": 6001,
       "name": "InsufficientExperience",
-      "msg": "Insufficient experience."
+      "msg": "The player has insufficient experience."
     },
     {
       "code": 6002,
-      "name": "InsufficientFunds",
-      "msg": "Insufficient funds."
+      "name": "LootboxAlreadyClaimed",
+      "msg": "The lootbox has already been claimed."
     },
     {
       "code": 6003,
-      "name": "UninitializedAccount",
-      "msg": "The inventory has not been initialized."
+      "name": "QuestNotCompleted",
+      "msg": "The quest has not been completed."
     },
     {
       "code": 6004,
-      "name": "InvalidItem",
-      "msg": "The inventory item is not allowed."
+      "name": "RewardAlreadyClaimed",
+      "msg": "The quest reward has already been claimed."
     },
     {
       "code": 6005,
-      "name": "AlreadyRecruited",
-      "msg": "The inventory already has this team member."
+      "name": "LootboxNotClaimed",
+      "msg": "The lootbox has not been claimed yet."
     },
     {
       "code": 6006,
-      "name": "AlreadyClaimed",
-      "msg": "Item already claimed."
+      "name": "MaxLevelReached",
+      "msg": "The player has reached the maximum lootbox level."
     },
     {
       "code": 6007,
-      "name": "LootboxNotFound",
-      "msg": "Lootbox not found in inventory."
+      "name": "InsufficientSilver",
+      "msg": "The player does not have enough silver."
     },
     {
       "code": 6008,
-      "name": "Overflow",
-      "msg": "Overflow occurred."
+      "name": "HeistAlreadyInProgress",
+      "msg": "Heist already in progress."
+    },
+    {
+      "code": 6009,
+      "name": "InsufficientUnitsForHeist",
+      "msg": "Insufficient units for heist."
+    },
+    {
+      "code": 6010,
+      "name": "HeistNotYetComplete",
+      "msg": "Not enough time has passed to complete the heist."
+    },
+    {
+      "code": 6011,
+      "name": "NoActiveHeist",
+      "msg": "No active heist."
+    },
+    {
+      "code": 6012,
+      "name": "TimeOverflow",
+      "msg": "Timestamp overflow."
     }
   ],
   "types": [
