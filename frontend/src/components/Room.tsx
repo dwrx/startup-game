@@ -14,10 +14,11 @@ interface RoomProps {
   playerLevel: number;
   roomData?: any;
   roomType?: any;
+  isUpgradeAvailable?: boolean;
   onPurchase: (room: any, isLegal: boolean) => void;
 }
 
-const Room: React.FC<RoomProps> = ({ className, isLegal, playerCash, playerLevel, roomData, onPurchase }) => {
+const Room: React.FC<RoomProps> = ({ className, isLegal, playerCash, playerLevel, roomData, isUpgradeAvailable, onPurchase }) => {
   const [purchased, setPurchased] = useState(!!roomData);
   const [openPurchaseModal, setOpenPurchaseModal] = useState(false);
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
@@ -87,6 +88,7 @@ const Room: React.FC<RoomProps> = ({ className, isLegal, playerCash, playerLevel
         {purchased ? (
           <div className="room-content">
             <img src={getRoomImage(selectedRoom.roomType)} alt={selectedRoom.name} />
+            {isUpgradeAvailable && <p className="upgrade-available">Upgrade Available</p>}
           </div>
         ) : (
           <div className="room-placeholder">

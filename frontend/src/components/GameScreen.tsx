@@ -5,6 +5,7 @@ import "../styles.css";
 import Navbar from "./Navbar";
 import Room from "./Room";
 import useProgram from "../hooks/useProgram";
+import { legalRooms as allLegalRooms, illegalRooms as allIllegalRooms } from "../rooms";
 import { JSX } from "react/jsx-runtime";
 
 const GameScreen: React.FC = () => {
@@ -13,6 +14,8 @@ const GameScreen: React.FC = () => {
   const [playerData, setPlayerData] = useState<any>(null);
   const [legalRooms, setLegalRooms] = useState<any[]>([]);
   const [illegalRooms, setIllegalRooms] = useState<any[]>([]);
+  const [inventory, setInventory] = useState<any>(null);
+  const allRooms = [...allLegalRooms, ...allIllegalRooms];
 
   useEffect(() => {
     const fetchPlayerData = async () => {
@@ -48,6 +51,19 @@ const GameScreen: React.FC = () => {
       } catch (err) {
         console.error("Failed to fetch player account:", err);
       }
+
+      try {
+        const [inventoryPda] = await PublicKey.findProgramAddress(
+          [Buffer.from("INVENTORY"), wallet.publicKey.toBuffer()],
+          program.programId
+        );
+        // @ts-ignore
+        const inventoryAccount = await program.account.inventory.fetch(inventoryPda);
+        setInventory(inventoryAccount);
+      } catch (err) {
+        console.log("Inventory account not initialized", err);
+        setInventory(null);
+      }
     };
 
     fetchPlayerData();
@@ -63,12 +79,26 @@ const GameScreen: React.FC = () => {
     }
   };
 
+  const checkUpgradeAvailability = (room: any) => {
+    if (!inventory || !inventory.items) {
+      return false;
+    }
+    const matchedRoom = allRooms.find((r) => JSON.stringify(r.roomType) === JSON.stringify(room.roomType));
+    console.log('matchedRoom', matchedRoom);
+    if (!matchedRoom || !matchedRoom.upgradeItem) {
+      return false;
+    }
+    const playerHasItem = inventory.items.find((item: any) => item[matchedRoom.upgradeItem.name]);
+    return !!playerHasItem;
+  };
+
   const renderRooms = (rooms: any[], startIndex: number, isLegal: boolean) => {
     const roomComponents: JSX.Element[] = [];
     if (!playerData) {
       return roomComponents;
     }
     for (let i = 0; i < rooms.length; i++) {
+      const isUpgradeAvailable = checkUpgradeAvailability(rooms[i]);
       roomComponents.push(
         <Room
           key={startIndex + i}
@@ -78,6 +108,7 @@ const GameScreen: React.FC = () => {
           playerLevel={playerData.experience.toNumber()}
           onPurchase={handlePurchase}
           roomData={rooms[i]}
+          isUpgradeAvailable={isUpgradeAvailable}
         />
       );
     }

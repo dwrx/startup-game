@@ -132,6 +132,15 @@ li {
   margin: 0;
 }
 
+p.upgrade-available {
+  position: absolute;
+  background: #000000cf;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: #fff;
+}
+
 @media (max-width: 768px) {
   .guide-container {
     padding: 10px;
