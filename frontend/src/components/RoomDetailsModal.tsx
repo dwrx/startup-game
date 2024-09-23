@@ -14,6 +14,7 @@ interface RoomDetailsModalProps {
 }
 
 const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room }) => {
+  const [roomLevel, setRoomLevel] = useState<number>(0);
   const [enforcers, setEnforcers] = useState<number>(0);
   const [hitmen, setHitmen] = useState<number>(0);
   const [playerCash, setPlayerCash] = useState<{ cleanCash: number; dirtyCash: number }>({
@@ -22,6 +23,8 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
   });
   const [maxEnforcers, setMaxEnforcers] = useState<number>(0);
   const [maxHitmen, setMaxHitmen] = useState<number>(0);
+  const [inventoryAccount, setInventoryAccount] = useState<any>(null);
+  const [upgradeItem, setUpgradeItem] = useState<any>(null);
 
   const wallet = useWallet();
   const program = useProgram();
@@ -40,6 +43,12 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
     try {
       // @ts-ignore
       const playerAccount = await program.account.player.fetch(playerPda);
+      const activeRoom = playerAccount.rooms.find(
+        (roomInAccount: any) => JSON.stringify(roomInAccount.roomType) === JSON.stringify(room.roomType)
+      );
+      if (activeRoom) {
+        setRoomLevel(activeRoom.level.toNumber());
+      }
       const cleanCash = playerAccount.cleanCash.toNumber();
       const dirtyCash = playerAccount.dirtyCash.toNumber();
       setPlayerCash({ cleanCash, dirtyCash });
@@ -47,6 +56,26 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
       // Calculate max enforcers and hitmen based on available cash
       setMaxEnforcers(Math.floor(cleanCash / ENFORCER_COST));
       setMaxHitmen(Math.floor(dirtyCash / HITMAN_COST));
+
+      try {
+        const [inventoryPda] = await PublicKey.findProgramAddress(
+          [Buffer.from("INVENTORY"), wallet.publicKey.toBuffer()],
+          program.programId
+        );
+        // @ts-ignore
+        const inventory = await program.account.inventory.fetch(inventoryPda);
+        setInventoryAccount(inventory);
+        if (inventory && inventory.items.length > 0 && room.upgradeItem) {
+          // find if player has required item in inventory
+          const playerHasItem = inventory.items.find((item: any) => item[room.upgradeItem.name]);
+          if (playerHasItem) {
+            setUpgradeItem(room.upgradeItem);
+          }
+        }
+      } catch (err) {
+        console.log("Inventory account not initialized");
+        setInventoryAccount(null);
+      }
 
       return playerAccount;
     } catch (err) {
@@ -57,6 +86,10 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
   useEffect(() => {
     fetchPlayer();
   }, [open]);
+
+  const handleUpgrade = async () => {
+    if (!wallet.connected || !wallet.publicKey || !program) return;
+  };
 
   const handleRecruit = async () => {
     if (!wallet.connected || !wallet.publicKey || !program) return;
@@ -91,6 +124,11 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
     }
   };
 
+  const nextLevel = roomLevel + 1;
+  const nextYield = nextLevel * room.yield;
+  const nextCapacity = nextLevel * room.capacity;
+  const nextCost = nextLevel * 10000;
+
   return (
     <Modal open={open} onClose={onClose} className="room-details-modal">
       <Box className="modal-box">
@@ -99,9 +137,29 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
         <hr />
         {room.name !== "Security Room" && (
           <>
-            <Typography>Yield: ${room.yield}/min</Typography>
-            <Typography>Max capacity: ${room.capacity}</Typography>
-            <Typography>Level: 1</Typography>
+            <Box display="flex" justifyContent="space-between">
+              <Box width="48%">
+                <pre>
+                  <b>Current Level:</b> {roomLevel}
+                </pre>
+                <pre>Yield: ${room.yield}/min</pre>
+                <pre>Max Capacity: ${room.capacity}</pre>
+              </Box>
+
+              {room.upgradeItem && (
+                <Box width="48%">
+                  <pre>
+                    <b>Next Level:</b> {nextLevel}
+                  </pre>
+                  <pre>Yield: ${nextYield}/min</pre>
+                  <pre>Max Capacity: ${nextCapacity}</pre>
+                  <pre style={{ display: "flex", alignItems: "center" }}>
+                    Upgrade item: <img src={room.upgradeItem.image} width="50" alt={room.upgradeItem.name} />
+                  </pre>
+                </Box>
+              )}
+            </Box>
+
             <hr />
           </>
         )}
@@ -160,7 +218,19 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ open, onClose, room
             </Button>
           )}
 
-          <Button variant="contained" color="primary" className="close" onClick={onClose}>
+          {room.upgradeItem && (
+            <Button variant="contained" color="primary" onClick={handleUpgrade} disabled={!upgradeItem}>
+              {upgradeItem ? "Upgrade" : "Missing required loot item"}
+            </Button>
+          )}
+
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ backgroundColor: "transparent", color: "#ffffff" }}
+            className="close"
+            onClick={onClose}
+          >
             Close
           </Button>
         </Box>

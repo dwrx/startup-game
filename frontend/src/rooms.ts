@@ -1,3 +1,5 @@
+import { updateGetAccessor } from "typescript";
+
 export const legalRooms = [
   {
     name: "Laundry",
@@ -9,6 +11,10 @@ export const legalRooms = [
     capacity: 100,
     image: "/rooms/laundry.gif",
     levelRequirement: 0,
+    upgradeItem: {
+      name: "washingMachine",
+      image: "loot/washing-machine.png",
+    },
   },
   {
     name: "Fastfood",
@@ -20,6 +26,10 @@ export const legalRooms = [
     capacity: 200,
     image: "/rooms/fastFoodRestaurant.gif",
     levelRequirement: 2,
+    upgradeItem: {
+      name: "microwaveOven",
+      image: "loot/microwave-oven.png",
+    },
   },
   {
     name: "Fitness Center",
@@ -31,6 +41,10 @@ export const legalRooms = [
     capacity: 300,
     image: "/rooms/fitnessCenter.png",
     levelRequirement: 5,
+    upgradeItem: {
+      name: "boxingSandbag",
+      image: "loot/boxing-sandbag.png",
+    },
   },
 ];
 
@@ -45,6 +59,10 @@ export const illegalRooms = [
     capacity: 150,
     image: "/rooms/unlicensedBar.gif",
     levelRequirement: 1,
+    upgradeItem: {
+      name: "whiskey",
+      image: "loot/whiskey.png",
+    },
   },
   {
     name: "Cannabis Farm",
@@ -56,6 +74,10 @@ export const illegalRooms = [
     capacity: 250,
     image: "/rooms/cannabisFarm.gif",
     levelRequirement: 3,
+    upgradeItem: {
+      name: "cannabisSeeds",
+      image: "loot/cannabis-seeds.png",
+    },
   },
   {
     name: "Strip Club",
@@ -67,6 +89,10 @@ export const illegalRooms = [
     capacity: 400,
     image: "/rooms/stripClub.gif",
     levelRequirement: 4,
+    upgradeItem: {
+      name: "vipLoungeFurniture",
+      image: "loot/vip-lounge-furniture.png",
+    },
   },
   {
     name: "Casino",
@@ -78,6 +104,10 @@ export const illegalRooms = [
     capacity: 500,
     image: "/rooms/casino.gif",
     levelRequirement: 6,
+    upgradeItem: {
+      name: "slotMachine",
+      image: "loot/slot-machine.png",
+    },
   },
   {
     name: "Saferoom",
