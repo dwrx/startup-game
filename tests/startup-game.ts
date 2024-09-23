@@ -392,4 +392,34 @@ describe("startup-game", () => {
     expect(heistsAccount.heistTimestamp.toNumber()).to.equal(0);
     expect(heistsAccount.completedHeists.length).to.equal(0);
   });
+
+  it("Fails to upgrade Security Room (not upgradable)", async () => {
+    try {
+      const roomType = { securityRoom: {} };
+      await program.methods
+        .upgradeRoom(roomType)
+        .accounts({
+          player: playerPda,
+          inventory: inventoryPda,
+        })
+        .rpc();
+    } catch (err) {
+      expect(err.error.errorMessage).to.equal("Room not found.");
+    }
+  });
+
+  it("Fails to upgrade Laundry due to missing Washing Machine in inventory", async () => {
+    try {
+      const roomType = { laundry: {} };
+      await program.methods
+        .upgradeRoom(roomType)
+        .accounts({
+          player: playerPda,
+          inventory: inventoryPda,
+        })
+        .rpc();
+    } catch (err) {
+      expect(err.error.errorMessage).to.equal("Required item not found in the inventory.");
+    }
+  });
 });

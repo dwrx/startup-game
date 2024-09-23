@@ -291,7 +291,7 @@ pub mod startup_game {
             id: player.rooms.len() as u64 + 1,
             room_type: room_type.clone(),
             level: 1,
-            storage_capacity: room_type.storage_capacity(),
+            storage_capacity: room_type.storage_capacity(1),
             last_collected: clock.unix_timestamp as u64,
         };
 
@@ -320,6 +320,40 @@ pub mod startup_game {
             RoomType::FitnessCenter => player.complete_quest(10),
             _ => {}
         }
+
+        Ok(())
+    }
+
+    pub fn upgrade_room(ctx: Context<UpgradeRoom>, room_type: RoomType) -> Result<()> {
+        let player = &mut ctx.accounts.player;
+        let inventory = &mut ctx.accounts.inventory;
+
+        let room = player
+            .rooms
+            .iter_mut()
+            .find(|r| r.room_type == room_type)
+            .ok_or(RoomError::RoomNotFound)?;
+
+        // Check if the room is upgradable
+        let required_item = room_type.upgrade_item().ok_or(RoomError::RoomIsNotUpgradable)?;
+
+        // Check if the player has the required loot item
+        let item_index = inventory
+            .items
+            .iter()
+            .position(|item| item == &required_item)
+            .ok_or(InventoryError::RequiredItemNotFound)?;
+
+        inventory.items.remove(item_index);
+        room.level += 1;
+
+        room.storage_capacity = room_type.storage_capacity(room.level);
+        let new_yield = room_type.yield_per_minute(room.level);
+        msg!(
+            "Room upgraded to level {}. New yield: {}",
+            room.level,
+            new_yield
+        );
 
         Ok(())
     }
@@ -704,6 +738,15 @@ pub struct PurchaseRoom<'info> {
 }
 
 #[derive(Accounts)]
+pub struct UpgradeRoom<'info> {
+    #[account(mut, has_one = owner)]
+    pub player: Account<'info, Player>,
+    #[account(mut, has_one = owner)]
+    pub inventory: Account<'info, Inventory>,
+    pub owner: Signer<'info>,
+}
+
+#[derive(Accounts)]
 pub struct CollectDirtyCash<'info> {
     #[account(mut, has_one = owner)]
     pub player: Account<'info, Player>,
@@ -833,7 +876,7 @@ impl Room {
     fn pending_rewards(&self) -> u64 {
         let clock = Clock::get().unwrap();
         let elapsed_time = (clock.unix_timestamp as u64).saturating_sub(self.last_collected);
-        let yield_per_second = self.room_type.yield_per_minute() as f64 / 60.0;
+        let yield_per_second = self.room_type.yield_per_minute(self.level) as f64 / 60.0;
         let potential_reward = (elapsed_time as f64 * yield_per_second).round() as u64;
         potential_reward.min(self.storage_capacity)
     }
@@ -884,46 +927,46 @@ impl RoomType {
         }
     }
 
-    fn storage_capacity(&self) -> u64 {
+    fn storage_capacity(&self, level: u64) -> u64 {
         match self {
-            RoomType::Laundry => 100,
-            RoomType::FastFoodRestaurant => 200,
-            RoomType::FitnessCenter => 300,
-            RoomType::UnlicensedBar => 150,
-            RoomType::CannabisFarm => 250,
-            RoomType::StripClub => 400,
-            RoomType::Casino => 500,
-            RoomType::Saferoom => 300,
-            RoomType::SecurityRoom => 0,
-        }
-    }
-
-    fn yield_per_minute(&self) -> u64 {
-        match self {
-            RoomType::Laundry => 50,
-            RoomType::FastFoodRestaurant => 75,
-            RoomType::FitnessCenter => 85,
-            RoomType::UnlicensedBar => 65,
-            RoomType::CannabisFarm => 70,
-            RoomType::StripClub => 100,
-            RoomType::Casino => 120,
+            RoomType::Laundry => 100 * level,
+            RoomType::FastFoodRestaurant => 200 * level,
+            RoomType::FitnessCenter => 300 * level,
+            RoomType::UnlicensedBar => 150 * level,
+            RoomType::CannabisFarm => 250 * level,
+            RoomType::StripClub => 400 * level,
+            RoomType::Casino => 500 * level,
             RoomType::Saferoom => 0,
             RoomType::SecurityRoom => 0,
         }
     }
-}
 
-impl RoomType {
-    fn upgraded_cost(&self, level: u8) -> u64 {
-        (self.cost() as f64 * 1.10_f64.powi(level as i32 - 1)) as u64
+    fn yield_per_minute(&self, level: u64) -> u64 {
+        match self {
+            RoomType::Laundry => 50 * level,
+            RoomType::FastFoodRestaurant => 75 * level,
+            RoomType::FitnessCenter => 85 * level,
+            RoomType::UnlicensedBar => 65 * level,
+            RoomType::CannabisFarm => 70 * level,
+            RoomType::StripClub => 100 * level,
+            RoomType::Casino => 120 * level,
+            RoomType::Saferoom => 0,
+            RoomType::SecurityRoom => 0,
+        }
     }
 
-    fn upgraded_yield_per_minute(&self, level: u8) -> u64 {
-        (self.yield_per_minute() as f64 * 1.10_f64.powi(level as i32 - 1)) as u64
-    }
-
-    fn upgraded_storage_capacity(&self, level: u8) -> u64 {
-        (self.storage_capacity() as f64 * 1.10_f64.powi(level as i32 - 1)) as u64
+    fn upgrade_item(&self) -> Option<InventoryItem> {
+        match self {
+            RoomType::Laundry => Some(InventoryItem::WashingMachine),
+            RoomType::FastFoodRestaurant => Some(InventoryItem::MicrowaveOven),
+            RoomType::FitnessCenter => Some(InventoryItem::BoxingSandbag),
+            RoomType::UnlicensedBar => Some(InventoryItem::Whiskey),
+            RoomType::CannabisFarm => Some(InventoryItem::CannabisSeeds),
+            RoomType::StripClub => Some(InventoryItem::VipLoungeFurniture),
+            RoomType::Casino => Some(InventoryItem::SlotMachine),
+            // These rooms are not upgradable
+            RoomType::Saferoom | RoomType::SecurityRoom => None,
+        }
     }
 }
 

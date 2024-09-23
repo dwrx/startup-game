@@ -44,6 +44,10 @@ pub enum RoomError {
     SecurityRoomLevelTooLow,
     #[msg("No Security Room.")]
     NoSecurityRoom,
+    #[msg("Room is not upgradable.")]
+    RoomIsNotUpgradable,
+    #[msg("Room not found.")]
+    RoomNotFound,
 }
 
 #[error_code]
@@ -66,4 +70,6 @@ pub enum InventoryError {
     LootboxNotFound,
     #[msg("Overflow occurred.")]
     Overflow,
+    #[msg("Required item not found in the inventory.")]
+    RequiredItemNotFound,
 }
