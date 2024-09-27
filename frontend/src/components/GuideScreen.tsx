@@ -201,6 +201,10 @@ const GuideScreen: React.FC = () => {
             <img src="/lootbox-3.png" alt="Epic Lootbox" />
             <span>Epic</span>
           </div>
+          <div className="lootbox legendary">
+            <img src="/lootbox-4.png" alt="Legendary Lootbox" />
+            <span>Legendary</span>
+          </div>
         </div>
         <p>You can check your rings balances in the <a href="https://odyssey.sonic.game/task" target="_blank" rel="noopener noreferrer">Sonic Odyssey</a> page.</p>
         <p className="back-home">

@@ -248,27 +248,33 @@ const HomeScreen: React.FC = () => {
 
       {message && <div className={`message-box ${messageType}`}>{message}</div>}
       <div className="content-wrapper">
-        <a href="https://discord.gg/fckhkP5p5Z" target="_blank" rel="noopener noreferrer" style={{textDecoration: 'none'}}>
-        <p
-          className="block-title"
-          style={{
-            textAlign: "center",
-            background: "#00000087",
-            width: "100%",
-            maxWidth: "720px",
-            margin: "0 auto",
-            marginBottom: "25px",
-            borderRadius: "5px",
-            color: "#fff",
-            padding: "10px 0",
-            textTransform: "uppercase",
-            fontFamily: "'Chakra Petch', 'Roboto', 'sans-serif'",
-            fontWeight: "bold",
-            textDecoration: "none",
-          }}
+        <a
+          href="https://discord.gg/fckhkP5p5Z"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ textDecoration: "none" }}
         >
-          <img src="/icons/discord.png" alt="Discord" className="social-icon" style={{verticalAlign: "middle"}} /> Chat with us on Discord
-        </p>
+          <p
+            className="block-title"
+            style={{
+              textAlign: "center",
+              background: "#00000087",
+              width: "100%",
+              maxWidth: "720px",
+              margin: "0 auto",
+              marginBottom: "25px",
+              borderRadius: "5px",
+              color: "#fff",
+              padding: "10px 0",
+              textTransform: "uppercase",
+              fontFamily: "'Chakra Petch', 'Roboto', 'sans-serif'",
+              fontWeight: "bold",
+              textDecoration: "none",
+            }}
+          >
+            <img src="/icons/discord.png" alt="Discord" className="social-icon" style={{ verticalAlign: "middle" }} />{" "}
+            Chat with us on Discord
+          </p>
         </a>
         <div className="content-wrappper-details">
           <div className={`left-block ${!wallet.connected ? "centered" : ""}`}>
@@ -336,17 +342,24 @@ const HomeScreen: React.FC = () => {
                 <p className="upgrade-lootbox">Claim lootbox</p>
               ) : (
                 <>
-                  <p className="progression-text">Lootbox Progression</p>
-                  <div className="progress-wrapper">
-                    <LinearProgress
-                      variant="determinate"
-                      value={(silver / (lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800)) * 100}
-                      className="progress-bar"
-                    />
-                    <span className="xp-text">
-                      {silver} / {lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800} silver
-                    </span>
-                  </div>
+                  {lootboxLevel < 4 && (
+                    <>
+                      <p className="progression-text">Lootbox Progression</p>
+                      <div className="progress-wrapper">
+                        <LinearProgress
+                          variant="determinate"
+                          value={(silver / (lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800)) * 100}
+                          className="progress-bar"
+                        />
+                        <span className="xp-text">
+                          {silver} / {lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800} silver
+                        </span>
+                      </div>
+                    </>
+                  )}
+                  {lootboxLevel >= 4 && (
+                    <p className="progression-text">Max level reached!</p>
+                  )}
                   {silver >= (lootboxLevel === 1 ? 1000 : lootboxLevel === 2 ? 2400 : 3800) && lootboxLevel < 4 && (
                     <Button
                       variant="contained"
