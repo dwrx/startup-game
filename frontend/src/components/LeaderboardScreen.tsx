@@ -22,6 +22,7 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 type Player = {
   address: string;
   xp: number;
+  rings?: number;
   silver: number;
   lootbox_level: number;
   score: number;
@@ -72,7 +73,7 @@ const LeaderboardScreen = () => {
       <SiteNavigation />
       <Box className="leaderboard-header">
         <Typography variant="h6" gutterBottom>
-          Players active during the pre-season will share <span style={{color: 'gold'}}>1,000,000 Sonic Odyssey rings</span> and other rewards.
+          A snapshot was taken on October 1st at 9 AM UTC. Ring claims will open soon as we finalize the rank and reward calculations.
         </Typography>
       </Box>
 
@@ -90,6 +91,7 @@ const LeaderboardScreen = () => {
                 <TableCell align="right">XP</TableCell>
                 <TableCell align="right">Silver</TableCell>
                 <TableCell align="right">Lootbox</TableCell>
+                <TableCell align="right" style={{display: 'flex'}}><img src="/rings.png" width="24" alt="" className="rings-img" /> <span style={{color: "rgb(215, 151, 58)"}}>Rings</span></TableCell>
                 <TableCell align="right">Score</TableCell>
               </TableRow>
             </TableHead>
@@ -114,6 +116,9 @@ const LeaderboardScreen = () => {
                     ) : (
                       "—"
                     )}
+                  </TableCell>
+                  <TableCell align="right" style={{ fontSize: "18px", color: "rgb(215, 151, 58)" }}>
+                    {playerPosition.rings || '???'}
                   </TableCell>
                   <TableCell align="right" style={{ fontSize: "18px", color: "gold" }}>
                     {playerPosition.score}
@@ -143,6 +148,9 @@ const LeaderboardScreen = () => {
                     ) : (
                       "—"
                     )}
+                  </TableCell>
+                  <TableCell align="right" style={{ fontSize: "18px", color: "rgb(215, 151, 58)" }}>
+                    {player.rings || '???'}
                   </TableCell>
                   <TableCell align="right" style={{ fontSize: "18px", color: "gold" }}>
                     {player.score}

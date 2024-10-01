@@ -325,7 +325,7 @@ const HomeScreen: React.FC = () => {
               </>
             )}
           </div>
-          <div className="right-block">
+          <div className="right-block" style={{justifyContent: 'flex-start'}}>
             <div className="top-right-block">
               <div className="shining-container">
                 <div className="shining-effect"></div>
@@ -334,7 +334,8 @@ const HomeScreen: React.FC = () => {
                 <img src={`/lootbox-${lootboxLevel || 1}.png`} alt="Lootbox" className="lootbox-image" />
               </div>
             </div>
-            <div className="bottom-right-block" onClick={claimLootbox}>
+            <p style={{color: "#fff", textAlign: "center", margin: 0, padding: 0}}>Loot box claim period is over.</p>
+            {/* <div className="bottom-right-block" onClick={claimLootbox}>
               <div className="shining-container">
                 <div className="shining-effect"></div>
               </div>
@@ -373,7 +374,7 @@ const HomeScreen: React.FC = () => {
                   )}
                 </>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

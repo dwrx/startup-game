@@ -301,7 +301,7 @@ const InventoryScreen: React.FC = () => {
   return (
     <div className="inventory-page" style={{ overflowY: "scroll" }}>
       <SiteNavigation />
-      {isOKApp &&
+      {false && isOKApp &&
         !loading &&
         playerAccount &&
         inventoryAccount &&

@@ -309,7 +309,7 @@ const MissionsModal: React.FC<MissionsModalProps> = ({ open, onClose }) => {
           onChange={(e, newValue) => setActiveTab(newValue)}
         >
           <Tab className="missions-tab-button" label="Missions" />
-          <Tab className="missions-tab-button" label="Odyssey Rings" />
+          {/* <Tab className="missions-tab-button" label="Odyssey Rings" /> */}
           <FormControlLabel
             control={<Switch checked={hideClaimed} onChange={() => setHideClaimed(!hideClaimed)} color="primary" />}
             label="Hide claimed"
@@ -396,11 +396,8 @@ const MissionsModal: React.FC<MissionsModalProps> = ({ open, onClose }) => {
             </ul>
           </>
         )}
-        {activeTab === 1 && (
+        {/* {activeTab === 1 && (
           <>
-            {/* <Typography variant="body1" paragraph>
-              Progress in the game to earn Odyssey Rings.
-            </Typography> */}
             {error && (
               <Typography color="error" className="quest-claim-error" variant="body2">
                 {error}{" "}
@@ -430,9 +427,6 @@ const MissionsModal: React.FC<MissionsModalProps> = ({ open, onClose }) => {
                             {quest.rewards[0].amount} Rings
                           </div>
                         </div>
-                        {/* <Typography variant="body2" className="mission-description">
-                        {quest.description}
-                      </Typography> */}
                       </div>
                       <div className="mission-action">
                         {!isClaimed ? (
@@ -466,7 +460,7 @@ const MissionsModal: React.FC<MissionsModalProps> = ({ open, onClose }) => {
                 })}
             </ul>
           </>
-        )}
+        )} */}
         <Box mt={2} textAlign="right">
           <Button variant="contained" color="primary" className="close" onClick={onClose}>
             Close
