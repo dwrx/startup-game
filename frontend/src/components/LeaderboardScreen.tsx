@@ -13,6 +13,7 @@ import {
   Paper,
   Typography,
   Tooltip,
+  Button,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import "./LeaderboardScreen.css";
@@ -22,7 +23,8 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 type Player = {
   address: string;
   xp: number;
-  rings?: number;
+  rings: number;
+  rings_claimed?: number;
   silver: number;
   lootbox_level: number;
   score: number;
@@ -35,31 +37,34 @@ const LeaderboardScreen = () => {
   const [loading, setLoading] = useState(true);
   const [leaderboard, setLeaderboard] = useState<Player[]>([]);
   const [playerPosition, setPlayerPosition] = useState<Player | null>(null);
+  const [claiming, setClaiming] = useState<boolean>(false);
+  const [claimTx, setClaimTx] = useState<string | null>(null);
+
+  const fetchLeaderboard = async () => {
+    setLoading(true);
+    try {
+      const addressParam = wallet.publicKey ? `?address=${wallet.publicKey.toBase58()}` : "";
+      const response = await fetch(`${API_BASE_URL}/api/v1/leaderboard${addressParam}`);
+      const result = await response.json();
+
+      if (result.success) {
+        setClaimTx(result.claimTx);
+        if (result.leaderboard[0]?.position !== undefined) {
+          setPlayerPosition(result.leaderboard[0]);
+          setLeaderboard(result.leaderboard.slice(1));
+        } else if (result.leaderboard[0] === null) {
+          setLeaderboard(result.leaderboard.slice(1));
+        } else {
+          setLeaderboard(result.leaderboard);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch leaderboard", error);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const fetchLeaderboard = async () => {
-      setLoading(true);
-      try {
-        const addressParam = wallet.publicKey ? `?address=${wallet.publicKey.toBase58()}` : "";
-        const response = await fetch(`${API_BASE_URL}/api/v1/leaderboard${addressParam}`);
-        const result = await response.json();
-
-        if (result.success) {
-          if (result.leaderboard[0]?.position !== undefined) {
-            setPlayerPosition(result.leaderboard[0]);
-            setLeaderboard(result.leaderboard.slice(1));
-          } else if (result.leaderboard[0] === null) {
-            setLeaderboard(result.leaderboard.slice(1));
-          } else {
-            setLeaderboard(result.leaderboard);
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch leaderboard", error);
-      }
-      setLoading(false);
-    };
-
     fetchLeaderboard();
   }, [wallet.publicKey]);
 
@@ -68,12 +73,30 @@ const LeaderboardScreen = () => {
     return `${address.slice(0, 3)}...${address.slice(-3)}`;
   };
 
+  const claimRings = async (address: string) => {
+    if (claiming || !wallet.publicKey) return;
+    setClaiming(true);
+    const response = await fetch(`${API_BASE_URL}/api/v1/claim-odyssey-reward`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ questId: 9999, address: wallet.publicKey.toBase58() }),
+    });
+    const result = await response.json();
+    if (result.success) {
+      console.log("Rings claimed successfully");
+    } else {
+      console.error("Failed to claim rings:", result.message);
+    }
+    await fetchLeaderboard();
+    setClaiming(false);
+  };
+
   return (
     <div className="leaderboard-page">
       <SiteNavigation />
       <Box className="leaderboard-header">
         <Typography variant="h6" gutterBottom>
-          A snapshot was taken on October 1st at 9 AM UTC. Ring claims will open soon as we finalize the rank and reward calculations.
+          A snapshot was taken on October 1st at 9 AM UTC. Top-1000 players are eligible to claim Rings. 
         </Typography>
       </Box>
 
@@ -118,7 +141,21 @@ const LeaderboardScreen = () => {
                     )}
                   </TableCell>
                   <TableCell align="right" style={{ fontSize: "18px", color: "rgb(215, 151, 58)" }}>
-                    {playerPosition.rings || '???'}
+                  {playerPosition.rings_claimed === 0 && <span>{`${playerPosition.rings} Rings` || '???'}</span>}
+                    <div>
+                      {(playerPosition.rings > 0 && playerPosition.rings_claimed === 0) && (
+                        <Button variant="contained" className="claim-rings-btn" style={{backgroundColor: '#f2b24e', color: "black" }} onClick={() => claimRings(playerPosition.address)}>
+                          {claiming ? "Claiming..." : "Claim"}
+                        </Button>
+                      )}
+                      {(playerPosition.rings > 0 && playerPosition.rings_claimed === 1) && (
+                        <p>
+                          <a href={`https://explorer.sonic.game/tx/${claimTx}`} style={{color: '#fff'}} target="_blank" rel="noreferrer noopener">
+                            <span>CLAIMED {playerPosition.rings} RINGS</span>
+                          </a>
+                        </p>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell align="right" style={{ fontSize: "18px", color: "gold" }}>
                     {playerPosition.score}
