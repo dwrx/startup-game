@@ -177,7 +177,8 @@ pub mod startup_game {
         if win {
             player.experience += xp_reward;
             player.silver += silver_reward;
-            heists.heist_level += 1;
+
+            heists.heist_level = heists.heist_level.saturating_add(1);
 
             // 35% chance of receiving a random loot item
             if (clock.slot % 100) < 35 {
@@ -221,42 +222,42 @@ pub mod startup_game {
     }
 
     pub fn claim_lootbox(ctx: Context<ClaimLootbox>) -> Result<()> {
-        let player = &mut ctx.accounts.player;
+        // let player = &mut ctx.accounts.player;
 
-        if player.lootbox_level > 0 {
-            return err!(PlayerError::LootboxAlreadyClaimed);
-        }
+        // if player.lootbox_level > 0 {
+        //     return err!(PlayerError::LootboxAlreadyClaimed);
+        // }
 
-        if player.experience < 3 {
-            return err!(PlayerError::InsufficientExperience);
-        }
+        // if player.experience < 3 {
+        //     return err!(PlayerError::InsufficientExperience);
+        // }
 
-        player.lootbox_level = 1;
+        // player.lootbox_level = 1;
 
         Ok(())
     }
 
     pub fn upgrade_lootbox(ctx: Context<UpgradeLootbox>) -> Result<()> {
-        let player = &mut ctx.accounts.player;
+        // let player = &mut ctx.accounts.player;
 
-        if player.lootbox_level == 0 {
-            return err!(PlayerError::LootboxNotClaimed);
-        }
+        // if player.lootbox_level == 0 {
+        //     return err!(PlayerError::LootboxNotClaimed);
+        // }
 
-        let cost = player
-            .get_lootbox_upgrade_cost()
-            .ok_or(PlayerError::MaxLevelReached)?;
+        // let cost = player
+        //     .get_lootbox_upgrade_cost()
+        //     .ok_or(PlayerError::MaxLevelReached)?;
 
-        if player.silver < cost {
-            return err!(PlayerError::InsufficientSilver);
-        }
+        // if player.silver < cost {
+        //     return err!(PlayerError::InsufficientSilver);
+        // }
 
-        player.silver = player
-            .silver
-            .checked_sub(cost)
-            .ok_or(PlayerError::InsufficientSilver)?;
+        // player.silver = player
+        //     .silver
+        //     .checked_sub(cost)
+        //     .ok_or(PlayerError::InsufficientSilver)?;
 
-        player.lootbox_level += 1;
+        // player.lootbox_level += 1;
 
         Ok(())
     }
@@ -335,7 +336,9 @@ pub mod startup_game {
             .ok_or(RoomError::RoomNotFound)?;
 
         // Check if the room is upgradable
-        let required_item = room_type.upgrade_item().ok_or(RoomError::RoomIsNotUpgradable)?;
+        let required_item = room_type
+            .upgrade_item()
+            .ok_or(RoomError::RoomIsNotUpgradable)?;
 
         // Check if the player has the required loot item
         let item_index = inventory
@@ -561,15 +564,15 @@ pub mod startup_game {
     }
 
     pub fn claim_okx_lootbox(ctx: Context<ClaimOkxLootbox>) -> Result<()> {
-        let inventory = &mut ctx.accounts.inventory;
+        // let inventory = &mut ctx.accounts.inventory;
 
-        if inventory.items.contains(&InventoryItem::OkxLootbox)
-            || inventory.items.contains(&InventoryItem::OpenedOkxLootbox)
-        {
-            return err!(InventoryError::AlreadyClaimed);
-        }
+        // if inventory.items.contains(&InventoryItem::OkxLootbox)
+        //     || inventory.items.contains(&InventoryItem::OpenedOkxLootbox)
+        // {
+        //     return err!(InventoryError::AlreadyClaimed);
+        // }
 
-        inventory.items.push(InventoryItem::OkxLootbox);
+        // inventory.items.push(InventoryItem::OkxLootbox);
 
         Ok(())
     }
