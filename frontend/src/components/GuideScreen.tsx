@@ -14,10 +14,8 @@ const GuideScreen: React.FC = () => {
           <h3>Contents</h3>
           <ul>
             <li><a href="#about">About the Game</a></li>
-            <li><a href="#connect-wallet">Connect Your Wallet</a></li>
             <li><a href="#gameplay">Gameplay</a></li>
             <li><a href="#how-it-works">How It Works</a></li>
-            <li><a href="#pre-season-rewards">🏆 Pre-season & Sonic Odyssey Rewards</a></li>
           </ul>
         </div>
 
@@ -28,58 +26,6 @@ const GuideScreen: React.FC = () => {
           protect their businesses from police raids, or to attack NPC competitors in story mode. Players complete
           quests to earn <b>silver</b> tokens and experience points, which can be used to unlock new game features or
           spent on loot boxes and transferable assets after the Pre-season ends.
-        </p>
-
-        <h2 id="connect-wallet">Connect Your Wallet to Sonic</h2>
-        <p>
-          To play <b>Startup</b>, you need a wallet that supports the <b>{NETWORK_NAME}</b> network. We recommend
-          using either{" "}
-          <a href="https://www.backpack.app/" target="_blank" rel="noopener noreferrer">
-            Backpack
-          </a>,{" "}
-          <a href="https://nightly.app/" target="_blank" rel="noopener noreferrer">
-            Nightly
-          </a>{" "}
-          or{" "}
-          <a href="https://www.okx.com/web3" target="_blank" rel="noopener noreferrer">
-            OKX</a>{" "}
-          wallets for now.
-        </p>
-        <ul>
-          <li>
-            <a
-              href={BACKPACK_GUIDE}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Backpack Wallet Setup Guide
-            </a>
-          </li>
-          <li>
-            <a
-              href={NIGHTLY_GUIDE}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Nightly Wallet Setup Guide
-            </a>
-          </li>
-          <li>
-            <a
-              href={OKX_GUIDE}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              OKX Wallet Setup Guide
-            </a>
-          </li>
-        </ul>
-        <p>
-          Once your wallet is set up, request test SOL from the{" "}
-          <a href="https://faucet.sonic.game/" target="_blank" rel="noopener noreferrer">
-            {NETWORK_NAME} Faucet
-          </a>
-          .
         </p>
 
         <h2 id="gameplay">Gameplay</h2>
@@ -164,28 +110,19 @@ const GuideScreen: React.FC = () => {
           Dirty cash generated from illegal businesses can be laundered through legal businesses. There is a 30% loss
           when converting dirty cash to clean cash.
         </p>
-        <h2 id="pre-season-rewards">Pre-season & Sonic Odyssey Rewards</h2>
-        <div className="info-box">
-          <p>
-            All in-game actions count towards the 100 TX daily goal in the Sonic Odyssey campaign. Just to name a few on-chain transactions: purchasing or upgrading rooms, collecting
-            or converting cash, recruiting units, raiding, and claiming quest rewards.
-          </p>
-        </div>
+        <h2 id="pre-season-rewards">Pre-season Rewards</h2>
         <p>
-          Players can earn valuable assets and Rings by being active in the game during Pre-Season. There is a prize pool of <span style={{ color: "#d7973a" }}>1,000,000</span> <img src="/rings.png" width="24" alt="" className="rings-img" />{" "}
-          <span style={{ color: "#d7973a" }}>Rings</span>. The pre-season is expected to last ~6 weeks until late September - early October.
+          Players can earn valuable assets by being active in the game during Pre-Season.
         </p>
         <ul>
           <li>
-            <b>Quests:</b> Complete missions to earn in-game currency "silver" and share a pool of 250,000 Rings on a FCFS basis. Every completed quest yields 100 silver and 1 XP. Players who earn 5XP, 10XP, and 15XP in the game can additionally claim 2, 3, and 5 Rings, respectively.
+            <b>Quests:</b> TBA
           </li>
           <li>
-            <b>Leaderboard:</b> A guaranteed pool of Rings and Silver for all players who stay active throughout the season. The exact distribution model is to be announced.
+            <b>Leaderboard:</b> TBA
           </li>
           <li>
-            <b>Loot boxes:</b> Players can upgrade their loot boxes by spending silver obtained via quests, raids, and game events. The higher the loot box level, the more valuable the rewards. Loot boxes open up to{" "}
-            <img src="/rings.png" width="24" alt="" className="rings-img" />{" "}
-            <span style={{ color: "#d7973a" }}>Rings</span>, NFTs, WLs, silver, and other rewards after the pre-season concludes.
+            <b>Loot boxes:</b> Players can upgrade their loot boxes by spending silver obtained via quests, raids, and game events. The higher the loot box level, the more valuable the rewards. Loot boxes open up to NFTs, WLs, silver, and other rewards after the pre-season concludes.
           </li>
         </ul>
         <div className="lootbox-images">
@@ -206,7 +143,6 @@ const GuideScreen: React.FC = () => {
             <span>Legendary</span>
           </div>
         </div>
-        <p>You can check your rings balances in the <a href="https://odyssey.sonic.game/task" target="_blank" rel="noopener noreferrer">Sonic Odyssey</a> page.</p>
         <p className="back-home">
           <a href="/">Back to the Home page</a>
         </p>

@@ -4,7 +4,7 @@ import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 
 require('@solana/wallet-adapter-react-ui/styles.css');
 
-const RPC = process.env.REACT_APP_RPC || 'https://devnet.sonic.game';
+const RPC = process.env.REACT_APP_RPC || 'https://api.devnet.solana.com';
 
 const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const endpoint = useMemo(() => RPC, []);

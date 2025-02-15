@@ -137,12 +137,11 @@ const InventoryScreen: React.FC = () => {
       };
     }
 
-    // Add hardcoded "PRE-SEASON BADGE"
-    // itemsMap["PRE-SEASON BADGE"] = {
-    //   name: "PRE-SEASON BADGE",
-    //   image: "/early-bird.png",
-    //   count: 1,
-    // };
+    itemsMap["PRE-SEASON BADGE"] = {
+      name: "PRE-SEASON BADGE",
+      image: "/early-bird.png",
+      count: 1,
+    };
 
     if (inventoryAccount) {
       inventoryAccount.items.forEach((item: any) => {

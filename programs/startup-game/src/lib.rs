@@ -3,7 +3,7 @@ use anchor_lang::prelude::*;
 
 pub mod errors;
 
-declare_id!("2HkFArK6JYkarKcynVvwc76Dt5MZFwNrjWnzWaxhzmE3");
+declare_id!("8KyZ61SmQRD7GP7y6PwFdd39Aaubd4efTHrXNzMwmUmo");
 
 #[program]
 pub mod startup_game {
@@ -562,47 +562,6 @@ pub mod startup_game {
 
         Ok(())
     }
-
-    pub fn claim_okx_lootbox(ctx: Context<ClaimOkxLootbox>) -> Result<()> {
-        // let inventory = &mut ctx.accounts.inventory;
-
-        // if inventory.items.contains(&InventoryItem::OkxLootbox)
-        //     || inventory.items.contains(&InventoryItem::OpenedOkxLootbox)
-        // {
-        //     return err!(InventoryError::AlreadyClaimed);
-        // }
-
-        // inventory.items.push(InventoryItem::OkxLootbox);
-
-        Ok(())
-    }
-
-    pub fn open_okx_lootbox(ctx: Context<OpenOkxLootbox>) -> Result<()> {
-        let player = &mut ctx.accounts.player;
-        let inventory = &mut ctx.accounts.inventory;
-
-        if !inventory.items.contains(&InventoryItem::OkxLootbox) {
-            return err!(InventoryError::LootboxNotFound);
-        }
-
-        // Remove OkxLootbox and add OpenedOkxLootbox
-        inventory
-            .items
-            .retain(|item| item != &InventoryItem::OkxLootbox);
-        inventory.items.push(InventoryItem::OpenedOkxLootbox);
-
-        player.dirty_cash = player
-            .dirty_cash
-            .checked_add(1000)
-            .ok_or(InventoryError::Overflow)?;
-
-        player.silver = player
-            .silver
-            .checked_add(250)
-            .ok_or(InventoryError::Overflow)?;
-
-        Ok(())
-    }
 }
 
 #[derive(Accounts)]
@@ -665,8 +624,6 @@ pub enum InventoryItem {
     Thief,
     Diplomat,
     Researcher,
-    OkxLootbox,
-    OpenedOkxLootbox,
     WashingMachine,
     MicrowaveOven,
     Whiskey,
@@ -783,22 +740,6 @@ pub struct RecruitTeamMember<'info> {
 pub struct ClaimQuestReward<'info> {
     #[account(mut, has_one = owner)]
     pub player: Account<'info, Player>,
-    pub owner: Signer<'info>,
-}
-
-#[derive(Accounts)]
-pub struct ClaimOkxLootbox<'info> {
-    #[account(mut, has_one = owner)]
-    pub inventory: Account<'info, Inventory>,
-    pub owner: Signer<'info>,
-}
-
-#[derive(Accounts)]
-pub struct OpenOkxLootbox<'info> {
-    #[account(mut, has_one = owner)]
-    pub player: Account<'info, Player>,
-    #[account(mut, has_one = owner)]
-    pub inventory: Account<'info, Inventory>,
     pub owner: Signer<'info>,
 }
 

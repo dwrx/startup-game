@@ -1,5 +1,5 @@
 {
-  "address": "2HkFArK6JYkarKcynVvwc76Dt5MZFwNrjWnzWaxhzmE3",
+  "address": "8KyZ61SmQRD7GP7y6PwFdd39Aaubd4efTHrXNzMwmUmo",
   "metadata": {
     "name": "startup_game",
     "version": "0.1.0",
@@ -19,22 +19,6 @@
           "name": "owner",
           "signer": true,
           "relations": ["player"]
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "claim_okx_lootbox",
-      "discriminator": [133, 111, 45, 165, 100, 84, 52, 133],
-      "accounts": [
-        {
-          "name": "inventory",
-          "writable": true
-        },
-        {
-          "name": "owner",
-          "signer": true,
-          "relations": ["inventory"]
         }
       ],
       "args": []
@@ -224,26 +208,6 @@
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "open_okx_lootbox",
-      "discriminator": [204, 65, 133, 166, 247, 77, 102, 84],
-      "accounts": [
-        {
-          "name": "player",
-          "writable": true
-        },
-        {
-          "name": "inventory",
-          "writable": true
-        },
-        {
-          "name": "owner",
-          "signer": true,
-          "relations": ["player", "inventory"]
         }
       ],
       "args": []
@@ -608,12 +572,6 @@
           },
           {
             "name": "Researcher"
-          },
-          {
-            "name": "OkxLootbox"
-          },
-          {
-            "name": "OpenedOkxLootbox"
           },
           {
             "name": "WashingMachine"

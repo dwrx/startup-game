@@ -6,7 +6,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { PublicKey, SystemProgram } from "@solana/web3.js";
 import { Button, CircularProgress, Box, Alert, Link, LinearProgress } from "@mui/material";
 import SiteNavigation from "./SiteNavigation";
-import HowToModal from "./HowToModal";
 import ClaimLootboxModal from "./ClaimLootboxModal";
 import useProgram from "../hooks/useProgram";
 import "./HomeScreen.css";
@@ -25,7 +24,6 @@ const HomeScreen: React.FC = () => {
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [claimModalOpen, setClaimModalOpen] = useState<boolean>(false);
-  const [howToModalOpen, setHowToModalOpen] = useState<boolean>(false);
   const [xp, setXp] = useState<number>(0);
   const [silver, setSilver] = useState<number>(0);
   const [lootboxClaimed, setLootboxClaimed] = useState<boolean>(false);
@@ -296,12 +294,7 @@ const HomeScreen: React.FC = () => {
               <>
                 <Box mt={4}>
                   <Alert severity="warning">
-                    Switch wallet to <b>{NETWORK_NAME}</b> network (<Link href="/guide#connect-wallet">How?</Link>) and
-                    request SOL from{" "}
-                    <a href="https://faucet.sonic.game/" target="_blank" rel="noreferrer noopener">
-                      faucet
-                    </a>{" "}
-                    to play.
+                    The game is available only on <b>Solana Devnet</b>.
                   </Alert>
                 </Box>
                 <Box mt={4}>
@@ -334,8 +327,7 @@ const HomeScreen: React.FC = () => {
                 <img src={`/lootbox-${lootboxLevel || 1}.png`} alt="Lootbox" className="lootbox-image" />
               </div>
             </div>
-            <p style={{color: "#fff", textAlign: "center", margin: 0, padding: 0}}>Loot box claim period is over.</p>
-            {/* <div className="bottom-right-block" onClick={claimLootbox}>
+            <div className="bottom-right-block" onClick={claimLootbox}>
               <div className="shining-container">
                 <div className="shining-effect"></div>
               </div>
@@ -374,7 +366,7 @@ const HomeScreen: React.FC = () => {
                   )}
                 </>
               )}
-            </div> */}
+            </div>
           </div>
         </div>
       </div>
@@ -391,7 +383,6 @@ const HomeScreen: React.FC = () => {
         onSignInSuccess={handleSignInSuccess}
         onClaim={handleClaimLootbox}
       />
-      <HowToModal open={howToModalOpen} onClose={() => setHowToModalOpen(false)} />
     </div>
   );
 };
